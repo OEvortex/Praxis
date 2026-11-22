@@ -1097,10 +1097,13 @@ export class AgentRuntime {
     }));
     try {
       const s = get_settings();
-      usageStats.record_live_turn(s, {
+      usageStats.record_call_usage(s, {
         session_id: handle.session_id,
         turn_id: handle.turn_id,
-        started_at: turn_started_at,
+        model: String(runtime.model ?? ""),
+        provider: String(runtime.model_provider ?? ""),
+        usage,
+        ttft_s: first_token_at !== null ? first_token_at - turn_started_at : 0,
       });
       if (first_token_at !== null) {
         usageStats.record_turn_timing(s, {
@@ -1438,6 +1441,9 @@ export class LocalAgent {
     this._persist_entry("user", userContent);
 
     const tools = this._openai_tools();
+    // A tool-heavy turn makes several model calls; the final AgentEndEvent must
+    // carry the sum, not just the last call's usage.
+    let turnUsage: UsageStats | null = null;
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       if (cancelSignal?.aborted) throw new DOMException("Aborted", "AbortError");
 
@@ -1448,13 +1454,14 @@ export class LocalAgent {
         step = await gen.next();
       }
       const { content, tool_calls, usage } = step.value;
+      turnUsage = usageStats.add_usage(turnUsage, usage) as UsageStats;
 
       if (tool_calls.length === 0) {
         if (content) {
           this._messages.push({ role: "assistant", content });
           this._persist_entry("assistant", content);
         }
-        yield new AgentEndEvent(usage);
+        yield new AgentEndEvent(turnUsage);
         return;
       }
 
@@ -1554,7 +1561,7 @@ export class LocalAgent {
       }
     }
     // Tool-round cap reached — end the turn rather than looping forever.
-    yield new AgentEndEvent(null);
+    yield new AgentEndEvent(turnUsage);
   }
 
   /** Persist a lightweight message entry into the bound PraxisSession. */

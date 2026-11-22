@@ -1,9 +1,0 @@
-用户当前的请求：
-{question}
-
-当前模式：{mode}
-
-可读来源清单（用 read_source 按 id 读取全文）：
-{manifest}
-
-现在开始调查：按需调用 read_source，然后写出你客观、详尽的调查结论。

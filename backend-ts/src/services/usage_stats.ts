@@ -111,6 +111,27 @@ function utcYearStartSeconds(year: number): number {
 
 // -- recording ----------------------------------------------------------------
 
+/** Add one model call's usage into a turn's running total. */
+export function add_usage(
+  total: { [k: string]: unknown } | null,
+  next: { [k: string]: unknown } | null | undefined,
+): { [k: string]: unknown } | null {
+  if (!next) return total;
+  const out: Record<string, unknown> = { ...(total ?? {}) };
+  for (const field of [
+    "total_tokens",
+    "input_tokens",
+    "output_tokens",
+    "cache_read_tokens",
+    "cache_write_tokens",
+  ] as const) {
+    const value = Number((next as Record<string, unknown>)[field] ?? 0) || 0;
+    if (value) out[field] = (Number(out[field]) || 0) + value;
+  }
+  out["calls"] = (Number(out["calls"]) || 0) + 1;
+  return out;
+}
+
 /** Store honest stream timings for one turn. Never raises. */
 export function record_turn_timing(
   settings: Settings,
@@ -347,6 +368,75 @@ export function record_live_turn(
       });
       // duration is unknown per call; leave 0 so tokens/sec stays null.
       insertRows(settings, rows);
+    });
+  } catch {
+    // accounting must never break a turn
+  }
+}
+
+/**
+ * Record the provider usage reported by a just-finished turn.
+ *
+ * The local agent loop keeps usage on the `AgentEndEvent`, not on persisted
+ * session entries, so `record_live_turn` (which scrapes `vtx_entries`) has
+ * nothing to find. This is the authoritative path for live turns.
+ */
+export function record_call_usage(
+  settings: Settings,
+  args: {
+    session_id: string;
+    turn_id: string;
+    model: string;
+    provider: string;
+    usage: {
+      input_tokens?: number;
+      output_tokens?: number;
+      cache_read_tokens?: number;
+      cache_write_tokens?: number;
+      total_tokens?: number;
+      calls?: number;
+    } | null;
+    duration_s?: number;
+    ttft_s?: number;
+  },
+): void {
+  const u = args.usage;
+  if (!u) return;
+  const input = toInt(u.input_tokens);
+  const output = toInt(u.output_tokens);
+  const cacheRead = toInt(u.cache_read_tokens);
+  const cacheWrite = toInt(u.cache_write_tokens);
+  const total = toInt(u.total_tokens) || input + output + cacheRead + cacheWrite;
+  if (!total) return;
+  try {
+    withConnection(settings, (conn) => {
+      conn.exec(TABLE);
+      conn.exec(INDEX);
+      // One row per turn: a scraped backfill must not double-count this call.
+      conn
+        .prepare("DELETE FROM usage_turns WHERE session_id = ? AND turn_id = ?")
+        .run(args.session_id, args.turn_id);
+      const stmt = conn.prepare(
+        "INSERT INTO usage_turns (ts, session_id, turn_id, model, provider," +
+          " input_tokens, output_tokens, cache_read_tokens," +
+          " cache_write_tokens, total_tokens, calls, duration_s, ttft_s)" +
+          " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      );
+      stmt.run(
+        Date.now() / 1000,
+        args.session_id,
+        args.turn_id,
+        args.model,
+        args.provider,
+        input,
+        output,
+        cacheRead,
+        cacheWrite,
+        total,
+        Math.max(1, toInt(u.calls) || 1),
+        Math.max(0, Number(args.duration_s) || 0),
+        Math.max(0, Number(args.ttft_s) || 0),
+      );
     });
   } catch {
     // accounting must never break a turn
@@ -645,4 +735,6 @@ export function usage_for_year(settings: Settings, year: number, timezone: strin
 // camelCase aliases for callers that prefer them.
 export const recordTurnTiming = record_turn_timing;
 export const recordLiveTurn = record_live_turn;
+export const recordCallUsage = record_call_usage;
+export const addUsage = add_usage;
 export const usageForYear = usage_for_year;
