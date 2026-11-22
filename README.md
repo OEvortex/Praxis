@@ -87,6 +87,21 @@ bun run check       # contracts + architecture + typecheck + tests + lint + buil
 
 API contracts are generated from the backend OpenAPI schema (`web/contracts/`); `bun run contracts:check` verifies they are in sync.
 
+### Response format: Markdown vs. OpenUI
+
+The chat renders two kinds of answer with one renderer pipeline: plain Markdown prose for short/factual/LaTeX/safety answers, and OpenUI Lang programs when an interface does work prose cannot (a tool, stepper, form, comparison chart/table, stateful checklist, game, or diagram). The shared prompt lives in `web/lib/openui/prompt-options.ts`; regenerate the generated prompts and the backend spec with `cd web && npm run openui:prompt`. Never restore a "your entire response must be UI / no markdown" instruction — that makes the model wrap every answer in components.
+
+The per-turn renderer choice is logged in the `result` event as `metadata.metadata.renderer` (`markdown` | `ui`). To catch regressions where the model reaches for UI too often, run the false-trigger eval:
+
+```bash
+cd backend-ts
+npx tsx scripts/eval-visual-triggers.ts          # offline fixture/policy check
+npx tsx scripts/eval-visual-triggers.ts --live   # run the fixtures against the configured model
+npx tsx scripts/eval-visual-triggers.ts --live --limit 4
+```
+
+Fixtures live in `backend-ts/tests/fixtures/visual-triggers.json` and are also asserted by `npm test`.
+
 ## License
 
 See repository for license details.

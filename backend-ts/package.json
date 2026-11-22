@@ -8,6 +8,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "node dist/main.js",
     "test": "vitest run",
+    "eval:visual-triggers": "tsx scripts/eval-visual-triggers.ts",
     "refresh-model-metadata": "node scripts/refresh-model-metadata.mjs"
   },
   "dependencies": {

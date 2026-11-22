@@ -184,14 +184,21 @@ export function build_praxis_prompt(
       "\n\n# The learner\n\n" +
       PRAXIS_BASE;
   } else if (OPENUI_SPEC) {
-    // The main chat renders assistant answers with the OpenUI Lang Renderer,
-    // so the model must emit UI programs rather than Markdown.
+    // The chat renders both plain Markdown and OpenUI programs. The model
+    // chooses per answer: Markdown is the default; UI is for work prose cannot
+    // do. See the README note on avoiding generative-UI over-use.
     base =
       base +
       "\n\n# Response format\n\n" +
-      "Answer the learner with an OpenUI Lang program. Use the component " +
-      "library to lay out explanations, quizzes, tables and interactive " +
-      "widgets. Do not reply with plain Markdown prose.\n\n" +
+      "Answer the learner with an OpenUI Lang program when an interactive " +
+      "interface helps: a tool or calculator, a stepper, a form, a chart or " +
+      "table for comparison, a stateful checklist, a game, or a drawing. " +
+      "For a short, factual, definitional, LaTeX, safety, or single-value " +
+      "answer, reply in ordinary Markdown with no program at all — this is a " +
+      "complete, valid answer and the default when simple text is clearest. " +
+      "If you do build a page, lead with a short Markdown explanation and let " +
+      "the components add depth; use Markdown, not long Text nodes, for prose " +
+      "sections inside the program. Never wrap a simple answer in UI.\n\n" +
       OPENUI_SPEC;
   }
 

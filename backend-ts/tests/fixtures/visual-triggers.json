@@ -1,0 +1,86 @@
+[
+  {
+    "id": "definition",
+    "category": "markdown",
+    "prompt": "What is the Calvin cycle? One sentence.",
+    "expected": "markdown",
+    "sample_output": "The Calvin cycle is the sequence of light-independent reactions in the stroma of a chloroplast that fix carbon dioxide into sugar using ATP and NADPH."
+  },
+  {
+    "id": "single-value",
+    "category": "markdown",
+    "prompt": "What is 12 percent of 250?",
+    "expected": "markdown",
+    "sample_output": "12% of 250 is **30**."
+  },
+  {
+    "id": "latex-derivation",
+    "category": "markdown",
+    "prompt": "Derive the quadratic formula.",
+    "expected": "markdown",
+    "sample_output": "Starting from $ax^2+bx+c=0$, divide by $a$ and complete the square:\n\n$$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$"
+  },
+  {
+    "id": "safety-answer",
+    "category": "markdown",
+    "prompt": "Is it safe to mix bleach and ammonia?",
+    "expected": "markdown",
+    "sample_output": "No. Mixing bleach and ammonia releases toxic chloramine gas. Never combine household cleaners, and ventilate the area if you have already done so."
+  },
+  {
+    "id": "short-explanation",
+    "category": "markdown",
+    "prompt": "Why is the sky blue? Keep it short.",
+    "expected": "markdown",
+    "sample_output": "Air molecules scatter shorter blue wavelengths more strongly than longer red ones, so the sky looks blue."
+  },
+  {
+    "id": "prose-with-math",
+    "category": "markdown",
+    "prompt": "Explain the chain rule briefly.",
+    "expected": "markdown",
+    "sample_output": "If $y=f(g(x))$, then $\\frac{dy}{dx}=f'(g(x))\\,g'(x)$. Differentiate the outside function first, then multiply by the derivative of the inside."
+  },
+  {
+    "id": "interactive-calculator",
+    "category": "ui",
+    "prompt": "Build me a retirement savings calculator.",
+    "expected": "ui",
+    "sample_output": "root = Col([title, slider, result])\n$years = 10\ntitle = Title(\"Retirement savings\", \"lg\")\nslider = Slider($years, 1, 40, @Set($years, ?))\nresult = Title(@Format(@Payment(1000, 0.05, $years), \"currency\"), \"xl\")"
+  },
+  {
+    "id": "stepper",
+    "category": "ui",
+    "prompt": "Show me how to fold a paper crane, step by step.",
+    "expected": "ui",
+    "sample_output": "root = Col([head, viewer, nav])\n$step = 0\nhead = Title(\"Fold a paper crane\", \"xl\")\nnav = Button(\"Next\", @Set($step, $step + 1))\nviewer = Text(\"Step \" + ($step + 1))"
+  },
+  {
+    "id": "comparison-table",
+    "category": "ui",
+    "prompt": "Compare Basic ($9, 1 user), Pro ($29, 5 users) and Team ($99, 20 users) in a table.",
+    "expected": "ui",
+    "sample_output": "root = Col([intro, table])\nintro = Markdown(\"Here is how the three plans compare.\")\ntable = Table([\"Plan\", \"Price\", \"Seats\"], [[\"Basic\", \"$9\", \"1\"], [\"Pro\", \"$29\", \"5\"]])"
+  },
+  {
+    "id": "form",
+    "category": "ui",
+    "prompt": "Build a form that collects my budget and preferred operating system, and shows a laptop recommendation when I submit it.",
+    "expected": "ui",
+    "sample_output": "root = Form([Text(\"Budget\"), Button(\"Suggest\", @ToAssistant(\"Suggest a laptop\"))])"
+  },
+  {
+    "id": "stateful-checklist",
+    "category": "ui",
+    "prompt": "Give me a packing checklist I can tick off as I pack.",
+    "expected": "ui",
+    "sample_output": "root = Col([title, list])\n$packed = []\ntitle = Title(\"Packing list\", \"lg\")\nlist = CheckboxGroup($packed, [\"Passport\", \"Charger\", \"Toothbrush\"], @Set($packed, ?))"
+  },
+  {
+    "id": "fenced-program",
+    "category": "ui",
+    "prompt": "Give me a fenced openui-lang program.",
+    "expected": "ui",
+    "sample_output": "```openui-lang\nroot = Title(\"Hello\", \"lg\")\n```"
+  }
+]

@@ -40,6 +40,7 @@ import { get_settings } from "../config.js";
 import * as providerConfig from "../provider-config.js";
 // TODO(verify): sibling ports land concurrently — names assumed snake_case.
 import { build_context_budget, tool_manifest_text } from "./context_budget.js";
+import { classifyRenderer } from "./renderer.js";
 import { InlineThinkingSplitter } from "../services/inline_thinking.js";
 import { generate_title } from "../services/title_gen.js";
 import * as usageStats from "../services/usage_stats.js";
@@ -1134,6 +1135,7 @@ export class AgentRuntime {
       metadata: {
         metadata: {
           context_budget: AgentRuntime._context_budget(runtime, session, usage),
+          renderer: classifyRenderer(assistant_parts.join("")),
           usage_summary: AgentRuntime._usage_summary(usage, {
             started_at: turn_started_at,
             first_token_at,

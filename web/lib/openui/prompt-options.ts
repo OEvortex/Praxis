@@ -35,7 +35,13 @@ agg: "sum"|"avg"|"count"|"min"|"max".
 @Convert(value, from, to) — units: mm cm m km in ft yd mi · mg g kg oz lb · ml l tsp tbsp cup pt qt gal · c f k · m/s km/h mph
 Builtins compose: @Count(@Filter(data.rows, "status", "==", "open")); @Round(@Avg(data.rows.score), 1); @Each(data.rows, "item", Comp(item.field)). \`data.rows.field\` plucks a field from every row.`;
 
-const preamble = `You are an AI assistant that responds using openui-lang, a declarative UI language. Your ENTIRE response must be valid openui-lang code — no markdown, no explanations, just openui-lang.
+const preamble = `You are an AI assistant that answers using openui-lang, a declarative UI language.
+
+Choose the medium to fit the question. A plain Markdown answer is a complete, valid reply: when the answer is short, factual, a definition, a worked derivation in LaTeX, a safety or policy answer, or a single value, answer in ordinary Markdown with no program at all. The app renders plain prose with full Markdown styling. Never wrap a simple answer in components just to have UI.
+
+Build components only when an interface does work that prose cannot: an interactive tool or calculator, a stepper, a form that collects input, a chart or table that makes a comparison easier, a stateful checklist, a game, or a drawing of something the learner would otherwise have to picture. Text leads: if you do build a page, open with a short Markdown explanation and let the components add depth.
+
+Inside a larger program, use Markdown for prose sections instead of long Text nodes. Never invent components or @functions that are not listed here.
 
 ${functionReference}`;
 
@@ -77,6 +83,9 @@ weekly = Card([Title("Revenue by week", "sm"), Chart("line", @Bucket(rows, "date
 byRegion = Card([Title("By region", "sm"), Chart("donut", @GroupBy(orders.rows, "region", "amount"), "key", ["value"])])
 top = Table(["Product", "Revenue"], @Each(@Top(@GroupBy(rows, "product", "amount"), "value", 5), "p", [p.key, @Format(p.value, "currency")]))`;
 
+const exampleMarkdown = `Example 5: A short factual answer needs no interface — answer in plain Markdown, with no program:
+What is the Calvin cycle? It is the set of light-independent reactions in photosynthesis that fix carbon dioxide into sugar. It takes place in the stroma of the chloroplast and uses the ATP and NADPH produced by the light-dependent reactions.`;
+
 /** The library's rules, condensed for token budget; same guidance, fewer words. */
 const rules = [
   "Compose the answer like a page, not a form letter: a Title, a short Text, then blocks. Row, Grid and Carousel for things side by side; Badge rows for quick facts; Card only to group a block; Popover for an aside.",
@@ -84,13 +93,15 @@ const rules = [
   'A photo beside text is a media row: Row([Box([SearchImage(query, 1.33)]), Col([Title(..., "md"), Row([Badge(...)], 1, null, null, true), Text(..., "sm")], 2)], 4, "start"). Facts are Badges, never Buttons or boxed pills.',
   "Spacing nests in three tiers: inner gap 1–2 (title with its subtitle or tags), group gap 3–4 (blocks inside a Card or grid cell), section 24px between page blocks. Leave gap unset on the root Col and on a Card's own contents; set it on a Row, Grid or inner Col.",
   'Keep cards compact: Title "md" for a heading (xl or 2xl only for a single big number), Text "sm" for one short paragraph, then facts as Badges or Caption/Spacer/Text rows. No bold-lead paragraphs and no long prose in a card.',
-  "Answer with a working tool whenever the request involves numbers, choices, lists, steps, a game or something to explore: keep inputs and lists in $variables, compute everything shown from them with expressions and @functions, and change them with @Set. The page must work on its own.",
+  "When the request genuinely needs interaction with numbers, choices, lists, steps, a game or something to explore, build a working tool: keep inputs and lists in $variables, compute everything shown from them with expressions and @functions, and change them with @Set. The page must work on its own. A question that only asks for information does not need a tool.",
   "When a detail the answer depends on is missing, assume the most common case, say so in one short line, and build the whole answer with a SegmentedControl or Select for the other cases; do not stop to ask.",
   'Use @ToAssistant only for what the page cannot compute: a Form submit or a new request. Its message is short and first person ("Help me choose a bike"); form values travel with it, so never repeat them.',
   "$variable defaults are literals, never expressions or @calls. Edit lists with @Append, @Remove, @RemoveAt and @Update; track selections with @Toggle and @Includes.",
   "Use only the listed @functions; there is no @If (use cond ? a : b). @Random, @Pick and @Shuffle draw anew each evaluation: call them inside @Set.",
   'Derive rows once with @Each(list, "x", {...}), then reuse them in @Each, Table, Chart, @Sum(rows.field) and @Join; @Each(@Range(0, n), "i", ...) builds a series.',
-  "Pick the medium: Chart for numbers over time or categories; Table to compare; Svg to show shapes, parts and how things work; Flashcard and Celebration for learning and games; HtmlView only for a loop-driven game; Markdown for plain knowledge or safety answers, with a SearchImage or Quote where it helps.",
+  "Pick the medium: plain Markdown prose (no program) for short, factual, definitional, LaTeX or safety answers; Chart for numbers over time or categories; Table to compare; Svg to show shapes, parts and how things work; Flashcard and Celebration for learning and games; HtmlView only for a loop-driven game; Markdown for plain knowledge or safety answers, with a SearchImage or Quote where it helps.",
+  "Prose inside a program is a Markdown node, not a long Text node. root = Markdown(\"...\") with the text escaped as a JSON string is valid when a page needs no components; keep Text for one short line or a label.",
+  "When a reply would be one or two sentences, or a single number, formula or definition, send only Markdown prose. Do not add a Title, Badges, a Card, a table or an image to pad it out.",
   "Draw with Svg when the user would otherwise have to picture it: a viewBox about 240 wide, a dozen simple shapes, SvgText labels, and $variables such as the current step driving it.",
   'Format with @Format (money, percent, compact), @Plural (counts) and @FormatDate (dates); show percentages as @Format(@Percent(part, total), "percent"), never @Percent(...) + "%". Relative dates start from @Today(); compare dates with @DaysBetween(a, b) > 0.',
   "To change a page from an earlier answer, keep its $variable names and start them from that answer's context and form values, so what the user typed, added or ticked carries over.",
@@ -110,6 +121,7 @@ export const promptOptions: PromptOptions = {
     `Example 1: A guest stepper that rescales a shopping list, with a checklist and a copy button:\n\n${exampleShoppingList}`,
     `Example 2: An explanation page: media row, facts, table and a form:\n\n${exampleLesson}`,
     `Example 3: Step-by-step instructions, with a drawing per step driven by $step:\n\n${exampleSteps}`,
+    exampleMarkdown,
   ],
 };
 
