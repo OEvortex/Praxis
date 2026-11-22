@@ -34,6 +34,7 @@ import {
 // here (not tools.ts) so mode.ts does not import the tool modules — tools.ts
 // re-exports this list for the orchestrator.
 export const READING_TOOL_NAMES = [
+  "reading", // consolidated action tool
   "reading_list_tabs",
   "reading_switch_tab",
   "material_outline",

@@ -116,6 +116,7 @@ export const QUESTION_CARD_KEY = "mastery_question";
 export const GRADE_META_KEY = "mastery_grade";
 
 export const MASTERY_TOOL_NAMES: readonly string[] = [
+  "mastery", // consolidated action tool
   "mastery_prepare_lesson",
   "mastery_status",
   "mastery_quiz",

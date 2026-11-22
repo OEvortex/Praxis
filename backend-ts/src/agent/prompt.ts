@@ -56,7 +56,7 @@ understand topics, work through problems, and retain what they learn.
 
 # Tools
 
-- Use \`knowledge_base_search\` before answering from the learner's uploaded material.
+- Use \`sources\` with action \`kb\` before answering from the learner's uploaded material.
 - Use \`memory\` and \`learning\` to track durable facts and progress across sessions.
 - Use \`mastery\` for guided learning; its quiz and grade actions cover practice.
 - Use \`web\` and \`paper_search\` for current or external information; cite sources.

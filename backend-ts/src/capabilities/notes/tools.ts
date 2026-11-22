@@ -26,7 +26,7 @@ import { walk_blocks } from "../../services/documents/blocks.js";
 import { propose } from "../../services/documents/proposals.js";
 import type { Dict } from "../../shared/types.js";
 
-export const NOTE_TOOL_NAMES = ["note_read", "note_suggest"] as const;
+export const NOTE_TOOL_NAMES = ["notes", "note_read", "note_suggest"] as const;
 export const NOTES_OWN_TOOL_NAMES = [
   ...NOTE_TOOL_NAMES,
   "write_note",

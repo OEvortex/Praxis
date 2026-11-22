@@ -45,7 +45,7 @@ playbook: |
      is not enough to tell what the figure shows — a non-current page, another
      tab, or any figure the turn does not carry. If the caption already answers,
      do not call it.
-  6. `reader_annotate` leaves a durable mark the user can export with their own
+  6. `reading(action="annotate")` leaves a durable mark the user can export with their own
      annotations. Use it when they ask you to mark something up — not as a
      substitute for explaining.
 

@@ -88,7 +88,7 @@ export function augment_kwargs(
   metadata: Dict,
   session_id = "",
 ): Record<string, unknown> {
-  if (tool_name === "propose_creation") {
+  if (tool_name === "propose_creation" || tool_name === "propose") {
     return {
       ...kwargs,
       _creation_context: {

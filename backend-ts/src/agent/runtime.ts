@@ -943,7 +943,6 @@ export class AgentRuntime {
           // page into the /files tree and marks its result with a
           // machine-readable prefix. Marker format: VIDEO_LESSON_RESULT:<json>
           if (
-            event.tool_name === "video" &&
             text.startsWith("VIDEO_LESSON_RESULT:") &&
             !(out as AnyDict)?.is_error
           ) {
@@ -990,7 +989,6 @@ export class AgentRuntime {
           // Legacy marker for pre-Remotion MP4/HyperFrames lessons.
           // Marker format: VIDEO_ARTIFACT:<rel>|<title>|<readable>
           if (
-            event.tool_name === "video" &&
             text.startsWith("VIDEO_ARTIFACT:") &&
             !(out as AnyDict)?.is_error
           ) {
@@ -1022,7 +1020,6 @@ export class AgentRuntime {
           // video's `result` event is what makes the frontend mount a custom
           // viewer for this turn.
           if (
-            event.tool_name === "notebook" &&
             text.includes("NOTEBOOK_TASK:") &&
             !(out as AnyDict)?.is_error
           ) {

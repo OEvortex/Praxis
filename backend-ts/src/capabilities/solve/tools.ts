@@ -15,6 +15,7 @@ import { get_session, resolve_solve_session_id_from_params } from "./session.js"
 import type { Dict } from "../../shared/types.js";
 
 export const SOLVE_TOOL_NAMES = [
+  "solve", // consolidated action tool
   "solve_plan",
   "solve_finish_step",
   "solve_replan",

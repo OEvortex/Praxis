@@ -87,6 +87,10 @@ bun run check       # contracts + architecture + typecheck + tests + lint + buil
 
 API contracts are generated from the backend OpenAPI schema (`web/contracts/`); `bun run contracts:check` verifies they are in sync.
 
+### Consolidated agent tools
+
+The chat agent sees **21 tools**, not ~77. Related tools are registered as one `action`-dispatched tool (`agent/merged_tools.ts`, factory in `agent/merged_tools_factory.ts`): `obsidian`, `ima`, `marginnote`, `setup`, `subagent`, `propose`, `generate`, `solve`, `reading`, `mastery`, `notes`, `sources`. The original tool objects remain the implementation, so capability mode gating, server-injected params and result markers are unchanged. `npm test` asserts the consolidated surface and that hidden params are forwarded.
+
 ### Response format: Markdown vs. OpenUI
 
 The chat renders two kinds of answer with one renderer pipeline: plain Markdown prose for short/factual/LaTeX/safety answers, and OpenUI Lang programs when an interface does work prose cannot (a tool, stepper, form, comparison chart/table, stateful checklist, game, or diagram). The shared prompt lives in `web/lib/openui/prompt-options.ts`; regenerate the generated prompts and the backend spec with `cd web && npm run openui:prompt`. Never restore a "your entire response must be UI / no markdown" instruction — that makes the model wrap every answer in components.

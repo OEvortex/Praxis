@@ -11,7 +11,7 @@ import {
 } from "./drafts.js";
 import type { Dict } from "../../shared/types.js";
 
-export const CREATOR_TOOL_NAMES = ["propose_creation"] as const;
+export const CREATOR_TOOL_NAMES = ["propose", "propose_creation"] as const;
 
 export const proposeCreationParamsSchema = {
   type: "object",
