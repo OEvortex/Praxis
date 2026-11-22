@@ -30,7 +30,7 @@ export const EXTENSION_ENDPOINTS = {
   "web-fetch": "/api/settings/web-fetch",
 } as const;
 
-export type ExtensionKey = keyof typeof EXTENSION_ENDPOINTS;
+type ExtensionKey = keyof typeof EXTENSION_ENDPOINTS;
 
 function isExtensionKey(value: string): value is ExtensionKey {
   return value in EXTENSION_ENDPOINTS;

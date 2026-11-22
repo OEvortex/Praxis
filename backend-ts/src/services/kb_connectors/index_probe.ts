@@ -116,7 +116,7 @@ function sortVersions(versions: AnyRecord[]): AnyRecord[] {
 }
 
 /** list_kb_versions — newest first. */
-export function listKbVersions(kbDir: string): AnyRecord[] {
+function listKbVersions(kbDir: string): AnyRecord[] {
   const versions: AnyRecord[] = [];
   for (const versionDir of flatVersionDirs(kbDir)) {
     try {

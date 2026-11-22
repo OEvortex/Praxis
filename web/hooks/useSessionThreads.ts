@@ -17,7 +17,7 @@ import { groupThreadsByMessage } from "@/lib/session-threads";
 
 const NO_THREADS: SessionSummary[] = [];
 
-export interface SessionThreads {
+interface SessionThreads {
   threads: SessionSummary[];
   byMessageId: ReadonlyMap<string, SessionSummary[]>;
   refresh: () => void;

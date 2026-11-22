@@ -32,7 +32,7 @@ function _str(value: unknown): string {
  * provider/model and streamed TextDeltaEvents. The TS port uses the shared
  * one-shot LLM helper until agent/runtime.ts exposes an equivalent runner.
  */
-export async function _llm_text(prompt: string, _cancelEvent?: AbortSignal): Promise<string> {
+async function _llm_text(prompt: string, _cancelEvent?: AbortSignal): Promise<string> {
   const settings = get_settings();
   return (await _completeText(settings, { system: "", prompt })).trim();
 }

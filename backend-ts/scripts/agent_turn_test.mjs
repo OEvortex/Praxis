@@ -15,9 +15,7 @@ process.env.PRAXIS_TITLE_API_URL = "off";
 // we point the "openai" preset connection at the working OpenAI-compatible
 // router instead. Key comes from the opencode config's wusrouter entry.
 const LLM_BASE_URL = process.env.TEST_LLM_BASE_URL || "https://wusrouter.com/v1";
-const LLM_API_KEY =
-  process.env.TEST_LLM_API_KEY ||
-  "sk-ws-218bc9ecf8376cf4ad2a7015a3b1704083cb566a6b32a13fb620f683ee0de39d";
+const LLM_API_KEY = process.env.TEST_LLM_API_KEY;
 const LLM_MODEL = process.env.TEST_LLM_MODEL || "wr/deepseek-v4.1-flash:free";
 
 const { createApp, shutdown, appState } = await import("../src/main.ts");

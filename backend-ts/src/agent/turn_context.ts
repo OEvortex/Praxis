@@ -40,8 +40,8 @@ export class ContextVar<T> {
 export const current_session_id = new ContextVar<string>("");
 export const current_workspace_id = new ContextVar<string>("");
 export const current_note_document_id = new ContextVar<string>("");
-export const current_note_block_id = new ContextVar<string>("");
-export const current_note_generation_kind = new ContextVar<string>("");
+const current_note_block_id = new ContextVar<string>("");
+const current_note_generation_kind = new ContextVar<string>("");
 
 export function set_turn_context(session_id: string, workspace_id: string): void {
   current_session_id.set(session_id || "");

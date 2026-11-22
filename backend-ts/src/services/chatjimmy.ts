@@ -7,16 +7,28 @@
 import type { Settings } from "../config.js";
 
 /** Model requested from the chatjimmy endpoint for every background call. */
-export const CHATJIMMY_MODEL = "llama3.1-8B";
-export const CHATJIMMY_TIMEOUT_MS = 6000;
+const CHATJIMMY_MODEL = "llama3.1-8B";
+const CHATJIMMY_TIMEOUT_MS = 6000;
 
+const DEFAULT_CHATJIMMY_URL = "https://chatjimmy.ai/api/chat";
 const OFF_VALUES = ["off", "none", "disabled"];
 
-/** Endpoint from settings (`PRAXIS_TITLE_API_URL`), defaulting to chatjimmy. */
-export function chatjimmyApiUrl(settings: Settings): string {
+/**
+ * Endpoint from settings (`PRAXIS_TITLE_API_URL`), defaulting to chatjimmy.
+ *
+ * `defaultWhenOff` lets composer hints ignore the title-specific "off" value:
+ * titles are disabled by that setting, hints by their own `ask_hint_enabled`
+ * toggle — one switch must not silently switch off the other feature.
+ */
+function chatjimmyApiUrl(settings: Settings, defaultWhenOff = false): string {
   const v = settings.title_api_url;
-  if (typeof v === "string" && v.trim()) return v.trim();
-  return (process.env.PRAXIS_TITLE_API_URL ?? "https://chatjimmy.ai/api/chat").trim();
+  const configured = typeof v === "string" ? v.trim() : "";
+  if (configured && !(defaultWhenOff && OFF_VALUES.includes(configured.toLowerCase()))) {
+    return configured;
+  }
+  const fallback = (process.env.PRAXIS_TITLE_API_URL ?? DEFAULT_CHATJIMMY_URL).trim();
+  if (defaultWhenOff && OFF_VALUES.includes(fallback.toLowerCase())) return DEFAULT_CHATJIMMY_URL;
+  return fallback;
 }
 
 /** False when the endpoint is blank or explicitly disabled. */
@@ -35,9 +47,11 @@ export async function chatjimmyComplete(
     system?: string;
     prompt: string;
     timeoutMs?: number;
+    /** Composer hints keep working when the title toggle is "off". */
+    defaultWhenOff?: boolean;
   },
 ): Promise<string | null> {
-  const url = chatjimmyApiUrl(settings);
+  const url = chatjimmyApiUrl(settings, args.defaultWhenOff);
   if (!url || OFF_VALUES.includes(url.toLowerCase())) return null;
 
   const body = {

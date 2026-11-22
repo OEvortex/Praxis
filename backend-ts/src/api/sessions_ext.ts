@@ -12,6 +12,7 @@ import { get_settings, type Settings } from "../config.js";
 import type { SessionStore, SessionDict } from "../store/session_store.js";
 import type { AgentRuntime } from "../agent/runtime.js";
 import { chatjimmyComplete } from "../services/chatjimmy.js";
+import { askHintsEnabled } from "../services/settings_ext/store.js";
 import { generate_title } from "../services/title_gen.js";
 
 export const sessionsExtRouter = new Hono();
@@ -255,6 +256,7 @@ function sanitizeHint(raw: string, language: string, lastUser: string): string {
 sessionsExtRouter.get("/api/sessions/:session_id/ask-hint", async (c) => {
   const sessionId = c.req.param("session_id") ?? "";
   const empty = { hint: "", session_id: sessionId, generated_at: Date.now() / 1000 };
+  if (!askHintsEnabled(settings())) return c.json(empty);
   const s = await store();
   const session = s.get(sessionId) as AnyRecord | null;
   if (!session) return c.json(empty);
@@ -276,6 +278,7 @@ sessionsExtRouter.get("/api/sessions/:session_id/ask-hint", async (c) => {
       system: ASK_HINT_SYSTEM_EN,
       prompt,
       timeoutMs: ASK_HINT_TIMEOUT_MS,
+      defaultWhenOff: true,
     });
     return c.json({
       hint: raw ? sanitizeHint(raw, "en", lastUser) : "",
@@ -585,36 +588,3 @@ sessionsExtRouter.post("/api/sessions/:session_id/quiz-results", async (c) => {
   });
 });
 
-// ==========================================================================
-// GET /api/sessions/{id} extras — orphaned failed turns + oversized event cap.
-// handlers.ts owns the base GET; these helpers are exported for parity but
-// the base route stays in handlers.ts (do-not-edit constraint).
-// ==========================================================================
-
-const MAX_EVENT_PAYLOAD = 1024 * 1024;
-const TRUNCATION_NOTICE = "\n\n[... content truncated]";
-const TRUNCATABLE = new Set(["tool_result", "observation"]);
-
-export function truncateOversizedEvents(messages: AnyRecord[]): void {
-  const cap = (container: AnyRecord, field: string): boolean => {
-    const v = container[field];
-    if (typeof v === "string" && v.length > MAX_EVENT_PAYLOAD) {
-      container[field] = v.slice(0, MAX_EVENT_PAYLOAD) + TRUNCATION_NOTICE;
-      return true;
-    }
-    return false;
-  };
-  for (const msg of messages) {
-    const events = msg["events"];
-    if (!Array.isArray(events)) continue;
-    for (const event of events) {
-      if (!isRecord(event) || !TRUNCATABLE.has(String(event["type"]))) continue;
-      let truncated = cap(event, "content");
-      const toolMeta = isRecord(event["metadata"]) ? event["metadata"]["tool_metadata"] : null;
-      if (isRecord(toolMeta)) {
-        for (const field of ["content", "answer"]) truncated = cap(toolMeta, field) || truncated;
-      }
-      if (truncated) event["_truncated"] = true;
-    }
-  }
-}

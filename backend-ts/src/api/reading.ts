@@ -18,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync, rmSync,
 import { basename, extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { get_settings } from "../config.js";
+import { askHintsEnabled } from "../services/settings_ext/store.js";
 import { ReadingStore, contentHash, MAX_READ_CHARS } from "../services/reading/store.js";
 import { ReadingCatalogStore, type WorkspaceRecord, type MaterialRecord } from "../services/reading/catalog.js";
 import { ReadingIngestionService, urlMaterialId, MAX_TRANSCRIPT_BYTES } from "../services/reading/ingestion.js";
@@ -1396,6 +1397,7 @@ function cleanContext(value: string, limit: number): string {
 
 async function askHint(workspaceId: string, sessionId: string, locator: number | null, selection: string) {
   const empty = { hint: "", material_id: "", generated_at: Date.now() / 1000 };
+  if (!askHintsEnabled(settings)) return empty;
   try {
     const cat = catalog();
     const workspace = cat.getWorkspace(workspaceId);
@@ -1445,7 +1447,12 @@ Prefer a specific why, distinction, implication, or boundary case over a generic
       "Write only that one question.",
     ].filter(Boolean).join("\n\n");
     // Composer hints use the hardcoded chatjimmy model, not the chat model.
-    const raw = await chatjimmyComplete(settings, { system, prompt, timeoutMs: 20_000 });
+    const raw = await chatjimmyComplete(settings, {
+      system,
+      prompt,
+      timeoutMs: 20_000,
+      defaultWhenOff: true,
+    });
     const hint = sanitizeHint(raw ?? "");
     const result = { hint, material_id: materialId, generated_at: Date.now() / 1000 };
     if (hint && !cleanSelection) {

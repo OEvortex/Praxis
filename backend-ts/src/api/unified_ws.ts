@@ -138,5 +138,3 @@ export function attachUnifiedWs(server: HttpServer, path = "/ws"): WebSocketServ
   return wss;
 }
 
-/** Hono-side informational route so `app.route('/', unifiedWsRouter)` is safe. */
-export const unifiedWsInfo = { path: "/ws", protocol_version: PROTOCOL_VERSION };

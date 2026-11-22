@@ -41,7 +41,7 @@ function _readPromptAsset(...names: string[]): string {
 
 // The generated OpenUI Lang spec lives next to this module. It teaches the
 // model to answer with declarative UI programs instead of Markdown.
-export const OPENUI_SPEC = _readPromptAsset("openui_prompt.txt");
+const OPENUI_SPEC = _readPromptAsset("openui_prompt.txt");
 
 export const PRAXIS_BASE = `You are Praxis, an AI learning companion. You help a learner
 understand topics, work through problems, and retain what they learn.
@@ -212,4 +212,3 @@ export function build_praxis_prompt(
   return sections.join("\n\n");
 }
 
-export const buildPraxisPrompt = build_praxis_prompt;

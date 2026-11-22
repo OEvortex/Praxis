@@ -1,6 +1,7 @@
 // the line the study composer
 // shows before the learner types. Never blocks; "" means "keep placeholder".
 import { chatjimmyComplete } from "../chatjimmy.js";
+import { askHintsEnabled } from "../settings_ext/store.js";
 import type { Settings } from "../../config.js";
 import type { SessionStore } from "../../store/session_store.js";
 import { LearningStore } from "./store.js";
@@ -173,7 +174,7 @@ export async function getAskHint(
   const material = loadPosition(store, pathId);
   const [transcript, anchor] = loadTranscript(sessionStore, sessionId);
   const empty = { hint: "", knowledge_point_id: "", generated_at: Date.now() / 1000 };
-  if (!material.waypoint) return empty;
+  if (!askHintsEnabled(settings) || !material.waypoint) return empty;
   material.transcript = transcript;
   material.anchor = `${material.anchor}:${anchor}`;
 
@@ -190,6 +191,7 @@ export async function getAskHint(
         system: SYSTEM_EN,
         prompt: render(material),
         timeoutMs: LLM_TIMEOUT,
+        defaultWhenOff: true,
       });
       const hint = sanitize(raw ?? "", "en");
       const entry: HintCacheEntry = {

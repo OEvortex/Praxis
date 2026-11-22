@@ -46,21 +46,21 @@ function one(name: string, tool: BaseTool, description?: string): MergedAction {
 }
 
 /** 22 external-store tools become three. */
-export const obsidian = actionTool({
+const obsidian = actionTool({
   name: "obsidian",
   description: "Search, read and edit the user's Obsidian vault. Jailed to the configured vault root.",
   toolIcon: "🗃️",
   actions: byName(OBSIDIAN_TOOLS, "obsidian_"),
 });
 
-export const ima = actionTool({
+const ima = actionTool({
   name: "ima",
   description: "Search and manage the user's IMA subscribed knowledge bases and notes.",
   toolIcon: "📚",
   actions: byName(IMA_TOOLS, "ima_"),
 });
 
-export const marginnote = actionTool({
+const marginnote = actionTool({
   name: "marginnote",
   description: "Search, read and inspect the user's MarginNote 4 library, or manage its bridge.",
   toolIcon: "🧠",
@@ -68,7 +68,7 @@ export const marginnote = actionTool({
 });
 
 /** Four setup tools become one. */
-export const setup = actionTool({
+const setup = actionTool({
   name: "setup",
   description: "Inspect Praxis configuration, apply settings, request credentials and run setup jobs. Call inspect first.",
   toolIcon: "⚙️",
@@ -76,7 +76,7 @@ export const setup = actionTool({
 });
 
 /** Three subagent tools become one. */
-export const subagent = actionTool({
+const subagent = actionTool({
   name: "subagent",
   description: "List available external agents, configure the consultation budget, and delegate a question.",
   toolIcon: "🤝",
@@ -88,7 +88,7 @@ export const subagent = actionTool({
 });
 
 /** Three approval-only proposal tools become one. */
-export const propose = actionTool({
+const propose = actionTool({
   name: "propose",
   description: "Publish a reviewable draft. Nothing is created or started until the user approves it in the UI.",
   toolIcon: "📝",
@@ -100,7 +100,7 @@ export const propose = actionTool({
 });
 
 /** Two background-generation tools become one. */
-export const generate = actionTool({
+const generate = actionTool({
   name: "generate",
   description: "Dispatch a background writer sub-agent. The result is published for review when it finishes.",
   toolIcon: "✨",
@@ -111,7 +111,7 @@ export const generate = actionTool({
 });
 
 /** Three solve-loop tools become one. */
-export const solve = actionTool({
+const solve = actionTool({
   name: "solve",
   description: "Plan a multi-step solution, finish the current step, or replan. Returns the next step to work on.",
   toolIcon: "🧩",
@@ -119,7 +119,7 @@ export const solve = actionTool({
 });
 
 /** Eight reading tools become one. */
-export const reading = actionTool({
+const reading = actionTool({
   name: "reading",
   description: "Work with the open reading material: switch tabs, outline, search, read passages, jump the reader, and annotate.",
   toolIcon: "📖",
@@ -141,7 +141,7 @@ export const reading = actionTool({
 });
 
 /** Sixteen mastery tools (and the legacy subset) become one. */
-export const mastery = actionTool({
+const mastery = actionTool({
   name: "mastery",
   description: "The whole Guided Learning loop: paths, modes, outlines, lessons, questions, grading and reviews. Call status first.",
   toolIcon: "🎯",
@@ -150,7 +150,7 @@ export const mastery = actionTool({
 
 /** Authored note pages (DeepTutor's notes module). */
 const noteTools = notes_tools();
-export const notes = actionTool({
+const notes = actionTool({
   name: "notes",
   description: "Read, search and edit authored note pages. Propose reviewable block edits with suggest.",
   toolIcon: "📓",
@@ -168,7 +168,7 @@ export const notes = actionTool({
 });
 
 /** Favorites collections — DeepTutor's notebook toolset. */
-export const notebooks = actionTool({
+const notebooks = actionTool({
   name: "notebooks",
   description:
     "List favorites collections and their records, read a saved record, and save or patch a favorite.",
@@ -177,7 +177,7 @@ export const notebooks = actionTool({
 });
 
 /** Knowledge base + attached-source retrieval becomes one. */
-export const sources = actionTool({
+const sources = actionTool({
   name: "sources",
   description: "Retrieve from the learner's knowledge bases and read attached sources.",
   toolIcon: "🔎",

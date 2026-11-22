@@ -7,7 +7,7 @@ export interface UserReplyPayload {
 }
 
 /** What a host does with a card's answers, and whether they landed. */
-export type SubmitUserReply = (
+type SubmitUserReply = (
   payload: UserReplyPayload,
 ) => void | boolean | Promise<void | boolean>;
 

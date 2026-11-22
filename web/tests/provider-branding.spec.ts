@@ -13,8 +13,8 @@ const asset = (file: string) => path.join(root, 'web/public/provider-icons', fil
 
 describe('provider branding', () => {
   it('covers every branded provider in all service registries', () => {
-    const llm = readFileSync(path.join(root, 'reff/praxis/services/provider_registry.py'), 'utf8')
-    const services = readFileSync(path.join(root, 'reff/praxis/services/config/provider_runtime.py'), 'utf8')
+    const llm = readFileSync(path.join(root, 'reff/deeptutor/services/provider_registry.py'), 'utf8')
+    const services = readFileSync(path.join(root, 'reff/deeptutor/services/config/provider_runtime.py'), 'utf8')
     const ids = new Set([
       ...Array.from(llm.matchAll(/name="([a-z_]+)"/g), m => m[1]),
       ...Array.from(services.matchAll(/^    "([a-z_]+)": \w+ProviderSpec\(/gm), m => m[1]),

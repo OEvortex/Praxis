@@ -21,14 +21,14 @@ import { ContextVar } from "./turn_context.js";
 
 // -- session record / store shapes (structural; see ../store/session_store.js) --
 
-export interface SessionRecordDict {
+interface SessionRecordDict {
   id: string;
   vtx_header?: Record<string, unknown> | null;
   vtx_entries?: unknown[];
   [k: string]: unknown;
 }
 
-export interface SessionStoreLike {
+interface SessionStoreLike {
   save(record: SessionRecordDict): void;
   [k: string]: unknown;
 }
@@ -37,7 +37,7 @@ export interface SessionStoreLike {
 // vtx.agent.session entry models, flattened to plain JSON objects. The `type`
 // discriminator mirrors the ``type`` literal on each entry class.
 
-export interface VtxSessionEntry {
+interface VtxSessionEntry {
   type: string;
   id: string;
   target_id?: string | null;
@@ -45,17 +45,17 @@ export interface VtxSessionEntry {
   [k: string]: unknown;
 }
 
-export type MessageEntry = VtxSessionEntry & { type: "message" };
-export type ThinkingLevelChangeEntry = VtxSessionEntry & { type: "thinking_level_change" };
-export type ModelChangeEntry = VtxSessionEntry & { type: "model_change" };
-export type CompactionEntry = VtxSessionEntry & { type: "compaction" };
-export type CustomMessageEntry = VtxSessionEntry & { type: "custom_message" };
-export type HarnessStateEntry = VtxSessionEntry & { type: "harness_state" };
-export type SessionInfoEntry = VtxSessionEntry & { type: "session_info" };
-export type LeafEntry = VtxSessionEntry & { type: "leaf" };
-export type RuntimeCheckpointEntry = VtxSessionEntry & { type: "runtime_checkpoint" };
+type MessageEntry = VtxSessionEntry & { type: "message" };
+type ThinkingLevelChangeEntry = VtxSessionEntry & { type: "thinking_level_change" };
+type ModelChangeEntry = VtxSessionEntry & { type: "model_change" };
+type CompactionEntry = VtxSessionEntry & { type: "compaction" };
+type CustomMessageEntry = VtxSessionEntry & { type: "custom_message" };
+type HarnessStateEntry = VtxSessionEntry & { type: "harness_state" };
+type SessionInfoEntry = VtxSessionEntry & { type: "session_info" };
+type LeafEntry = VtxSessionEntry & { type: "leaf" };
+type RuntimeCheckpointEntry = VtxSessionEntry & { type: "runtime_checkpoint" };
 
-export type SessionHeader = Record<string, unknown>;
+type SessionHeader = Record<string, unknown>;
 
 const ENTRY_TYPES: ReadonlySet<string> = new Set([
   "message",

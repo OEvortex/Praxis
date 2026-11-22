@@ -37,7 +37,7 @@ export abstract class BaseTool<P = unknown> {
 
 export interface ToolResultLike { success: boolean; result: string; [k: string]: unknown }
 
-export interface SubagentSpec {
+interface SubagentSpec {
   name: string;
   description: string;
   prompt?: string;
@@ -51,7 +51,7 @@ export interface SubagentSpec {
   [k: string]: unknown;
 }
 
-export interface SessionRecord {
+interface SessionRecord {
   id: string;
   messages: unknown[];
   vtx_header?: Record<string, unknown>;
@@ -59,7 +59,7 @@ export interface SessionRecord {
   [k: string]: unknown;
 }
 
-export interface StreamEvent { type: string; [k: string]: unknown }
+interface StreamEvent { type: string; [k: string]: unknown }
 
 // ---------------------------------------------------------------------------
 // vtx protocol / runtime types used by the agent turn runtime.
@@ -138,7 +138,7 @@ export const ApprovalResponse = {
 } as const;
 export type ApprovalResponse = (typeof ApprovalResponse)[keyof typeof ApprovalResponse];
 
-export interface AskUserOption {
+interface AskUserOption {
   label: string;
   description?: string | null;
   [k: string]: unknown;

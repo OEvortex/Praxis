@@ -54,7 +54,7 @@ export function subscribeProgress(kbKey: string, fn: ProgressListener): () => vo
   };
 }
 
-export function broadcastProgress(kbKey: string, progress: AnyRecord): void {
+function broadcastProgress(kbKey: string, progress: AnyRecord): void {
   for (const fn of progressListeners.get(kbKey) ?? []) {
     try {
       fn(progress);
@@ -205,15 +205,15 @@ export class ProgressTracker {
 const TERMINAL_STATES = new Set(["completed", "partial", "failed", "cancelled", "interrupted"]);
 const liveRunTaskIds = new Set<string>();
 
-export function markRunLive(taskId: string): void {
+function markRunLive(taskId: string): void {
   liveRunTaskIds.add(taskId);
 }
 
-export function markRunDone(taskId: string): void {
+function markRunDone(taskId: string): void {
   liveRunTaskIds.delete(taskId);
 }
 
-export function isRunLive(run: AnyRecord | null): boolean {
+function isRunLive(run: AnyRecord | null): boolean {
   if (!run) return false;
   const taskId = String(run["task_id"] ?? "");
   if (taskId && liveRunTaskIds.has(taskId)) return true;
@@ -296,7 +296,7 @@ export function beginRun(
   return run;
 }
 
-export function finishRun(kbDirPath: string, state: string, extra: AnyRecord = {}): void {
+function finishRun(kbDirPath: string, state: string, extra: AnyRecord = {}): void {
   const value = loadRunQuiet(kbDirPath);
   if (value === null) return;
   const documents = (value["documents"] ?? {}) as AnyRecord;
@@ -453,23 +453,3 @@ export async function runReindexTask(
   }
 }
 
-export function listRawFilesRecursive(root: string): string[] {
-  const out: string[] = [];
-  const walk = (dir: string) => {
-    let entries;
-    try {
-      entries = readdirSync(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const e of entries) {
-      const p = join(dir, e.name);
-      try {
-        if (e.isDirectory()) walk(p);
-        else if (e.isFile()) out.push(p);
-      } catch { /* ignore */ }
-    }
-  };
-  walk(root);
-  return out.sort();
-}

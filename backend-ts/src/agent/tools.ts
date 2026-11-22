@@ -12,9 +12,6 @@ import { register_notes_tools } from "../capabilities/notes/tools.js";
 import { MERGED_TOOLS } from "./merged_tools.js";
 // Capabilities still exposed as individual tools.
 import { AUDIO_OVERVIEW_TOOLS } from "../capabilities/audio_overview/index.js";
-// schema. The TS shim is a no-op without a vtx module, but keep the import for
-// parity with modules that install it explicitly.
-import "./_vtx_compat.js";
 
 const TOGGLEABLE = new Set(["web", "web_search", "paper_search"]);
 const WEB_SEARCH_ALIAS = new Map([["web_search", "web"]]);

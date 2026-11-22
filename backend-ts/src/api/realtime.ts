@@ -840,6 +840,3 @@ realtimeRouter.delete("/api/realtime/clients/:client_id", async (c) => {
   return c.json({ closed: true });
 });
 
-export async function clientFor(): Promise<RealtimeHub> {
-  return hubFor();
-}

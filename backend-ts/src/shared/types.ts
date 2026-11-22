@@ -2,8 +2,8 @@
 export type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 export type Dict = Record<string, unknown>;
 
-export interface BlockNoteInline { type: string; text?: string; styles?: Record<string, unknown>; [k: string]: unknown }
-export interface BlockNoteBlock {
+interface BlockNoteInline { type: string; text?: string; styles?: Record<string, unknown>; [k: string]: unknown }
+interface BlockNoteBlock {
   id: string;
   type: string;
   props?: Record<string, unknown>;
@@ -12,7 +12,7 @@ export interface BlockNoteBlock {
   [k: string]: unknown;
 }
 
-export interface CoWriterDocument {
+interface CoWriterDocument {
   id: string;
   title: string | null;
   content: string;
@@ -24,7 +24,7 @@ export interface CoWriterDocument {
   [k: string]: unknown;
 }
 
-export interface CoWriterDocumentSummary {
+interface CoWriterDocumentSummary {
   id: string;
   title: string | null;
   parent_id: string | null;

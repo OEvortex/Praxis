@@ -248,6 +248,11 @@ export function loadStarters(settings: Settings = getSettings()): Json {
     ask_hint_enabled: typeof raw.ask_hint_enabled === "boolean" ? raw.ask_hint_enabled : true,
   };
 }
+/** Whether the composer's predicted-next-line (Tab-to-complete) is enabled. */
+export function askHintsEnabled(settings: Settings = getSettings()): boolean {
+  return loadStarters(settings).ask_hint_enabled === true;
+}
+
 export function saveStarters(settings: Settings, value: Json): Json {
   const current = loadStarters(settings);
   const patch = { ...value };

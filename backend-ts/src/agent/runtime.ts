@@ -60,10 +60,6 @@ import { get_notebook_manager } from "../services/notebook/service.js";
 import { builtin_tools } from "./tools.js";
 import { build_praxis_prompt, PRAXIS_BASE } from "./prompt.js";
 import {
-  install_context_limit_cache,
-  install_model_fetch_cache,
-} from "./vtx_catalog_cache.js";
-import {
   bind as bind_dt_session,
   unbind as unbind_dt_session,
   rebind as rebind_dt_session,
@@ -100,7 +96,7 @@ const log = {
   warning: (msg: string, err?: unknown) => console.warn(`[praxis.runtime] ${msg}`, err ?? ""),
 };
 
-export const PROTOCOL_VERSION = "2.0";
+const PROTOCOL_VERSION = "2.0";
 
 type AnyDict = Record<string, any>;
 
@@ -111,7 +107,7 @@ function now(): number {
 // -- small concurrency primitives (asyncio.Event / Queue / Future equivalents) --
 
 /** asyncio.Event equivalent: set once, waiters resolve. */
-export class Signal {
+class Signal {
   private _set = false;
   private readonly _waiters: (() => void)[] = [];
   private readonly _listeners: (() => void)[] = [];
@@ -221,7 +217,7 @@ const ERROR_PREFIXES = [
   "unavailable:",
 ];
 
-export function _tool_result_is_error(out: any, text: string): boolean {
+function _tool_result_is_error(out: any, text: string): boolean {
   /** Tools return plain strings, so failure text must be detected too. */
   if (out?.is_error) return true;
   if (out?.success === false) return true;
@@ -234,7 +230,7 @@ export function _tool_result_is_error(out: any, text: string): boolean {
  * There is no vtx module to patch in TS — kept as a documented no-op for
  * structural parity (the local agent loop never performs selection writes).
  */
-export function _suppress_vtx_selection_writes(): () => void {
+function _suppress_vtx_selection_writes(): () => void {
   return () => {};
 }
 
@@ -291,7 +287,7 @@ export class TurnHandle {
  * remains for parity with function-tool objects that only expose
  * ``{name, description, execute}``.
  */
-export class SdkToolAdapter extends BaseTool {
+class SdkToolAdapter extends BaseTool {
   declare name: string;
   declare description: string;
   toolIcon?: string;
@@ -338,10 +334,6 @@ export class SdkToolAdapter extends BaseTool {
 export class AgentRuntime {
   private readonly _settings: Settings;
   private readonly _store: SessionStore;
-  // vtx rebuilds its provider model list on every session init; the caches
-  // below are behaviour-preserving (see vtx_catalog_cache.ts). In TS there is
-  // no vtx module to patch, so the installers are called without targets —
-  // they no-op but keep the port structurally identical.
   private readonly _turns = new Map<string, TurnHandle>();
   private readonly _vtx_runtimes = new Map<string, { runtime: LocalAgentRuntime; agent: LocalAgent }>();
   // turn_id -> (deferred to resolve, tool_call_id, question prompts by id)
@@ -356,8 +348,6 @@ export class AgentRuntime {
   constructor(settings: Settings, store: SessionStore) {
     this._settings = settings;
     this._store = store;
-    install_context_limit_cache();
-    install_model_fetch_cache();
     // The notebook writer reports progress through this runtime; mirror the
     try {
       notebookEvents.set_runtime(this);

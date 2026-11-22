@@ -17,4 +17,3 @@ export function load_co_writer_prompt(): string {
 }
 
 // Backwards-compatible alias for code still using the old name.
-export const load_writer_prompt = load_co_writer_prompt;

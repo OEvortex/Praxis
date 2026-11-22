@@ -153,11 +153,6 @@ const NAMED_FILES: Record<string, string> = {
   ".profile": "bash",
 };
 
-/** Set of all extensions covered by ``CODE_EXT_TO_LANG``. */
-export const CODE_EXTS: ReadonlySet<string> = new Set(
-  Object.keys(CODE_EXT_TO_LANG),
-);
-
 /**
  * Resolve a Prism language for *filename*.
  *

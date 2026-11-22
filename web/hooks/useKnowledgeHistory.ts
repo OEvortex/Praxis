@@ -146,4 +146,4 @@ export function useKnowledgeHistory() {
   };
 }
 
-export type UseKnowledgeHistoryReturn = ReturnType<typeof useKnowledgeHistory>;
+type UseKnowledgeHistoryReturn = ReturnType<typeof useKnowledgeHistory>;

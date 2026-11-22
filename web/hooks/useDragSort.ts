@@ -48,7 +48,7 @@ interface DragView {
   height: number;
 }
 
-export interface DragSortOptions {
+interface DragSortOptions {
   /** Row ids in the order they are currently rendered. */
   ids: readonly string[];
   /** Receives the full reordered id list when a drag settles. */
@@ -58,7 +58,7 @@ export interface DragSortOptions {
   scrollRef?: React.RefObject<HTMLElement | null>;
 }
 
-export interface DragItemProps {
+interface DragItemProps {
   ref: (element: HTMLElement | null) => void;
   onPointerDown: (event: React.PointerEvent) => void;
   onClickCapture: (event: React.MouseEvent) => void;

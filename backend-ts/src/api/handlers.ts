@@ -1109,7 +1109,14 @@ handlersRouter.get("/api/settings/workspace/folders", async (c) => {
 });
 
 // GET /api/system/status
-handlersRouter.get("/api/system/status", (c) => c.json({ status: "ok" }));
+// The settings hub reads `backend.status` (and treats llm/embeddings/search as
+// optional detail). Return the full shape so it never dereferences undefined.
+handlersRouter.get("/api/system/status", (c) => c.json({
+  backend: { status: "online", timestamp: new Date().toISOString() },
+  llm: { status: "unknown" },
+  embeddings: { status: "unknown" },
+  search: { status: "unknown" },
+}));
 
 // GET /api/reading/workspaces/index
 handlersRouter.get("/api/reading/workspaces/index", (c) =>

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch, apiUrl } from "@/shared/api/client";
 import { stripAudioMimeParameters } from "@/lib/voice-mime";
 
-export type RecorderState = "idle" | "recording" | "transcribing";
+type RecorderState = "idle" | "recording" | "transcribing";
 
 /**
  * Microphone capture → backend transcription. Records via MediaRecorder, posts

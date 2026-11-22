@@ -24,7 +24,7 @@ import {
 import { ConnectorHubIcon, modeIcon } from "./ComposerIcons";
 import type { ComposerControls } from "@/lib/page-customization";
 import { useTrayFold } from "./ComposerTrayFold";
-import { CREATE_KINDS, CREATION_KIND_ORDER, type CreationKind } from "@/lib/creations";
+import { CREATE_KINDS, type CreationKind } from "@/lib/creations";
 
 /** Local status shape — the MCP store surface was removed; the tray still
  * lists catalog connectors with a simple availability-based status. */

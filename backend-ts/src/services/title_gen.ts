@@ -49,4 +49,3 @@ export async function generate_title(
   return title || null;
 }
 
-export const generateTitle = generate_title;

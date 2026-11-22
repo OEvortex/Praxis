@@ -24,7 +24,8 @@ export default function SettingsStatusPanel() {
   const { status } = useSettings();
   const runtime = useRuntimeStatus();
 
-  const online = status?.backend.status === "online";
+  // Older/partial payloads can omit `backend`; don't crash the settings route.
+  const online = status?.backend?.status === "online";
 
   return (
     <section

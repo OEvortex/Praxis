@@ -7,21 +7,14 @@
 // page tools are gone with the Co-Writer editor.
 
 import { load_co_writer_prompt } from "./notebook_agent/prompt.js";
-import {
-  NOTEBOOK_TOOL_NAMES,
-  notebook_tools,
-  register_notebook_tools,
-} from "./notebook_agent/notebook_tools.js";
-import { notes_tools } from "../capabilities/notes/tools.js";
+import { NOTEBOOK_TOOL_NAMES } from "./notebook_agent/notebook_tools.js";
 import { current_session_id, note_context } from "./turn_context.js";
 import { getCoWriterStorage } from "../services/documents/storage.js";
-import type { BaseTool } from "../shared/vtx.js";
 
 // DeepTutor's notebook toolset: the three favorites tools plus the two
 // global notes tools. The old `nb_*` BlockNote page tools are deliberately
 // absent — the Co-Writer editor they served has been removed in favour of
 // the favorites-style notebooks at /notebooks.
-export const CO_WRITER_OWN_TOOL_NAMES = NOTEBOOK_TOOL_NAMES;
 export const CO_WRITER_TOOL_NAMES = [
   ...NOTEBOOK_TOOL_NAMES,
   "write_note",
@@ -84,16 +77,6 @@ export function notebook_context_block(
     );
   }
   return parts.length ? "\n\n# This notebook thread\n\n" + parts.join("\n") : "";
-}
-
-/** The shared notebook toolset, in DeepTutor's exposure order. */
-export function co_writer_tools(): BaseTool[] {
-  register_notebook_tools();
-  const notes = new Set(["write_note", "search_notes"]);
-  return [
-    ...(notebook_tools() as BaseTool[]),
-    ...notes_tools().filter((tool) => notes.has(tool.name)),
-  ];
 }
 
 export {

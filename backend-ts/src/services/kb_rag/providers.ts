@@ -123,7 +123,7 @@ export function modelOptionsPayload(settings: Settings, kinds: string[]): AnyDic
   return out;
 }
 
-export function findProfileAndModel(
+function findProfileAndModel(
   catalog: AnyDict,
   kind: string,
   profileId: string,
