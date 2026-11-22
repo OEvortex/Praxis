@@ -876,6 +876,7 @@ function SessionViewerPanelInner(
   return (
     <div
       role="dialog"
+      aria-label={"Session viewer"}
       aria-hidden={!visible}
       data-open={visible ? "true" : "false"}
       className="dt-viewer-panel fixed right-0 top-0 z-[30] flex h-dvh flex-col bg-[var(--card)] max-md:!w-full md:max-w-[92vw]"

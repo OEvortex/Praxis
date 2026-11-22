@@ -1,6 +1,8 @@
 // English UI labels for values chosen at runtime (route ids, service names, statuses).
 // These are product copy, not translations: there is one interface language.
 const ENGLISH_LABELS: Record<string, string> = {
+  "contextBudget.segment.input": "Input",
+  "contextBudget.segment.output": "Output",
   "contextBudget.segment.messages": "Messages",
   "contextBudget.segment.system_prompt": "System prompt",
   "contextBudget.segment.system_tools": "System tools",

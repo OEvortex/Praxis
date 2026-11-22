@@ -2511,6 +2511,11 @@ export default function ChatWorkspace() {
                   </div>
                 </div>
               ) : null}
+              {/* While a session is loading (or its load failed) the overlay
+                  owns the whole message area. Keeping the composer here would
+                  sit on top of its Retry button on short viewports. */}
+              {!sessionLoading && !sessionLoadFailed ? (
+              <>
               <ChatComposer
                 customizable
                 composerRef={composerRef}
@@ -2660,6 +2665,8 @@ export default function ChatWorkspace() {
                   onPick={handlePrefillComposer}
                   disabled={state.isStreaming}
                 />
+              ) : null}
+              </>
               ) : null}
               <div
                 aria-hidden="true"
