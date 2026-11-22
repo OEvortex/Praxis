@@ -1,6 +1,6 @@
 // Port of the remaining upstream routers: plugins.py, mcp_settings.py,
-// skills.py, space_cli_apps.py, space_mcp.py, capabilities.py,
-// capabilities_settings.py, tools.py, agent_config.py.
+// skills.py, space_cli_apps.py, space_mcp.py, capabilities_settings.py,
+// tools.py, agent_config.py.
 //
 // Wire-up: mount BEFORE handlersRouter — its /api/settings/* catch-all and
 // stub routes would otherwise shadow these.
@@ -56,14 +56,11 @@ platformRouter.get("/api/agents/:agent_type", (c) => {
 });
 
 // ==========================================================================
-// capabilities.py — GET /api/capabilities/registered
-// ==========================================================================
-
-platformRouter.get("/api/capabilities/registered", (c) => {
-  return c.json({ capabilities: misc.registered_capabilities() });
-});
-
 // capabilities_settings.py — GET/PUT /api/capabilities/settings
+// ==========================================================================
+// GET /api/capabilities/registered deliberately lives in handlers.ts: it
+// serves the chat + tutor-mode descriptors the Mode tray is built from. This
+// router must not shadow it with a different capability ID set.
 
 platformRouter.get("/api/capabilities/settings", (c) => {
   return c.json(misc.capabilities_settings_dict());

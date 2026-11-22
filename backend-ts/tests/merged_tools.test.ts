@@ -14,7 +14,7 @@ describe("consolidated tool registry", () => {
     expect(all.length).toBeLessThanOrEqual(25);
     for (const merged of [
       "obsidian", "ima", "marginnote", "setup", "subagent", "propose",
-      "generate", "solve", "reading", "mastery", "notes", "sources",
+      "generate", "solve", "reading", "mastery", "notes", "notebooks", "sources",
     ]) {
       expect(all).toContain(merged);
     }

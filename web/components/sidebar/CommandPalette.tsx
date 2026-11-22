@@ -80,7 +80,7 @@ export function CommandPalette({
       ...categories.map(item => ({ id: `category:${item.id}`, label: (item.label), icon: glyph(item.icon), run: go(item.href) })),
       ...[
         { href: '/calendar', label: 'Calendar', icon: CalendarDays },
-        { href: '/co-writer', label: 'Co-Writer', icon: PenLine },
+        { href: '/notebooks', label: 'Notebooks', icon: PenLine },
       ].map(item => ({ id: item.href, label: (item.label), icon: glyph(item.icon), run: go(item.href) })),
       ...[
         { groups: DASHBOARD_GROUPS, detail: "Resources" },

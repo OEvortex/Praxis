@@ -109,10 +109,15 @@ export default function NoteWorkspace({
         if (!isNoteNotFound(e)) setError(String(e))
       })
   }, [docId])
-  const refreshPages = useCallback(() => {
-    void listNotes()
-      .then(r => setPages(r.documents))
-      .catch(e => setError(String(e)))
+  const refreshPages = useCallback(async (): Promise<NoteSummary[] | null> => {
+    try {
+      const r = await listNotes()
+      setPages(r.documents)
+      return r.documents
+    } catch (e) {
+      setError(String(e))
+      return null
+    }
   }, [])
   const persistDraft = useCallback(() => {
     if (draftKey && latest.current)
@@ -270,19 +275,36 @@ export default function NoteWorkspace({
     flush,
     onSuggestions: refreshSuggestions,
     onPageChanged: () => {
-      // Co-writer writes pages directly; pull the new content into the open
-      // editor once a turn settles, but never clobber unsaved local edits.
-      if (version.current !== savedVersion.current) return
-      void getNote(docId)
-        .then(result => {
+      // Co-writer writes pages directly. Resync the notebook list on every
+      // settled turn — the agent may add, rename or delete pages even when
+      // the open page itself is gone. Never clobber unsaved local edits.
+      if (version.current !== savedVersion.current) {
+        void refreshPages()
+        return
+      }
+      void (async () => {
+        const docs = await refreshPages()
+        try {
+          const result = await getNote(docId)
           if (version.current !== savedVersion.current) return
           latest.current = result
           setPage(result)
           editor.current?.replace(result.blocks || editor.current.parse(result.content))
           savedVersion.current = version.current
-          refreshPages()
-        })
-        .catch(() => {})
+        } catch (err) {
+          if (!isNoteNotFound(err)) {
+            setError(String(err))
+            return
+          }
+          // The agent deleted the page we were looking at (e.g. it folded a
+          // blank draft into a new hub with subpages). Move to the newest
+          // remaining page instead of leaving a stale editor behind that only
+          // a manual refresh would clear.
+          const next = docs?.find(p => p.id !== docId)
+          if (next) router.replace(`/co-writer/${next.id}`)
+          else setMissing(true)
+        }
+      })()
     },
     onError: message => setError(message),
   })

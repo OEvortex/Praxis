@@ -11,12 +11,20 @@ notebook counterpart of `VideoLessonViewer`:
 - when the job settles — even minutes later, after the turn is gone —
   `notebook_events.notify_completion()` broadcasts a completion frame over the
   realtime hub, `NotebookNotifications` shows a toast, and the card flips to
-  the finished report with links to the created pages;
+  the finished report with links to the notebooks library;
 - the finished report is also appended to the vtx session as a synthetic
   tagged message, so the **main agent** sees it in context on the next turn.
 
 The completion is cached in `localStorage`, so a panel mounted after a reload
 still shows the result.
+
+## Toolset
+
+The writer (and the main chat) use DeepTutor's favorites notebook toolset:
+`list_notebook`, `list_favorites`, `save_favorite`, plus `write_note` /
+`search_notes` for authored note pages. The old BlockNote `nb_*` page tools
+and the `/co-writer` editor have been removed; saved material opens in
+`/notebooks`.
 
 ## Pieces
 
@@ -32,4 +40,4 @@ Back end: `backend-ts/src/agent/notebook_agent/` and the `notebook` tool in
 ## Tests
 
 - `web/tests/notebook-live.spec.tsx` — live panel streaming, loading and completion states.
-- Backend: `test_notebook_live.py`, `test_realtime_broadcast.py`.
+- `backend-ts/tests/notebook_tools.test.ts` — DeepTutor favorites tool semantics.

@@ -5,11 +5,11 @@ import { describe, expect, it } from "vitest";
 const source = (relative: string) =>
   fs.readFileSync(path.resolve(process.cwd(), relative), "utf8");
 
-describe("co-writer workspace boundaries", () => {
-  it("keeps the dynamic route as composition only", () => {
+describe("retired co-writer workspace", () => {
+  it("redirects old document URLs to the favorites notebooks", () => {
     const route = source("app/(workspace)/co-writer/[docId]/page.tsx");
-    expect(route).toMatch(/<NoteWorkspace[^>]*docId=/);
-    expect(route).not.toMatch(/apiFetch|localStorage|useState|useEffect/);
+    expect(route).toMatch(/router\.replace\("\/notebooks"/);
+    expect(route).not.toMatch(/NoteWorkspace|BlockNote|apiFetch|localStorage/);
     expect(route.split("\n").length).toBeLessThan(20);
   });
 

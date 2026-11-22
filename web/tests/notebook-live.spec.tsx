@@ -69,6 +69,6 @@ describe("NotebookLivePanel", () => {
     });
     expect(screen.getByText("Water Cycle")).toBeTruthy();
     expect(screen.getByText("Water Cycle Quiz")).toBeTruthy();
-    expect(document.querySelector('a[href="/co-writer/abcdef12"]')).toBeTruthy();
+    expect(document.querySelector('a[href="/notebooks"]')).toBeTruthy();
   });
 });

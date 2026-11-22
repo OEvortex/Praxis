@@ -11,7 +11,7 @@ import type { Context } from "hono";
 import { get_settings, type Settings } from "../config.js";
 import type { SessionStore, SessionDict } from "../store/session_store.js";
 import type { AgentRuntime } from "../agent/runtime.js";
-import { completeText } from "../services/llm_text.js";
+import { chatjimmyComplete } from "../services/chatjimmy.js";
 import { generate_title } from "../services/title_gen.js";
 
 export const sessionsExtRouter = new Hono();
@@ -270,15 +270,15 @@ sessionsExtRouter.get("/api/sessions/:session_id/ask-hint", async (c) => {
   const bodyText = tail.map((m) => `[${speaker(m.role)}] ${m.content}`).join("\n");
   const prompt = `# "End of the conversation"\n${bodyText}\n\nWrite that single next line."`;
   try {
-    const raw = await Promise.race([
-      completeText(settings(), {
-        system: ASK_HINT_SYSTEM_EN,
-        prompt,
-      }),
-      new Promise<string>((_, rej) => setTimeout(() => rej(new Error("timeout")), ASK_HINT_TIMEOUT_MS)),
-    ]);
+    // Composer hints run on the hardcoded chatjimmy model, like chat titles —
+    // never on the conversation's own model. chatjimmyComplete owns the timeout.
+    const raw = await chatjimmyComplete(settings(), {
+      system: ASK_HINT_SYSTEM_EN,
+      prompt,
+      timeoutMs: ASK_HINT_TIMEOUT_MS,
+    });
     return c.json({
-      hint: sanitizeHint(raw, "en", lastUser),
+      hint: raw ? sanitizeHint(raw, "en", lastUser) : "",
       session_id: sessionId,
       generated_at: Date.now() / 1000,
     });

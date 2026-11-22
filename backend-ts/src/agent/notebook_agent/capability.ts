@@ -2,10 +2,10 @@
 // Dispatch the Co-writer sub-agent.
 //
 // Mirrors ``video_lesson.capability``: the main agent only supplies the
-// learner's request; Co-writer uses the same system prompt and tool list as the
-// notebook chat (``nb_read``/``nb_list``/``nb_search``/``nb_patch`` plus the
-// shared research tools) and edits the notebook directly — the same operations a
-// user performs in the editor.
+// learner's request; the writer uses DeepTutor's notebook toolset
+// (``list_notebook``/``list_favorites``/``save_favorite`` plus
+// ``write_note``/``search_notes``) and saves records into favorites
+// collections — the same operations a user performs in /notebooks.
 //
 // ``background=True`` (the default) registers the run with vtx's
 // ``BackgroundTaskManager`` so the parent turn returns immediately and the
@@ -14,7 +14,7 @@
 import { randomUUID } from "node:crypto";
 
 import { load_co_writer_prompt } from "./prompt.js";
-import { COWRITER_TOOL_NAMES, register_writer_tools } from "./tools.js";
+import { CO_WRITER_TOOL_NAMES } from "../co_writer.js";
 import * as notebook_events from "./events.js";
 import * as subagent from "../subagent.js";
 
@@ -107,12 +107,14 @@ function _build_prompt(request: string, title: string, parent_page_id: string): 
         "explicit `parent:` are created under this page.\n"
       : "Parent page: none — top-level pages go to the notebook root.\n",
     "Learner request:\n" + request.trim() + "\n",
-    "Work like a user editing the notebook: check existing pages with " +
-      "nb_list/nb_search first, then make ALL writes with nb_patch — " +
-      "create pages, apply exact-match edits, append, rewrite, delete, " +
-      "and move/reparent in atomic batches. Use nb_read (offset/limit) " +
-      "before editing a page you haven't seen. Your final message is a " +
-      "short report of what you created or changed — not the content.",
+    "Work with the learner's favorites notebooks: call list_notebook with " +
+      "no arguments to discover collections, then with a notebook_id to " +
+      "list its records. Use list_favorites to read a saved record's body. " +
+      "Save new material with save_favorite (append — the real chat " +
+      "transcript is preserved by default) and patch a record's title or " +
+      "note with save_favorite (edit). Favorites preserve their original " +
+      "body. Your final message is a short report of what you saved or " +
+      "changed — not the content itself.",
   ];
   return parts.filter((p) => p).join("");
 }
@@ -181,7 +183,6 @@ export async function launch_notebook_job(opts: {
   const parent_page_id = opts.parent_page_id ?? "";
   const background = opts.background ?? true;
 
-  register_writer_tools();
   const ctx = getDispatcherContext();
   if (ctx == null) {
     throw new Error("Notebook writer failed: dispatcher context not initialized.");
@@ -192,7 +193,7 @@ export async function launch_notebook_job(opts: {
     description: "Co-writer — writes and manages the learner's notebook",
     instructions: load_co_writer_prompt(),
     instructions_mode: "replace",
-    tools_allow: [...COWRITER_TOOL_NAMES],
+    tools_allow: [...CO_WRITER_TOOL_NAMES],
     tools_deny: [],
     max_turns: MAX_TURNS,
   };

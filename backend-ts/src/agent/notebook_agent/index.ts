@@ -1,19 +1,19 @@
 //
-// Notebook writer sub-agent: builds Co-Writer pages in the background.
+// Notebook agent: DeepTutor's notebook toolset and the background writer.
 //
-// The main chat's ``notebook`` tool dispatches a dedicated writer agent through
-// vtx's sub-agent machinery (``SubagentSpec`` + ``resolve_subagent_runner`` +
-// ``BackgroundTaskManager``), exactly like ``delegate_subagent`` but with a
-// Praxis-owned prompt and tool surface. The writer creates real pages —
-// including subpages, mermaid diagrams and structured learning blocks — directly
-// in the notebook store; there is no learner watching the run, so writes are not
-// proposals.
-//
-// Layout mirrors ``video_lesson``:
-//
-// - ``prompts/co_writer.txt`` — the writer's system prompt (authoring playbook).
-// - ``tools.ts`` — the ``nb_*`` toolset, registered into vtx's global tool
-//   registry so ``SubagentSpec.tools_allow`` can select exactly these tools.
-// - ``capability.ts`` — dispatch: background (default) or synchronous run.
+// The writer sub-agent uses the same favorites toolset as the main chat
+// (``notebooks`` action tool + ``write_note``/``search_notes``). The old
+// BlockNote ``nb_*`` page tools served the removed Co-Writer editor.
 
 export { launch_notebook_job } from "./capability.js";
+export {
+  list_notebook,
+  list_favorites,
+  save_favorite,
+  notebook_tools,
+  register_notebook_tools,
+  NOTEBOOK_TOOL_NAMES,
+  listNotebooksOrRecords,
+  readFavoriteRecord,
+  writeNote,
+} from "./notebook_tools.js";

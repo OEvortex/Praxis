@@ -168,7 +168,7 @@ export default function NotebookLivePanel({
             <span>
               {done
                 ? pageLinks.length
-                  ? `${pageLinks.length} page${pageLinks.length === 1 ? "" : "s"} added to your notebook`
+                  ? `${pageLinks.length} record${pageLinks.length === 1 ? "" : "s"} saved to your notebooks`
                   : "The writer finished."
                 : "The writer could not finish."}
             </span>
@@ -177,7 +177,7 @@ export default function NotebookLivePanel({
             <ul className="nb-live-pages">
               {pageLinks.map((page) => (
                 <li key={page.id}>
-                  <Link href={`/co-writer/${page.id}`}>
+                  <Link href="/notebooks">
                     <BookOpen size={13} /> {page.label}
                   </Link>
                 </li>

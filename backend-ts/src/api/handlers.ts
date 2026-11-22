@@ -1589,124 +1589,348 @@ handlersRouter.delete(
 );
 
 // -- notebooks -----------------------------------------------------------------
+//
+// DeepTutor parity: the file-backed NotebookManager is the single source of
+// truth. The old generic `_listDir("notebooks")` fallback wrote a different
+// shape than the web client and the agent tools expect, so it is gone.
+
+import { get_notebook_manager } from "../services/notebook/service.js";
+import { NotebookCorruptedError, NotebookMoveConflictError } from "../services/notebook/service.js";
+import { NotebookSummarizeAgent } from "../agent/notebook/summarize_agent.js";
+
+function notebookFailure(c: Context, exc: unknown) {
+  if (exc instanceof NotebookCorruptedError) {
+    return c.json(
+      {
+        detail: exc.message,
+        code: "notebook_unreadable",
+        notebook_id: exc.notebook_id,
+        path: exc.path,
+      },
+      409 as never,
+    );
+  }
+  if (exc instanceof NotebookMoveConflictError) {
+    return c.json({ detail: exc.message }, 409 as never);
+  }
+  return c.json(
+    { detail: exc instanceof Error ? exc.message : String(exc) },
+    500 as never,
+  );
+}
+
+function recordFromBody(b: AnyRecord): AnyRecord {
+  const record: AnyRecord = { ...b };
+  if (record["id"] === undefined || record["id"] === null || record["id"] === "") {
+    record["id"] = uuid12();
+  }
+  if (record["created_at"] === undefined || record["created_at"] === null) {
+    record["created_at"] = now();
+  }
+  record["type"] = String(record["type"] ?? record["record_type"] ?? "chat");
+  record["title"] = String(record["title"] ?? "Untitled");
+  record["user_query"] = String(record["user_query"] ?? "");
+  record["output"] = String(record["output"] ?? record["content"] ?? "");
+  record["summary"] = String(record["summary"] ?? "");
+  record["metadata"] =
+    record["metadata"] && typeof record["metadata"] === "object"
+      ? record["metadata"]
+      : {};
+  return record;
+}
+
+function addRecordFromBody(b: AnyRecord, summary: string): AnyRecord {
+  const manager = get_notebook_manager();
+  const notebookIds = Array.isArray(b["notebook_ids"])
+    ? (b["notebook_ids"] as unknown[]).map(String)
+    : String(b["notebook_id"] ?? "")
+      ? [String(b["notebook_id"])]
+      : [];
+  const result = manager.add_record({
+    notebook_ids: notebookIds,
+    record_type: String(b["type"] ?? b["record_type"] ?? "chat"),
+    title: String(b["title"] ?? "Untitled"),
+    user_query: String(b["user_query"] ?? ""),
+    output: String(b["output"] ?? b["content"] ?? ""),
+    summary,
+    metadata:
+      b["metadata"] && typeof b["metadata"] === "object"
+        ? (b["metadata"] as AnyRecord)
+        : {},
+    kb_name: b["kb_name"] == null ? null : String(b["kb_name"]),
+  });
+  return result as unknown as AnyRecord;
+}
+
+// GET /api/notebooks/health
+handlersRouter.get("/api/notebooks/health", (c) =>
+  c.json({ status: "healthy", service: "notebook" }),
+);
+
+// GET /api/notebooks/statistics
+handlersRouter.get("/api/notebooks/statistics", (c) => {
+  try {
+    return c.json(get_notebook_manager().get_statistics());
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
 
 // GET /api/notebooks
-handlersRouter.get("/api/notebooks", (c) =>
-  c.json({ notebooks: _listDir("notebooks") }),
-);
+handlersRouter.get("/api/notebooks", (c) => {
+  try {
+    const notebooks = get_notebook_manager().list_notebooks();
+    return c.json({ notebooks, total: notebooks.length });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
 
 // POST /api/notebooks
 handlersRouter.post("/api/notebooks", async (c) => {
   const b = await body(c);
-  _putItem(b, "notebooks", "nb");
-  return c.json(b);
+  try {
+    const notebook = get_notebook_manager().create_notebook(
+      String(b["name"] ?? "Untitled"),
+      String(b["description"] ?? ""),
+      String(b["color"] ?? "#3B82F6"),
+      String(b["icon"] ?? "book"),
+    );
+    return c.json({ notebook });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
 });
 
-// GET /api/notebooks/{nb_id}
-handlersRouter.get("/api/notebooks/:nb_id", (c) => {
-  const nbId = c.req.param("nb_id");
-  return c.json(
-    _getItem("notebooks", nbId) ?? { id: nbId, records: [] },
+// GET /api/notebooks/records/{record_id}/location — before /{notebook_id}.
+handlersRouter.get("/api/notebooks/records/:record_id/location", (c) => {
+  const manager = get_notebook_manager();
+  const location = manager.locate_record(
+    c.req.param("record_id"),
+    qStr(c, "notebook_id", ""),
   );
+  if (!location) return httpError(c, 404, "record not found");
+  return c.json({ notebook_id: location });
 });
 
-// DELETE /api/notebooks/{nb_id}
-handlersRouter.delete("/api/notebooks/:nb_id", (c) => {
-  const nbId = c.req.param("nb_id");
-  return c.json({ ok: _delItem(nbId, "notebooks", "nb") });
-});
-
-// GET /api/notebooks/records/{record_id}
+// GET /api/notebooks/records/{record_id} — compatibility lookup.
 handlersRouter.get("/api/notebooks/records/:record_id", (c) => {
   const recordId = c.req.param("record_id");
-  for (const nb of _listDir("notebooks")) {
-    for (const r of (nb["records"] ?? []) as AnyRecord[]) {
-      if (String(r["id"]) === recordId) return c.json(r);
+  try {
+    for (const nb of get_notebook_manager().list_notebooks()) {
+      const record = get_notebook_manager().get_record(
+        String(nb["id"] ?? ""),
+        recordId,
+      );
+      if (record) return c.json(record);
     }
+    return httpError(c, 404, "record not found");
+  } catch (exc) {
+    return notebookFailure(c, exc);
   }
-  return httpError(c, 404, "record not found");
 });
 
-// GET /api/notebooks/{nb_id}/export
-handlersRouter.get("/api/notebooks/:nb_id/export", (c) => {
-  const nbId = c.req.param("nb_id");
-  const nb = _getItem("notebooks", nbId) ?? { id: nbId };
-  const records = (nb["records"] ?? []) as AnyRecord[];
-  const markdown =
-    `# ${String(nb["title"] ?? "Notebook")}\n\n` +
-    records.map((r) => String(r["content"] ?? "")).join("\n");
-  return c.json({ markdown });
-});
-
-// GET /api/notebooks/{nb_id}/records
-handlersRouter.get("/api/notebooks/:nb_id/records", (c) => {
-  const nb = _getItem("notebooks", c.req.param("nb_id")) ?? {};
-  return c.json({ records: nb["records"] ?? [] });
-});
-
-// POST /api/notebooks/{nb_id}/records
-handlersRouter.post("/api/notebooks/:nb_id/records", async (c) => {
-  const nbId = c.req.param("nb_id");
+// POST /api/notebooks/actions/add-record
+handlersRouter.post("/api/notebooks/actions/add-record", async (c) => {
   const b = await body(c);
-  const nb =
-    _getItem("notebooks", nbId) ??
-    ({ id: nbId, records: [] } as AnyRecord);
-  const rec: AnyRecord = { ...b };
-  if (rec["id"] === undefined || rec["id"] === null || rec["id"] === "") {
-    rec["id"] = uuid12();
+  try {
+    const result = addRecordFromBody(b, String(b["summary"] ?? ""));
+    return c.json(result);
+  } catch (exc) {
+    return notebookFailure(c, exc);
   }
-  if (rec["created_at"] === undefined || rec["created_at"] === null) {
-    rec["created_at"] = now();
-  }
-  const records = (nb["records"] ??= []) as AnyRecord[];
-  records.push(rec);
-  _putItem(nb, "notebooks", nbId);
-  return c.json(rec);
 });
 
-// GET /api/notebooks/{nb_id}/records/{rec_id}
+// POST /api/notebooks/actions/add-record-with-summary — SSE, like DeepTutor.
+handlersRouter.post("/api/notebooks/actions/add-record-with-summary", async (c) => {
+  const b = await body(c);
+  return streamSSE(c, async (stream) => {
+    try {
+      const summarizer = new NotebookSummarizeAgent(String(b["language"] ?? "en"));
+      let summary = "";
+      for await (const chunk of summarizer.stream_summary({
+        title: String(b["title"] ?? "Untitled"),
+        record_type: String(b["type"] ?? b["record_type"] ?? "chat"),
+        user_query: String(b["user_query"] ?? ""),
+        output: String(b["output"] ?? b["content"] ?? ""),
+        metadata: b["metadata"] as AnyRecord | undefined,
+      })) {
+        summary += chunk;
+        await stream.writeSSE({ data: JSON.stringify({ type: "summary_chunk", content: chunk }) });
+      }
+      const result = addRecordFromBody(b, summary.trim());
+      await stream.writeSSE({ data: JSON.stringify({ type: "result", ...result }) });
+    } catch (exc) {
+      await stream.writeSSE({
+        data: JSON.stringify({
+          type: "error",
+          detail: exc instanceof Error ? exc.message : String(exc),
+        }),
+      });
+    }
+  });
+});
+
+// GET /api/notebooks/{notebook_id}
+handlersRouter.get("/api/notebooks/:nb_id", (c) => {
+  try {
+    const nb = get_notebook_manager().get_notebook(c.req.param("nb_id"));
+    if (!nb) return httpError(c, 404, "notebook not found");
+    return c.json(nb);
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// PUT /api/notebooks/{notebook_id}
+handlersRouter.put("/api/notebooks/:nb_id", async (c) => {
+  const b = await body(c);
+  try {
+    const nb = get_notebook_manager().update_notebook(c.req.param("nb_id"), {
+      name: b["name"] == null ? null : String(b["name"]),
+      description: b["description"] == null ? null : String(b["description"]),
+      color: b["color"] == null ? null : String(b["color"]),
+      icon: b["icon"] == null ? null : String(b["icon"]),
+    });
+    if (!nb) return httpError(c, 404, "notebook not found");
+    return c.json({ notebook: nb });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// DELETE /api/notebooks/{notebook_id}
+handlersRouter.delete("/api/notebooks/:nb_id", (c) => {
+  try {
+    return c.json({
+      ok: get_notebook_manager().delete_notebook(c.req.param("nb_id")),
+    });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// GET /api/notebooks/{notebook_id}/records
+handlersRouter.get("/api/notebooks/:nb_id/records", (c) => {
+  try {
+    return c.json({
+      records: get_notebook_manager().get_records(c.req.param("nb_id")),
+    });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// POST /api/notebooks/{notebook_id}/records — compatibility write.
+handlersRouter.post("/api/notebooks/:nb_id/records", async (c) => {
+  const b = await body(c);
+  const nbId = c.req.param("nb_id");
+  const record = recordFromBody(b);
+  try {
+    const manager = get_notebook_manager();
+    const existing = manager.get_record(nbId, String(record["id"]));
+    const saved = existing
+      ? manager.update_record(nbId, String(record["id"]), record as AnyRecord)
+      : manager.add_record({
+          notebook_ids: [nbId],
+          record_type: String(record["type"] ?? "chat"),
+          title: String(record["title"] ?? "Untitled"),
+          user_query: String(record["user_query"] ?? ""),
+          output: String(record["output"] ?? ""),
+          summary: String(record["summary"] ?? ""),
+          metadata: record["metadata"] as AnyRecord | undefined,
+        }).record as unknown as AnyRecord;
+    return c.json(saved ?? record);
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// GET /api/notebooks/{notebook_id}/records/{record_id}
 handlersRouter.get("/api/notebooks/:nb_id/records/:rec_id", (c) => {
-  const nbId = c.req.param("nb_id");
-  const recId = c.req.param("rec_id");
-  const nb = _getItem("notebooks", nbId) ?? {};
-  for (const r of (nb["records"] ?? []) as AnyRecord[]) {
-    if (String(r["id"]) === recId) return c.json(r);
+  try {
+    const record = get_notebook_manager().get_record(
+      c.req.param("nb_id"),
+      c.req.param("rec_id"),
+    );
+    if (!record) return httpError(c, 404, "record not found");
+    return c.json(record);
+  } catch (exc) {
+    return notebookFailure(c, exc);
   }
-  return c.json({ id: recId });
 });
 
-// DELETE /api/notebooks/{nb_id}/records/{rec_id}
+// PUT /api/notebooks/{notebook_id}/records/{record_id}
+handlersRouter.put("/api/notebooks/:nb_id/records/:rec_id", async (c) => {
+  const b = await body(c);
+  // Favorites preserve their original Q&A and output.
+  delete b["output"];
+  delete b["user_query"];
+  try {
+    const record = get_notebook_manager().update_record(
+      c.req.param("nb_id"),
+      c.req.param("rec_id"),
+      b as AnyRecord,
+    );
+    if (!record) return httpError(c, 404, "record not found");
+    return c.json({ record });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
+
+// DELETE /api/notebooks/{notebook_id}/records/{record_id}
 handlersRouter.delete("/api/notebooks/:nb_id/records/:rec_id", (c) => {
-  const nbId = c.req.param("nb_id");
-  const recId = c.req.param("rec_id");
-  const nb = _getItem("notebooks", nbId) ?? { records: [] };
-  nb["records"] = ((nb["records"] ?? []) as AnyRecord[]).filter(
-    (r) => String(r["id"]) !== recId,
-  );
-  _putItem(nb, "notebooks", nbId);
-  return c.json({ ok: true });
+  try {
+    return c.json({
+      ok: get_notebook_manager().remove_record(
+        c.req.param("nb_id"),
+        c.req.param("rec_id"),
+      ),
+    });
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
 });
 
-// POST /api/notebooks/{nb_id}/records/{rec_id}/actions/{action}
+// POST /api/notebooks/{notebook_id}/records/{record_id}/actions/{copy|move}
 handlersRouter.post(
   "/api/notebooks/:nb_id/records/:rec_id/actions/:action",
   async (c) => {
-    const nbId = c.req.param("nb_id");
-    const recId = c.req.param("rec_id");
-    const action = c.req.param("action");
     const b = await body(c);
-    const nb = _getItem("notebooks", nbId) ?? { records: [] };
-    for (const r of (nb["records"] ?? []) as AnyRecord[]) {
-      if (String(r["id"]) === recId) {
-        const actions = (r["actions"] ??= []) as AnyRecord[];
-        actions.push({ action, at: now(), ...b });
-        _putItem(nb, "notebooks", nbId);
-        return c.json({ ok: true });
-      }
+    const action = c.req.param("action");
+    const sourceId = c.req.param("nb_id");
+    const recordId = c.req.param("rec_id");
+    const targetId = String(
+      b["target_notebook_id"] ?? b["targetNotebookId"] ?? "",
+    );
+    try {
+      const manager = get_notebook_manager();
+      const record =
+        action === "copy"
+          ? manager.copy_record(sourceId, recordId, targetId)
+          : manager.move_record(sourceId, recordId, targetId);
+      if (!record) return httpError(c, 404, "record not found");
+      return c.json({ record });
+    } catch (exc) {
+      return notebookFailure(c, exc);
     }
-    return c.json({ ok: false });
   },
 );
+
+// GET /api/notebooks/{notebook_id}/export — plain Markdown, like DeepTutor.
+handlersRouter.get("/api/notebooks/:nb_id/export", (c) => {
+  try {
+    const markdown = get_notebook_manager().export_markdown(
+      c.req.param("nb_id"),
+    );
+    if (markdown === null) return httpError(c, 404, "notebook not found");
+    c.header("Content-Type", "text/markdown; charset=utf-8");
+    return c.body(markdown);
+  } catch (exc) {
+    return notebookFailure(c, exc);
+  }
+});
 
 // -- mastery progress -----------------------------------------------------------
 

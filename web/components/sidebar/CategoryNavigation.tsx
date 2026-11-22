@@ -223,7 +223,7 @@ export function CategoryBody({
           <Section title={"Workspace"}>
             {[
               { href: '/calendar', label: 'Calendar', icon: CalendarDays },
-              { href: '/co-writer', label: 'Co-Writer', icon: PenLine },
+              { href: '/notebooks', label: 'Notebooks', icon: PenLine },
             ].map(item => (
                 <NavigationRow
                   key={item.href}

@@ -25,7 +25,7 @@ it("new profiles see five primary entries and two folded features", () => {
     "/space",
     "/calendar",
   ]);
-  expect(resolved.collapsed).toEqual(["/co-writer", "/agents"]);
+  expect(resolved.collapsed).toEqual(["/notebooks", "/agents"]);
   expect(resolved.customized).toBe(false);
   expect(SECONDARY_NAV.map(item => item.href)).toEqual(["/settings"]);
 });

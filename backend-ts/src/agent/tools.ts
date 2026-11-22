@@ -6,11 +6,8 @@
 import type { Settings } from "../config.js";
 import type { BaseTool } from "../shared/vtx.js";
 import * as dt_tools from "./dt_tools.js";
-import {
-  CO_WRITER_TOOL_NAMES,
-  co_writer_tools,
-  is_co_writer_turn,
-} from "./co_writer.js";
+import { register_notebook_tools } from "./notebook_agent/notebook_tools.js";
+import { register_notes_tools } from "../capabilities/notes/tools.js";
 // Consolidated action-dispatched tools (one per tool family).
 import { MERGED_TOOLS } from "./merged_tools.js";
 // Capabilities still exposed as individual tools.
@@ -59,20 +56,11 @@ export function builtin_tools(
   // always reach the model's schema.
   const toggleable = TOGGLEABLE;
 
-  // The notebook companion gets its own playbook: read the page and propose
-  // reviewable changes (including learning blocks/flashcards). These tools
-  // are absent from ordinary chat turns.
-  if (is_co_writer_turn()) {
-    for (const tool of co_writer_tools()) {
-      registry.set(tool.name, tool);
-    }
-    // Co-writer's toolset is deliberately narrower than the main chat's: no
-    // video, cron, mastery, workspace files or question bank.
-    const allowed = new Set<string>(CO_WRITER_TOOL_NAMES);
-    for (const name of [...registry.keys()]) {
-      if (!allowed.has(name)) registry.delete(name);
-    }
-  }
+  // Notebook and notes tools are mounted for the main agent (DeepTutor
+  // semantics). Registering them globally also makes them resolvable by
+  // the notebook sub-agent's ``tools_allow`` selection.
+  register_notebook_tools();
+  register_notes_tools();
 
   // web_search is the frontend's toggle name for the merged `web` tool.
   const requested = (enabled ?? []).map((n) => WEB_SEARCH_ALIAS.get(n) ?? n);

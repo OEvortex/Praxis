@@ -57,7 +57,7 @@ export function pageSections({
       pages: [
         { href: '/chat', label: "Chat", icon: MessageCircle },
         { href: '/calendar', label: "Calendar", icon: CalendarDays, account: true },
-        { href: '/co-writer', label: "Notebook", icon: PenLine },
+        { href: '/notebooks', label: "Notebooks", icon: PenLine },
       ],
     },
     {
@@ -103,7 +103,7 @@ export function pageSections({
  * under a second bar.
  */
 const OWN_HEADER = [
-  /^\/co-writer\/[^/]+/,
+  /^\/notebooks\/[^/]+/,
   /^\/learning\/reading\/(?!folders\/|materials$)[^/]+/,
   /^\/learning\/watching\//,
 ]

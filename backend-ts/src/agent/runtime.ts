@@ -55,6 +55,8 @@ import {
   type TurnCapabilityHooks,
 } from "./capability_hooks.js";
 import * as notebookEvents from "./notebook_agent/events.js";
+import { NotebookAnalysisAgent } from "./notebook/analysis_agent.js";
+import { get_notebook_manager } from "../services/notebook/service.js";
 import { builtin_tools } from "./tools.js";
 import { build_praxis_prompt, PRAXIS_BASE } from "./prompt.js";
 import {
@@ -688,6 +690,35 @@ export class AgentRuntime {
           (a.extracted_text ? `\n${a.extracted_text}` : ""),
       );
       prompt = [content, ...notes].filter(Boolean).join("\n\n");
+    }
+
+    // Ground the turn in any notebook favorites the learner attached.
+    // Mirrors deeptutor/services/session/turns/executor.py: the analysis
+    // agent picks up to five records and appends a compact context note.
+    const notebookRefs = (command.notebook_references as AnyDict[] | undefined) ?? [];
+    if (notebookRefs.length) {
+      try {
+        const records = get_notebook_manager().get_records_by_references(notebookRefs);
+        if (records.length) {
+          const language = String(command.language ?? "en");
+          const analysis = new NotebookAnalysisAgent(language, this._settings);
+          const note = await analysis.analyze(content, records, (event) => {
+            void this._emit(
+              handle,
+              AgentRuntime._stream_event(handle, String(event.type), {
+                content: event.content ?? "",
+                source: "notebook_analysis",
+                stage: event.stage,
+                metadata: event.metadata ?? null,
+              }),
+            );
+          });
+          if (note) prompt = [prompt, note].filter(Boolean).join("\n\n");
+        }
+      } catch (exc) {
+        // Context enrichment must never block a turn.
+        console.warn("notebook analysis failed:", exc);
+      }
     }
 
     // Per-session runtime cache — the runtime owns the agent session history.

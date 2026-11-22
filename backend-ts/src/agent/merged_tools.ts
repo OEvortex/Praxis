@@ -23,7 +23,7 @@ import { SOLVE_TOOLS } from "../capabilities/solve/tools.js";
 import { READING_TOOLS } from "../capabilities/reading/tools.js";
 import { MASTERY_TOOLS } from "../capabilities/mastery/tools.js";
 import { notes_tools } from "../capabilities/notes/tools.js";
-import { writer_tools } from "./notebook_agent/tools.js";
+import { notebook_tools } from "./notebook_agent/notebook_tools.js";
 
 /** One short sentence per action — the enum already names the operation. */
 function gloss(description: string): string {
@@ -148,12 +148,11 @@ export const mastery = actionTool({
   actions: byName(MASTERY_TOOLS, "mastery_"),
 });
 
-/** Notebook CRUD, both tool sets, becomes one. */
+/** Authored note pages (DeepTutor's notes module). */
 const noteTools = notes_tools();
-const writerTools = writer_tools();
 export const notes = actionTool({
   name: "notes",
-  description: "Read, search and edit notebook pages. Propose block edits with suggest, or apply page edits atomically with patch.",
+  description: "Read, search and edit authored note pages. Propose reviewable block edits with suggest.",
   toolIcon: "📓",
   actions: Object.fromEntries(
     Object.entries({
@@ -161,18 +160,20 @@ export const notes = actionTool({
       suggest: "note_suggest",
       write: "write_note",
       search: "search_notes",
-      nb_read: "nb_read",
-      nb_list: "nb_list",
-      nb_search: "nb_search",
-      nb_patch: "nb_patch",
     }).map(([action, toolName]) => [
       action,
-      one(
-        action,
-        [...noteTools, ...writerTools].find((tool) => tool.name === toolName)!,
-      ),
+      one(action, noteTools.find((tool) => tool.name === toolName)!),
     ]),
   ),
+});
+
+/** Favorites collections — DeepTutor's notebook toolset. */
+export const notebooks = actionTool({
+  name: "notebooks",
+  description:
+    "List favorites collections and their records, read a saved record, and save or patch a favorite.",
+  toolIcon: "⭐",
+  actions: byName(notebook_tools()),
 });
 
 /** Knowledge base + attached-source retrieval becomes one. */
@@ -199,5 +200,6 @@ export const MERGED_TOOLS: BaseTool[] = [
   reading,
   mastery,
   notes,
+  notebooks,
   sources,
 ];

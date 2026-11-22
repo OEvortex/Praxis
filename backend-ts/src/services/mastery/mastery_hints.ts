@@ -1,6 +1,6 @@
 // the line the study composer
 // shows before the learner types. Never blocks; "" means "keep placeholder".
-import { completeText } from "../llm_text.js";
+import { chatjimmyComplete } from "../chatjimmy.js";
 import type { Settings } from "../../config.js";
 import type { SessionStore } from "../../store/session_store.js";
 import { LearningStore } from "./store.js";
@@ -185,16 +185,13 @@ export async function getAskHint(
 
   const promise = (async (): Promise<HintCacheEntry> => {
     try {
-      const raw = await Promise.race([
-        completeText(settings, {
-          system: SYSTEM_EN,
-          prompt: render(material),
-        }),
-        new Promise<string>((_, reject) =>
-          setTimeout(() => reject(new Error("ask-hint timeout")), LLM_TIMEOUT),
-        ),
-      ]);
-      const hint = sanitize(raw, "en");
+      // Composer hints use the hardcoded chatjimmy model, not the chat model.
+      const raw = await chatjimmyComplete(settings, {
+        system: SYSTEM_EN,
+        prompt: render(material),
+        timeoutMs: LLM_TIMEOUT,
+      });
+      const hint = sanitize(raw ?? "", "en");
       const entry: HintCacheEntry = {
         hint,
         knowledge_point_id: material.anchor.split(":")[0] ?? "",

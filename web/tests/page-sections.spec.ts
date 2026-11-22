@@ -7,11 +7,11 @@ describe('page sections', () => {
   it('places each index page in the shelf the sidebar shows it under', () => {
     expect(locatePage('/space/journal', sections())?.section.id).toBe('resources')
     expect(locatePage('/learning', sections())?.section.id).toBe('learning')
-    expect(locatePage('/co-writer', sections())?.section.id).toBe('home')
+    expect(locatePage('/notebooks', sections())?.section.id).toBe('home')
     // Account-level pages are the same in every workspace, so show no workspace.
     expect(locatePage('/memory', sections())?.page.account).toBe(true)
     expect(locatePage('/personalization', sections())?.page.account).toBe(true)
-    expect(locatePage('/co-writer', sections())?.page.account).toBeUndefined()
+    expect(locatePage('/notebooks', sections())?.page.account).toBeUndefined()
     expect(locatePage('/space', sections())?.page.account).toBeUndefined()
   })
 
@@ -19,7 +19,8 @@ describe('page sections', () => {
     expect(locatePage('/learning/books/b1/pages/p1', sections())?.page.href).toBe('/learning/books')
     expect(locatePage('/learning/mastery/path_1', sections())?.page.href).toBe('/learning/mastery')
     expect(locatePage('/learning/reading/folders/f1', sections())?.page.href).toBe('/learning/reading')
-    expect(locatePage('/notebooks/abc', sections())?.page.href).toBe('/notebooks')
+    // A notebook detail view draws its own crumbs in the console toolbar.
+    expect(locatePage('/notebooks/abc', sections())).toBeNull()
   })
 
   it('locates conversations, study sessions and account detail views too', () => {
@@ -31,7 +32,7 @@ describe('page sections', () => {
   })
 
   it('leaves views that draw the crumbs in their own toolbar alone', () => {
-    expect(locatePage('/co-writer/doc', sections())).toBeNull()
+    expect(locatePage('/notebooks/doc', sections())).toBeNull()
     expect(locatePage('/learning/reading/rw_1', sections())).toBeNull()
   })
 

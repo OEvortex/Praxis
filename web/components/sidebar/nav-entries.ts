@@ -46,10 +46,10 @@ const PRIMARY_NAV: NavEntry[] = [
     href: '/calendar', label: 'Calendar', icon: CalendarDays,
   },
   {
-    href: '/co-writer',
-    label: 'Co-Writer',
+    href: '/notebooks',
+    label: 'Notebooks',
     icon: PenLine,
-    tooltipKey: 'Co-Writer tooltip',
+    tooltipKey: 'Notebooks tooltip',
     defaultCollapsed: true,
   },
   {

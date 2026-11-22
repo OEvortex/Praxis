@@ -1,8 +1,9 @@
 // capabilities_settings,imports,creations,dashboard,practice}.py.
 // NOTE: several paths overlap handlers.ts stubs (personas GET, creations drafts,
-// imports POST, dashboard suggestions/source-library/learning-library,
-// capabilities/registered, modules). Mount this router BEFORE handlersRouter
-// so the faithful implementations win.
+// imports POST, dashboard suggestions/source-library/learning-library, modules).
+// Mount this router BEFORE handlersRouter so the faithful implementations win.
+// GET /api/capabilities/registered is intentionally NOT one of them: the
+// handlers.ts version serves the tutor-mode descriptors used by the Mode tray.
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
@@ -340,18 +341,9 @@ miscRouter.get("/api/modules", (c) => {
 // capabilities.py + capabilities_settings.py — /api/capabilities/*
 // ==========================================================================
 
-miscRouter.get("/api/capabilities/registered", (c) => {
-  // Describe the turn capabilities this deployment can execute. Derived from
-  // the agent capabilities registered in src/agent/*/capability.ts.
-  const capabilities = [
-    { id: "chat", kind: "turn", available: true, manifest: { name: "chat" }, config_schema: {} },
-    { id: "co_writer", kind: "turn", available: true, manifest: { name: "co_writer" }, config_schema: {} },
-    { id: "notebook", kind: "turn", available: true, manifest: { name: "notebook" }, config_schema: {} },
-    { id: "video_lesson", kind: "turn", available: true, manifest: { name: "video_lesson" }, config_schema: {} },
-  ];
-  capabilities.sort((a, b) => a.id.localeCompare(b.id));
-  return c.json({ capabilities });
-});
+// GET /api/capabilities/registered is served by handlersRouter (chat + the five
+// tutor modes). Registering a different list here would shadow it at runtime,
+// since miscRouter is mounted first, and leave most Mode tray options inert.
 
 const CAP_DEFAULTS: AnyDict = {
   chat: { temperature: 0.7, max_tokens: 8192, max_rounds: 12, max_replans: 2 },

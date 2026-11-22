@@ -1424,7 +1424,7 @@ async function askHint(workspaceId: string, sessionId: string, locator: number |
       const hit = askHintCache.get(key)!;
       if (Date.now() / 1000 - hit.generated_at < 1800) return hit;
     }
-    const { completeText } = await import("../services/llm_text.js");
+    const { chatjimmyComplete } = await import("../services/chatjimmy.js");
     const system = `You write exactly ONE question a learner could ask their tutor right now while reading.
 Hard product rules:
 - Output the question alone: never an answer, summary, explanation, hint, suggestion, or "you could try..." phrasing.
@@ -1444,11 +1444,9 @@ Prefer a specific why, distinction, implication, or boundary case over a generic
         : "",
       "Write only that one question.",
     ].filter(Boolean).join("\n\n");
-    const raw = await Promise.race([
-      completeText(settings, { system, prompt }),
-      new Promise<string>((resolve) => setTimeout(() => resolve(""), 20_000)),
-    ]);
-    const hint = sanitizeHint(raw);
+    // Composer hints use the hardcoded chatjimmy model, not the chat model.
+    const raw = await chatjimmyComplete(settings, { system, prompt, timeoutMs: 20_000 });
+    const hint = sanitizeHint(raw ?? "");
     const result = { hint, material_id: materialId, generated_at: Date.now() / 1000 };
     if (hint && !cleanSelection) {
       if (askHintCache.size >= ASK_HINT_MAX) {

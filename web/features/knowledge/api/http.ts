@@ -1,5 +1,5 @@
-import { apiFetch, apiUrl as baseApiUrl } from "@/shared/api/client";
-import { invalidateClientCache, withClientCache } from "@/lib/client-cache";
+import { apiUrl as baseApiUrl } from "@/shared/api/client";
+import { invalidateClientCache } from "@/lib/client-cache";
 
 export function inKnowledgeLibrary(): boolean {
   return (
