@@ -8,6 +8,7 @@ import type { BaseTool } from "../shared/vtx.js";
 import * as dt_tools from "./dt_tools.js";
 import { register_notebook_tools } from "./notebook_agent/notebook_tools.js";
 import { register_notes_tools } from "../capabilities/notes/tools.js";
+import { ask_user } from "./ask_user.js";
 // Consolidated action-dispatched tools (one per tool family).
 import { MERGED_TOOLS } from "./merged_tools.js";
 // Capabilities still exposed as individual tools.
@@ -37,7 +38,9 @@ export function builtin_tools(
     // still handles artifacts the app itself creates (notes, media).
     ["learning", dt_tools.learning],
     ["workspace", dt_tools.workspace],
-    // `ask_user` is intentionally not registered for now.
+    // Pauses the turn on a question card; the runtime intercepts this name
+    // before dispatch (see runtime.ts) and resumes with the learner's answer.
+    ["ask_user", ask_user],
     // Scheduled reminders: the run lands in the turn's own session and
     // shows up on the calendar's Automations layer.
     ["cron", dt_tools.cron],

@@ -146,8 +146,15 @@ interface AskUserOption {
 
 export interface AskUserQuestion {
   question: string;
+  /** Stable question id used to match a learner's answer back to its prompt. */
+  id?: string;
+  /** All card fields below are normalized by the ask_user tool and forwarded
+   *  verbatim to the chat UI (which reads `prompt`, `allow_free_text`, ...). */
+  prompt?: string;
   header?: string | null;
   multi_select?: boolean;
+  allow_free_text?: boolean;
+  placeholder?: string | null;
   options?: AskUserOption[];
   [k: string]: unknown;
 }
@@ -217,6 +224,8 @@ export class AskUserEvent extends VtxEvent {
     public questions: AskUserQuestion[],
     public future: Deferred<AskUserResponse>,
     public tool_call_id: string,
+    /** Optional lead-in rendered above the question tabs on the card. */
+    public intro?: string | null,
   ) { super("ask_user"); }
 }
 

@@ -67,7 +67,6 @@ export default function SettingsOverview() {
       >
         {[
           { href: "/settings/embedding", title: "Knowledge search", description: "Configure an embedding model before indexing a knowledge base." },
-          { href: "/settings/search", title: "Web search", description: "Connect a search service to find information on the web." },
           { href: "/settings/task-models", title: "Background task models", description: "Choose models for automatic tasks such as titles and suggestions." },
         ].map(item => (
           <Link key={item.href} href={item.href} className="flex items-center justify-between gap-5 border-b border-[var(--border)]/50 py-4 last:border-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--ring)]">

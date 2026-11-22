@@ -454,4 +454,3 @@ export function useKnowledgeBases() {
   };
 }
 
-type UseKnowledgeBasesReturn = ReturnType<typeof useKnowledgeBases>;

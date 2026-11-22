@@ -13,7 +13,7 @@ export const SETTINGS_PAGE_GROUPS: { label: string; keys: string[] }[] = [
   { label: 'Personal', keys: ['general', 'workspace', 'appearance', 'usage'] },
   {
     label: 'Models & services',
-    keys: ['connections', 'llm', 'task-models', 'embedding', 'search', 'voice', 'multimodal'],
+    keys: ['connections', 'llm', 'task-models', 'embedding', 'voice', 'multimodal'],
   },
   {
     label: 'Learning & conversation',
@@ -40,7 +40,6 @@ const WIDE_SETTINGS_PAGES = new Set([
   'connections',
   'llm',
   'embedding',
-  'search',
   'voice',
   'multimodal',
 ])

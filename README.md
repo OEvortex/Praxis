@@ -89,7 +89,7 @@ API contracts are generated from the backend OpenAPI schema (`web/contracts/`); 
 
 ### Consolidated agent tools
 
-The chat agent sees **21 tools**, not ~77. Related tools are registered as one `action`-dispatched tool (`agent/merged_tools.ts`, factory in `agent/merged_tools_factory.ts`): `obsidian`, `ima`, `marginnote`, `setup`, `subagent`, `propose`, `generate`, `solve`, `reading`, `mastery`, `notes`, `sources`. The original tool objects remain the implementation, so capability mode gating, server-injected params and result markers are unchanged. `npm test` asserts the consolidated surface and that hidden params are forwarded.
+The chat agent sees **23 tools**, not ~77. Related tools are registered as one `action`-dispatched tool (`agent/merged_tools.ts`, factory in `agent/merged_tools_factory.ts`): `obsidian`, `ima`, `marginnote`, `setup`, `subagent`, `propose`, `generate`, `solve`, `reading`, `mastery`, `notes`, `notebooks`, `sources`. The original tool objects remain the implementation, so capability mode gating, server-injected params and result markers are unchanged. The `ask_user` tool (`agent/ask_user.ts`) pauses a turn on a question card and resumes it with the learner's answer; its runtime interception lives in `agent/runtime.ts` and the card is rendered by `web/components/chat/home/AskUserOptions.tsx`. `npm test` asserts the consolidated surface and that hidden params are forwarded.
 
 ### Response format: Markdown vs. OpenUI
 

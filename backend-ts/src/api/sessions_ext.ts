@@ -11,7 +11,7 @@ import type { Context } from "hono";
 import { get_settings, type Settings } from "../config.js";
 import type { SessionStore, SessionDict } from "../store/session_store.js";
 import type { AgentRuntime } from "../agent/runtime.js";
-import { chatjimmyComplete } from "../services/chatjimmy.js";
+import { chatjimmyComplete, stripStatsTail } from "../services/chatjimmy.js";
 import { askHintsEnabled } from "../services/settings_ext/store.js";
 import { generate_title } from "../services/title_gen.js";
 
@@ -280,8 +280,9 @@ sessionsExtRouter.get("/api/sessions/:session_id/ask-hint", async (c) => {
       timeoutMs: ASK_HINT_TIMEOUT_MS,
       defaultWhenOff: true,
     });
+    const hint = sanitizeHint(stripStatsTail(raw ?? ""), "en", lastUser);
     return c.json({
-      hint: raw ? sanitizeHint(raw, "en", lastUser) : "",
+      hint,
       session_id: sessionId,
       generated_at: Date.now() / 1000,
     });

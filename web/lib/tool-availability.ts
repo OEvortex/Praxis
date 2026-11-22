@@ -18,20 +18,14 @@ export function toolAvailabilityCopy(
   reason: string | null | undefined,
   _language: ToolAvailabilityLanguage,
 ): ToolAvailabilityCopy {
-  if (reason === "search_provider_not_configured") {
+  if (
+    reason === "search_provider_not_configured" ||
+    reason === "search_credentials_missing"
+  ) {
+    // Search is built in; there is no provider to configure in Settings.
     return {
-      badge: "Not configured",
-      detail:
-        "Choose a provider in Search settings first. DuckDuckGo needs no API key.",
-      href: "/settings#search",
-    };
-  }
-  if (reason === "search_credentials_missing") {
-    return {
-      badge: "Credentials missing",
-      detail:
-        "The selected search provider needs credentials. Check Search settings.",
-      href: "/settings#search",
+      badge: "Unavailable",
+      detail: "Web search is not available in this build.",
     };
   }
   return {

@@ -1426,7 +1426,7 @@ async function askHint(workspaceId: string, sessionId: string, locator: number |
       const hit = askHintCache.get(key)!;
       if (Date.now() / 1000 - hit.generated_at < 1800) return hit;
     }
-    const { chatjimmyComplete } = await import("../services/chatjimmy.js");
+    const { chatjimmyComplete, stripStatsTail } = await import("../services/chatjimmy.js");
     const system = `You write exactly ONE question a learner could ask their tutor right now while reading.
 Hard product rules:
 - Output the question alone: never an answer, summary, explanation, hint, suggestion, or "you could try..." phrasing.
@@ -1453,7 +1453,7 @@ Prefer a specific why, distinction, implication, or boundary case over a generic
       timeoutMs: 20_000,
       defaultWhenOff: true,
     });
-    const hint = sanitizeHint(raw ?? "");
+    const hint = sanitizeHint(stripStatsTail(raw ?? ""));
     const result = { hint, material_id: materialId, generated_at: Date.now() / 1000 };
     if (hint && !cleanSelection) {
       if (askHintCache.size >= ASK_HINT_MAX) {

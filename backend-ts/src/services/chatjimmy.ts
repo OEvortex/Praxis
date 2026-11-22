@@ -31,6 +31,15 @@ function chatjimmyApiUrl(settings: Settings, defaultWhenOff = false): string {
   return fallback;
 }
 
+/**
+ * Strip the `<|stats|>...<|/stats|>` telemetry trailer that chatjimmy.ai
+ * appends to completions. Left in place it breaks downstream single-line
+ * validators (titles, composer hints), which then silently return empty.
+ */
+export function stripStatsTail(text: string): string {
+  return String(text ?? "").replace(/<\|stats\|>[\s\S]*/, "").trim();
+}
+
 /** False when the endpoint is blank or explicitly disabled. */
 export function chatjimmyEnabled(settings: Settings): boolean {
   const url = chatjimmyApiUrl(settings);

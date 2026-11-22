@@ -215,6 +215,13 @@ const spaceQuestionsRoute = createRoute({
   component: lazyPage(() => import("@/app/(utility)/space/questions/page")),
 });
 
+// Standalone routes (no layout shell)
+const handoffRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/handoff",
+  component: lazyPage(() => import("@/app/handoff/page")),
+});
+
 // (workspace) group
 const workspaceLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -482,6 +489,7 @@ const routeTree = rootRoute.addChildren([
       watchingSessionRoute,
     ]),
   ]),
+  handoffRoute,
 ]);
 
 export const router = createRouter({

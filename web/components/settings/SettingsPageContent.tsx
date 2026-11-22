@@ -78,12 +78,6 @@ const Embedding = dynamic(
   () => import("@/features/settings/sections/models/EmbeddingSettingsSection"),
   { loading },
 );
-const Search = dynamic(
-  () => import("@/features/settings/sections/models/SearchSettingsSection"),
-  {
-    loading,
-  },
-);
 const Tts = dynamic(
   () => import("@/features/settings/sections/models/TtsSettingsSection"),
   {
@@ -174,7 +168,6 @@ const PAGES: Record<string, React.ComponentType> = {
   llm: Llm,
   "task-models": Task,
   embedding: Embedding,
-  search: Search,
   tts: Tts,
   stt: Stt,
   imagegen: Image,

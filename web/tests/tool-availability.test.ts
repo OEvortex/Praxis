@@ -13,23 +13,17 @@ test("configured runtime and saved preference are both required", () => {
   assert.equal(toolEffectiveEnabled(true, true, true), false);
 });
 
-test("search provider readiness has actionable English copy", () => {
+test("search unavailability has no dead settings link", () => {
+  const expected = {
+    badge: "Unavailable",
+    detail: "Web search is not available in this build.",
+  };
   assert.deepEqual(
     toolAvailabilityCopy("search_provider_not_configured", "en"),
-    {
-      badge: "Not configured",
-      detail:
-        "Choose a provider in Search settings first. DuckDuckGo needs no API key.",
-      href: "/settings#search",
-    },
+    expected,
   );
   assert.deepEqual(
-    toolAvailabilityCopy("search_provider_not_configured", "en"),
-    {
-      badge: "Not configured",
-      detail:
-        "Choose a provider in Search settings first. DuckDuckGo needs no API key.",
-      href: "/settings#search",
-    },
+    toolAvailabilityCopy("search_credentials_missing", "en"),
+    expected,
   );
 });

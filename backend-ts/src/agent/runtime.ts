@@ -58,6 +58,7 @@ import * as notebookEvents from "./notebook_agent/events.js";
 import { NotebookAnalysisAgent } from "./notebook/analysis_agent.js";
 import { get_notebook_manager } from "../services/notebook/service.js";
 import { builtin_tools } from "./tools.js";
+import { buildAskUserPayload } from "./ask_user.js";
 import { build_praxis_prompt, PRAXIS_BASE } from "./prompt.js";
 import {
   bind as bind_dt_session,
@@ -874,19 +875,20 @@ export class AgentRuntime {
           const prompts = new Map<string, string>();
           const questions: AnyDict[] = [];
           (event.questions ?? []).forEach((q: AskUserQuestion, i: number) => {
-            const qid = `q${i + 1}`;
-            prompts.set(qid, q.question);
+            const qid = q.id || `q${i + 1}`;
+            const prompt = q.prompt || q.question;
+            prompts.set(qid, prompt);
             questions.push({
               id: qid,
-              prompt: q.question,
+              prompt,
               header: q.header ?? null,
               multi_select: Boolean(q.multi_select),
               options: (q.options ?? []).map((o) => ({
                 label: o.label,
                 description: o.description ?? null,
               })),
-              allow_free_text: true,
-              placeholder: null,
+              allow_free_text: q.allow_free_text !== false,
+              placeholder: q.placeholder ?? null,
             });
           });
           await this._emit(handle, AgentRuntime._stream_event(handle, "tool_result", {
@@ -895,7 +897,9 @@ export class AgentRuntime {
             metadata: {
               tool_call_id: event.tool_call_id,
               tool_name: "ask_user",
-              tool_metadata: { ask_user: { questions } },
+              tool_metadata: {
+                ask_user: { intro: event.intro ?? null, questions },
+              },
             },
           }));
           this._ask_user_waiters.set(handle.turn_id, {
@@ -1576,12 +1580,36 @@ export class LocalAgent {
         yield new ToolStartEvent(name, call.id);
         yield new ToolEndEvent(name, call.id, args);
 
-        // The SDK intercepts ask_user before dispatch: publish the questionnaire
-        // and pause until the learner's answer resolves the deferred.
+        // The SDK intercepts ask_user before dispatch: validate + normalise
+        // the questionnaire, publish the card, and pause until the learner's
+        // answer resolves the deferred. Invalid arguments fail the tool call
+        // (the error goes back to the model) instead of parking the turn.
         if (name === "ask_user") {
-          const questions = normalizeAskUserQuestions(args);
+          const { payload, error } = buildAskUserPayload(args);
+          if (payload === null) {
+            const failure = new ToolResult(false, error ?? "Invalid ask_user arguments.", true);
+            this._messages.push({
+              role: "tool",
+              tool_call_id: call.id,
+              name,
+              content: failure.result,
+            });
+            this._persist_entry("tool", failure.result, undefined, name);
+            yield new ToolResultEvent(name, call.id, failure);
+            continue;
+          }
+          const questions: AskUserQuestion[] = payload.questions.map((q) => ({
+            question: q.prompt,
+            prompt: q.prompt,
+            id: q.id,
+            header: q.header,
+            multi_select: q.multi_select,
+            allow_free_text: q.allow_free_text,
+            placeholder: q.placeholder,
+            options: q.options,
+          }));
           const future = deferred<AskUserResponse>();
-          yield new AskUserEvent(questions, future, call.id);
+          yield new AskUserEvent(questions, future, call.id, payload.intro);
           // Race the learner's answer against turn cancellation — without
           // this a cancelled turn stays parked on the question forever
           const response = await Promise.race([
@@ -1841,21 +1869,6 @@ export class LocalAgent {
 
     return { content, tool_calls: calls, usage };
   }
-}
-
-function normalizeAskUserQuestions(args: AnyDict): AskUserQuestion[] {
-  const raw = Array.isArray(args.questions) ? args.questions : [];
-  return raw.map((q: AnyDict) => ({
-    question: String(q.question ?? q.prompt ?? ""),
-    header: q.header ?? null,
-    multi_select: Boolean(q.multi_select),
-    options: Array.isArray(q.options)
-      ? q.options.map((o: AnyDict) => ({
-          label: String(o.label ?? o.text ?? ""),
-          description: o.description ?? null,
-        }))
-      : [],
-  }));
 }
 
 function formatAskUserResponse(response: AskUserResponse): string {

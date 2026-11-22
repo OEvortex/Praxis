@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import StarterSuggestions from '@/components/chat/home/StarterSuggestions'
 
@@ -94,12 +94,12 @@ it('fills the composer with the picked request instead of sending it', async () 
   fireEvent.click(await screen.findByRole('button', { name: /Why BM25 works/ }))
   expect(onPick).toHaveBeenLastCalledWith('Explain BM25')
   // Ways to start stay closed until one is chosen, and close once used.
-  expect(screen.queryByRole('button', { name: /starters\.solve\.2/ })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Check my solution' })).toBeNull()
   const solve = screen.getByRole('button', { name: 'Solve' })
   fireEvent.click(solve)
   expect(solve).toHaveAttribute('aria-expanded', 'true')
-  fireEvent.click(screen.getByRole('button', { name: /starters\.solve\.2/ }))
-  expect(onPick).toHaveBeenLastCalledWith('Check my solution to a problem: go through it step by step, find where and why it goes wrong, and give the corrected working in full. If I haven't shared the problem and my solution, ask me to send them.')
+  fireEvent.click(screen.getByRole('button', { name: 'Check my solution' }))
+  expect(onPick).toHaveBeenLastCalledWith("Check my solution to a problem: go through it step by step, find where and why it goes wrong, and give the corrected working in full. If I haven't shared the problem and my solution, ask me to send them.")
   expect(solve).toHaveAttribute('aria-expanded', 'false')
-  expect(screen.queryByRole('button', { name: /starters\.solve\.2/ })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Check my solution' })).toBeNull()
 })
