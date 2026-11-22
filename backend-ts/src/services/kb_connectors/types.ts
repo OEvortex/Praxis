@@ -1,5 +1,5 @@
 // Shared types/helpers for the knowledge-base connector surface.
-// Mirrors deeptutor.knowledge.kb_types + services.rag.factory provider names.
+// Mirrors the knowledge-base and RAG provider names.
 
 export type AnyRecord = Record<string, any>;
 

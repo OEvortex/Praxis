@@ -291,7 +291,7 @@ export default function NetworkSettingsPage() {
           >
             <SettingRow
               title={"Backend port"}
-              description={"FastAPI listens on this port."}
+              description={"The API server listens on this port."}
               control={
                 <input
                   className={`${inputClass} w-28`}

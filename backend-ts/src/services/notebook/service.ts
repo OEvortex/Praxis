@@ -3,10 +3,9 @@
 // Favorites notebooks are plain JSON files under
 // `<data_dir>/user/workspace/notebook/` (`{id}.json` + `notebooks_index.json`),
 // the same layout the web client documents ("file-backed under
-// data/user/workspace/notebook"). Method names keep the Python snake_case
+// data/user/workspace/notebook"). Method names keep the snake_case
 // surface so the ported router can call them unchanged.
 //
-// Python guards every read-modify-write cycle with per-notebook RLocks; Node
 // is single-threaded and every filesystem call below is synchronous, so no
 // `await` can interleave between a load and its save — the same mutual
 // exclusion holds without explicit locks.
@@ -89,7 +88,6 @@ export class NotebookMoveConflictError extends Error {
   }
 }
 
-// Sentinel mirroring Python's ``kb_name=_UNSET`` default argument.
 const _UNSET = Symbol("unset");
 export type Unset = typeof _UNSET;
 export { _UNSET as UNSET };
@@ -741,7 +739,6 @@ export class NotebookManager {
      * the only copy of the source.
      */
     if (source_notebook_id === target_notebook_id) return null;
-    // Python locks both collections in stable (sorted) order; Node's
     // synchronous sections make the ordering moot but kept for parity.
     const ordered = [source_notebook_id, target_notebook_id].sort();
     void ordered;
@@ -886,7 +883,6 @@ export function get_notebook_manager(
   return instance;
 }
 
-/** Module-level proxy mirroring Python's ``notebook_manager``. */
 export const notebook_manager: NotebookManager = new Proxy(
   {} as NotebookManager,
   {

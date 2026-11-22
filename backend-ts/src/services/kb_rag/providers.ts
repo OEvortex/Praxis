@@ -101,7 +101,6 @@ function _lightragServerDefaultsReady(settings: Settings): boolean {
 
 /**
  * Upstream asks each pipeline package whether it is importable. This backend
- * ships no GraphRAG/LightRAG Python packages — those engines are config-only
  * here — so availability is reported honestly as false with the same install
  * hint the UI already understands.
  */
@@ -363,7 +362,6 @@ export function validateLightRagRoleModels(settings: Settings, roleModels: AnyDi
 
 /**
  * Upstream degrades "hybrid" to "vector" when the BM25 package is missing
- * (Python 3.14 installs, #1792). This backend's keyword retriever is built-in,
  * so BM25 is always available and the effective profile equals the configured
  * one — same normalization rules otherwise.
  */
@@ -566,7 +564,7 @@ export function enginePreflight(settings: Settings, provider: string): AnyDict {
   const fn = _PREFLIGHTS[normalizeProviderName(provider)];
   if (!fn) {
     // Upstream indexes _PREFLIGHTS by normalized name; weknora/kiwix normalize
-    // to themselves but have no preflight -> KeyError -> 500 in FastAPI.
+    // to themselves but have no preflight -> KeyError -> 500 in the API.
     const e = new Error(`'${provider}'`);
     e.name = "KeyError";
     throw e;

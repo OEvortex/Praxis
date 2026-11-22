@@ -183,7 +183,7 @@ function dayOfWeek(y: number, m: number, d: number): number {
 
 /**
  * Next due time in epoch ms for a 5-field cron expression evaluated in `tz`
- * (IANA name; empty/undefined = server-local time, matching the Python code's
+ * (IANA name; empty/undefined = server-local time, matching the original code's
  * naive `datetime.fromtimestamp(now, tz=None)` behavior — we use the process
  * local zone via `Intl`'s default when tz is empty).
  * Returns null when the expression can never fire within ~5 years.

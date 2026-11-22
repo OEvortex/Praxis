@@ -7,12 +7,12 @@
 // one.
 //
 // NOTE on conventions (verified against the landed TS ports):
-//  - services/documents/* kept Python's snake_case export names.
+//  - services/documents/* kept snake_case export names.
 //  - CoWriterStorage methods are camelCase and take snake_case option keys
 //    (parent_id, expected_revision, source_turn_id, ...).
-//  - pydantic ``model_dump()`` → plain objects; ``modelDump()`` below tolerates
+//  - schema validation ``model_dump()`` → plain objects; ``modelDump()`` below tolerates
 //    both shapes.
-//  - Python ValueError surfaces as a plain Error (or name === "ValueError") in
+//  - ValueError surfaces as a plain Error (or name === "ValueError") in
 //    the TS ports, so isValueError() accepts both — TODO(verify) if the service
 //    ports later introduce a dedicated error class.
 
@@ -74,7 +74,7 @@ const documentsRouter = new Hono();
 
 const MAX_DOC_CHARS = 600_000;
 
-// ── HTTP error plumbing (FastAPI HTTPException equivalent) ───────────────
+// ── HTTP error plumbing (HTTP error equivalent) ───────────────
 
 class HttpError extends Error {
   constructor(public status: StatusCode, public detail: string) {
@@ -91,7 +91,7 @@ function errDetail(exc: unknown): string {
   return exc instanceof Error ? exc.message : String(exc);
 }
 
-// Python ``except ValueError``. The TS service ports raise plain Errors for
+// ValueError handling. The TS service ports raise plain Errors for
 // validation failures; RevisionConflict has its own class.
 function isValueError(exc: unknown): boolean {
   if (!(exc instanceof Error)) return false;
@@ -139,7 +139,7 @@ async function appState(): Promise<AppStateLike> {
 }
 
 function settingsFor(state: AppStateLike): Settings {
-  // FastAPI: request.app.state.settings or get_settings()
+  // App settings are read from request state.
   return state.settings ?? get_settings();
 }
 
@@ -159,7 +159,7 @@ function versionId(raw: string | undefined): string {
   return raw;
 }
 
-// pydantic model_dump() → plain JSON object. Document/version/proposal rows in
+// Model dumps serialize to plain JSON objects. Document/version/proposal rows in
 // the TS port are already plain objects; tolerate a modelDump()/model_dump()
 // method if a class-based shape ever appears.
 function modelDump(value: unknown): Dict {
@@ -178,7 +178,6 @@ function promptPair(result: unknown): [string, string] {
 }
 
 // storage._write is `private` in storage.ts but needed here for the clip
-// endpoint (Python calls the private method directly too).
 function storageWrite(storage: CoWriterStorage, doc: Doc, source: string): void {
   const s = storage as unknown as {
     _write?: (d: unknown, source?: string) => void;
@@ -321,7 +320,7 @@ async function referenceContext(
   for (const source of sources) {
     if (source === "rag" && kbName) {
       try {
-        // Python: search.params(action=..., ...) then search.execute(params)
+        // Search params are built, then executed.
         // TS port: execute() takes the plain params object (snake_case keys).
         const result = (await knowledge_base_search.execute({
           action: "search",
@@ -500,7 +499,7 @@ function sse(event: string, data: Dict): string {
 }
 
 // Convert an async generator of SSE frames into a streaming Response
-// (FastAPI StreamingResponse equivalent).
+// (streaming response).
 function sseResponse(
   events: AsyncGenerator<string, void, unknown>,
 ): Response {
@@ -716,7 +715,7 @@ documentsRouter.get("/api/documents/:doc_id", (c) => {
   return c.json(modelDump(doc));
 });
 
-// updateDocument opts: snake_case keys mirroring the pydantic fields; only keys
+// updateDocument opts: snake_case keys mirroring the schema validation fields; only keys
 // present in the request body are forwarded (model_dump(exclude_unset=True)).
 type UpdateDocumentOpts = {
   title?: string | null;
@@ -745,7 +744,7 @@ documentsRouter.put("/api/documents/:doc_id", async (c) => {
   for (const key of keys) {
     if (key in body) (update as Dict)[key] = body[key];
   }
-  // Type/length checks mirroring the pydantic model.
+  // Type/length checks mirroring the model.
   if ("title" in update && update.title !== null && update.title !== undefined) {
     optStr(update, "title", 300);
   }
@@ -978,7 +977,7 @@ interface UploadedFile {
   filename: string;
 }
 
-// FastAPI UploadFile → Hono/undici File from multipart form data.
+// an uploaded file → Hono/undici File from multipart form data.
 async function uploadedFile(c: {
   req: { parseBody: () => Promise<Record<string, unknown>> };
 }): Promise<UploadedFile> {
@@ -1277,7 +1276,7 @@ documentsRouter.get("/api/documents/:doc_id/threads", async (c) => {
   if (!storage.docExists(pageId)) {
     httpError(404, "Page not found");
   }
-  // FastAPI: request.app.state.store
+  // The document store lives on app state.
   const state = await appState();
   const store = state.store as
     | { get?: (id: string) => Dict | null }

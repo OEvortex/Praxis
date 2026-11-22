@@ -13,7 +13,6 @@ import { get_state, put_state } from "../../store/database.js";
 import { get_co_writer_storage } from "./storage.js";
 import type { CoWriterStorage } from "./storage.js";
 
-// ^ anchors at string start (no `m` flag), matching Python's \A.
 const _FRONTMATTER = /^---\s*\n([\s\S]*?)\n---\s*\n?/;
 const _INDEX_KEY = "notes/index";
 

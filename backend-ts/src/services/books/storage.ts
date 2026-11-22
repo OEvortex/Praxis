@@ -97,7 +97,7 @@ export function read_json<T = unknown>(path: string): T | null {
   }
 }
 
-// ── coercion helpers (pydantic model_validate equivalents) ────────────────
+// ── coercion helpers (model_validate equivalents) ────────────────
 
 function asRecord(v: unknown): Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v)

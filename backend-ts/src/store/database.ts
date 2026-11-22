@@ -164,7 +164,7 @@ export function connect(settings: Settings): DatabaseSync {
   try {
     connection.exec("PRAGMA journal_mode=WAL");
   } catch {
-    // ignore — same as Python's OperationalError pass
+    // ignore — same as the OperationalError pass
   }
   connection.exec("PRAGMA busy_timeout=30000");
   connection.exec("PRAGMA synchronous=NORMAL");
@@ -177,7 +177,7 @@ export function ensure_tables(settings: Settings): void {
   const path = database_path(settings);
   if (_TABLES_READY.has(path) && existsSync(path)) return;
   // Node is single-threaded and every step here is synchronous, so the
-  // Python threading.Lock is unnecessary.
+  // A lock is unnecessary.
   if (_TABLES_READY.has(path) && existsSync(path)) return;
   const connection = connect(settings);
   try {

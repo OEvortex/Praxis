@@ -1,5 +1,4 @@
-// HTTP client for the MarginNote 4 device bridge — port of the wire protocol
-// in deeptutor/api/routers/marginnote4.py.
+// HTTP client for the MarginNote 4 device bridge.
 //
 // Upstream the MN4 Add-on is the *caller* and DeepTutor the server; this TS
 // backend has no MN4 routes yet (src/api is out of scope), so the client lets

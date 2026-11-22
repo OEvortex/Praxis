@@ -5,7 +5,7 @@
 // kept in `doc_extras` and binary attachments in `doc_assets`. Page snapshots
 // live in `document_versions`.
 //
-// Method names keep the Python snake_case surface so sibling ported modules
+// Method names keep the snake_case surface so sibling ported modules
 // (routes, proposals, noteui) can call them unchanged.
 
 import { randomUUID } from "node:crypto";
@@ -20,7 +20,6 @@ import {
   validate_blocks as validateBlocks,
 } from "./blocks.js";
 
-// proposals.ts is ported lazily in Python (`from .proposals import ...` inside
 // update_document); mirror that with a lazy require so a missing module does
 // not break block saves.
 import { createRequire } from "node:module";
@@ -89,7 +88,7 @@ const MAX_VERSIONS_PER_DOCUMENT = 100;
 const VERSION_COALESCE_SECONDS = 300;
 
 // ---------------------------------------------------------------------------
-// Schema (mirrors the document tables in backend/app/store/database.py).
+// Schema for the document tables.
 // ---------------------------------------------------------------------------
 
 let _tablesReady = false;
@@ -210,7 +209,7 @@ function buildPreview(content: string, limit = 160, title = ""): string {
 }
 
 // ---------------------------------------------------------------------------
-// Model (de)serialisation — pydantic model_validate equivalents
+// Model (de)serialisation — model_validate equivalents
 // ---------------------------------------------------------------------------
 
 const ID_RE = /^[0-9a-f]{8,32}$/;
@@ -380,7 +379,6 @@ export class CoWriterStorage {
 
   /**
    * Serialise writers. Node is single-threaded and every storage operation is
-   * synchronous (node:sqlite), so the Python RLock has no contention to guard;
    * the queue below keeps the same serialisation contract for any future
    * async caller.
    */
@@ -681,7 +679,6 @@ export class CoWriterStorage {
         source = "save",
         ...metadata
       } = opts;
-      // Tolerate camelCase callers; the Python name is expected_revision.
       const expectedRevision =
         expected_revision ??
         (metadata["expectedRevision"] as number | null | undefined) ??
@@ -757,7 +754,7 @@ export class CoWriterStorage {
       document.updated_at = Date.now() / 1000;
       this._write(document, source);
       if (blocks !== null) {
-        // Python: from .proposals import refresh_review_anchors (lazy).
+        // Refresh review anchors lazily.
         const proposals = _loadProposals();
         const refresh =
           (proposals?.["refresh_review_anchors"] ??
@@ -854,7 +851,6 @@ export function getCoWriterStorage(): CoWriterStorage {
   return store;
 }
 
-// snake_case alias mirroring the Python name for callers that keep it.
 export const get_co_writer_storage = getCoWriterStorage;
 
 export {

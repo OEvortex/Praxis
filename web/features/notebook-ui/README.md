@@ -26,8 +26,8 @@ still shows the result.
 | `NotebookNotifications.tsx` | Always-on SSE listener that delivers background-job completions even after the turn ended. |
 | `notebook-live.css` | Styling for the live card. |
 
-Back end: `backend/app/agent/notebook_agent/` and the `notebook` tool in
-`backend/app/agent/dt_tools.py`.
+Back end: `backend-ts/src/agent/notebook_agent/` and the `notebook` tool in
+`backend-ts/src/agent/dt_tools.ts`.
 
 ## Tests
 

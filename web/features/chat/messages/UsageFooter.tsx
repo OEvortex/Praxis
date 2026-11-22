@@ -22,7 +22,14 @@ export function UsageFooter({ turn, session }: { turn: UsageSummary; session: Us
     notation: 'compact',
     maximumFractionDigits: 1,
   })
-  const tokenFigure = compact.format(turn.total_tokens ?? 0)
+  // A turn's headline is what the model produced; the 17k prompt tokens that
+  // come back with every reply are context, not output. The session scope still
+  // reports the cumulative total.
+  const tokenFigure = compact.format(turn.completion_tokens ?? 0)
+  const headline =
+    scope === 'turn'
+      ? { label: "Output tokens", value: number(shown.completion_tokens) }
+      : { label: "Total tokens", value: number(shown.total_tokens) }
   const hitFigure = rate(turn.cache_hit_rate)
   const seconds = (n?: number | null) =>
     n == null ? '—' : `${n.toFixed(2)} s`
@@ -82,6 +89,11 @@ export function UsageFooter({ turn, session }: { turn: UsageSummary; session: Us
   }, [open])
 
   const rows = [
+    // Keep ten rows in both scopes: the headline already shows output tokens
+    // for a turn, so show the request total there instead of a duplicate.
+    ...(scope === 'turn'
+      ? ([["Total tokens", number(shown.total_tokens)]] as string[][])
+      : []),
     ["Input tokens", number(shown.prompt_tokens)],
     ["Uncached input", number(uncached)],
     ["Cache read", cacheKnown ? number(shown.cache_read_input_tokens) : '—'],
@@ -89,7 +101,9 @@ export function UsageFooter({ turn, session }: { turn: UsageSummary; session: Us
       "Cache write",
       number(summary.cache_write_reported_calls ? summary.cache_creation_input_tokens : null),
     ],
-    ["Output tokens", number(shown.completion_tokens)],
+    ...(scope === 'session'
+      ? ([["Output tokens", number(shown.completion_tokens)]] as string[][])
+      : []),
     ["Reasoning tokens", number(shown.reasoning_tokens)],
     ["Cache hit rate", rate(shown.cache_hit_rate)],
     ["Model time", seconds(shown.duration_seconds)],
@@ -112,14 +126,14 @@ export function UsageFooter({ turn, session }: { turn: UsageSummary; session: Us
         aria-expanded={open}
         aria-controls={id}
         aria-haspopup="dialog"
-        aria-label={`${tokenFigure} ${"tokens"}, ${"Cache hit rate"} ${hitFigure}`}
+        aria-label={`${tokenFigure} ${"output tokens"}, ${"Cache hit rate"} ${hitFigure}`}
         onClick={() => setOpen(!open)}
         className="inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] tabular-nums text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--primary)] [@container(max-width:240px)]:gap-2 [@container(max-width:240px)]:px-2"
       >
         <span className="inline-flex items-center gap-1">
           <Coins size={12} strokeWidth={1.8} aria-hidden="true" />
           {tokenFigure}
-          <span className="[@container(max-width:240px)]:hidden">{"tokens"}</span>
+          <span className="[@container(max-width:240px)]:hidden">{"output tokens"}</span>
         </span>
         <span className="inline-flex items-center gap-1">
           <DatabaseZap size={12} strokeWidth={1.8} aria-hidden="true" />
@@ -174,9 +188,9 @@ export function UsageFooter({ turn, session }: { turn: UsageSummary; session: Us
               </button>
             </div>
             <div className="mb-2 flex items-baseline justify-between border-b border-[var(--border)] pb-2">
-              <span className="font-medium">{"Total tokens"}</span>
+              <span className="font-medium">{headline.label}</span>
               <span className="text-base font-semibold tabular-nums">
-                {number(shown.total_tokens)}
+                {headline.value}
               </span>
             </div>
             <dl className="space-y-1.5">

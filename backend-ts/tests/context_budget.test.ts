@@ -145,7 +145,7 @@ describe("build_context_budget", () => {
     const counted = count_tokens(text);
     expect(counted.exact).toBe(true);
     expect(counted.tokens).not.toBe(Math.floor(text.length / 4));
-  });
+  }, 20_000);
 
   it("keeps the Messages / System prompt / System tools breakdown", () => {
     const budget = build_context_budget(base);

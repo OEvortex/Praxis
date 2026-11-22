@@ -1,7 +1,6 @@
 // Sub-agent dispatcher bridge — the TS stand-in for vtx's
 // ``vtx.agent.dispatcher`` + ``vtx.agent.tools.task`` machinery.
 //
-// Python flow (vtx SDK):
 //   * ``vtx.agent.dispatcher.get_context()`` returns a contextvars-held
 //     ``DispatcherContext`` snapshot (provider/model/cwd/session) installed by
 //     the ConversationRuntime on every turn.

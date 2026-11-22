@@ -129,7 +129,6 @@ function extractLimits(data) {
     for (const [modelId, modelInfo] of Object.entries(models)) {
       if (!modelInfo || typeof modelInfo !== "object") continue;
       const limit = modelInfo.limit;
-      // Python `if not limit` skips both missing and empty dicts.
       if (
         !limit ||
         typeof limit !== "object" ||

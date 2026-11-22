@@ -1,11 +1,9 @@
 // Markdown <-> DOCX
 // conversion for Co-Writer interchange.
 //
-// python-docx is replaced by a minimal in-house OOXML implementation:
 //   * a small ZIP reader/writer built on node:zlib (store + deflate),
 //   * a small XML parser sufficient for wordprocessingML,
 //   * a hand-rolled .docx writer emitting the same document structure
-//     python-docx produces (styles.xml, numbering.xml, document.xml,
 //     document.xml.rels).
 
 import { deflateRawSync, inflateRawSync } from "node:zlib";
@@ -242,7 +240,6 @@ function _listZipMembers(data: Uint8Array): ZipInfo[] {
     const name = new TextDecoder().decode(
       data.subarray(p + 46, p + 46 + nameLen)
     );
-    // python: ``if not info.is_dir()`` — directory entries are skipped.
     if (!name.endsWith("/")) {
       members.push({ name, method, compressedSize, fileSize, localHeaderOffset });
     }
@@ -631,7 +628,6 @@ function relTargetMap(rels: XNode | null): Map<string, string> {
 }
 
 function paragraphPlainText(p: XNode): string {
-  // Concatenation of all w:t descendants (what python-docx .text approximates).
   let out = "";
   const walk = (node: XNode) => {
     for (const c of node.children) {
@@ -793,7 +789,6 @@ function inlineContentToMarkdown(
 }
 
 function cellText(cell: XNode): string {
-  // python-docx cell.text covers the cell's direct paragraphs.
   const paras = childElements(cell, "p");
   const text = paras
     .map((p) => paragraphPlainText(p).trim())
@@ -809,7 +804,6 @@ function tableRows(table: XNode): XNode[] {
     if (!isEl(child)) continue;
     const ln = localName(child.tag);
     if (ln === "tr") rows.push(child);
-    // nested w:tbl subtrees are skipped (python-docx row.cells also treats
     // the outer table only).
   }
   return rows;
@@ -913,7 +907,7 @@ type DocxInline = DocxRun | DocxHyperlink;
 interface DocxParagraph {
   styleId?: string;
   runs: DocxInline[];
-  hyperlinks: DocxHyperlink[]; // python-docx appends hyperlinks at paragraph end
+  hyperlinks: DocxHyperlink[];
 }
 interface DocxTable {
   rows: string[][];
@@ -1030,7 +1024,6 @@ function leadingIndent(line: string): number {
 }
 
 function listStyleId(base: "ListBullet" | "ListNumber", indent: number): string {
-  // python-docx: "List Bullet"/"List Bullet 2"/"List Bullet 3" (indent<=2).
   const suffix = indent <= 0 ? "" : String(indent + 1);
   return base + suffix;
 }
@@ -1197,7 +1190,6 @@ function addHyperlink(
   const id = nextId();
   const link: DocxHyperlink = { text, url, id };
   hyperlinks.push({ id, url });
-  // python-docx appends the hyperlink element at the end of the paragraph.
   p.hyperlinks.push(link);
 }
 
@@ -1387,7 +1379,6 @@ function paragraphXml(p: DocxParagraph): string {
   const runs = p.runs.map((r) => runXml(r)).join("");
   const links = p.hyperlinks
     .map((h) => {
-      // python-docx appends hyperlink elements at the end of the paragraph.
       return (
         `<w:hyperlink r:id="${h.id}" r:history="1">` +
         runXml({ text: h.text }, true) +

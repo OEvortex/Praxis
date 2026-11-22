@@ -22,7 +22,6 @@ import {
   walk_blocks,
 } from "../../services/documents/blocks.js";
 
-// TODO(verify): Python does lazy `from .. import dt_tools` / `kb_tools` inside
 // shared_tools(); both modules are ported — accessed loosely in case export
 // names differ (snake_case vs camelCase).
 import * as dt_tools from "../dt_tools.js";
@@ -32,7 +31,7 @@ import * as kb_tools from "../kb_tools.js";
 import { register_tool } from "../../shared/vtx.js";
 
 // ---------------------------------------------------------------------------
-// Local structural types (mirror the pydantic models / storage row shapes)
+// Local structural types (mirror the wire models / storage row shapes)
 // ---------------------------------------------------------------------------
 
 // TODO(verify): replace with exported types from services/documents/* once
@@ -123,12 +122,10 @@ function isRevisionConflict(err: unknown): boolean {
 }
 
 function has_blocks(doc: CoWriterDocumentLike): boolean {
-  // Python truthiness: a non-empty blocks list is required ("" / [] / None all falsy).
   return Array.isArray(doc.blocks) && doc.blocks.length > 0;
 }
 
 function countOccurrences(haystack: string, needle: string): number {
-  // Python str.count semantics, including count("") == len + 1.
   if (needle === "") return haystack.length + 1;
   let count = 0;
   let i = 0;
@@ -146,7 +143,6 @@ function replaceFirstLiteral(s: string, oldStr: string, newStr: string): string 
   return s.slice(0, i) + newStr + s.slice(i + oldStr.length);
 }
 
-// Python repr() approximation for error messages (JSON.stringify ≈ !r).
 function pyRepr(s: string): string {
   return JSON.stringify(s);
 }
@@ -726,7 +722,6 @@ export function writer_tools(): BaseTool[] {
 }
 
 export function shared_tools(): BaseTool[] {
-  // TODO(verify): Python returns [dt_tools.web, dt_tools.paper_search,
   // kb_tools.knowledge_base_search]; tolerate camelCase export names too.
   const dt = dt_tools as unknown as Record<string, any>;
   const kb = kb_tools as unknown as Record<string, any>;

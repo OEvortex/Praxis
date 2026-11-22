@@ -1,5 +1,4 @@
 // Minimal YAML subset for Obsidian frontmatter — port of the PyYAML
-// round-trip the Python vault used, narrowed to what frontmatter actually
 // contains: flat/nested maps, scalar lists, quoted and plain scalars,
 // comments, inline `[a, b]` / `{k: v}` flow collections, `|`/`>` block
 // scalars (with `-`/`+` chomping and indent indicators), and `&anchor` /

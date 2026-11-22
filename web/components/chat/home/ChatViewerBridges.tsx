@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import type { SessionViewerPanelHandle } from "@/components/chat/home/SessionViewerPanel";
 import { useGeogebraTabOpener } from "@/context/GeogebraTabContext";
-import { useQuizFollowupController } from "@/context/QuizFollowupContext";
+import { useOptionalQuizFollowupController } from "@/context/QuizFollowupContext";
 
 /** Connect in-message Quiz/GeoGebra actions to a surface's shared viewer. */
 export function ChatViewerBridges({
@@ -12,10 +12,11 @@ export function ChatViewerBridges({
 }: {
   viewerPanelRef: React.MutableRefObject<SessionViewerPanelHandle | null>;
 }) {
-  const quiz = useQuizFollowupController();
+  const quiz = useOptionalQuizFollowupController();
   const geogebra = useGeogebraTabOpener();
 
   useEffect(() => {
+    if (!quiz) return;
     quiz.setOpenTabHandler((context) => {
       viewerPanelRef.current?.openQuizFollowupTab(context);
     });

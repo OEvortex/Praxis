@@ -192,7 +192,7 @@ export async function requestBlob(
 }
 
 /**
- * Parse a response, throwing FastAPI's ``detail`` as the message on failure.
+ * Parse a response, throwing the API's ``detail`` as the message on failure.
  *
  * The status line alone ("500 Internal Server Error") tells a reader nothing;
  * the backend's own detail is what names the actual problem. Callers wanting

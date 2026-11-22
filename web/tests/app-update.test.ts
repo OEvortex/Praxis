@@ -134,7 +134,7 @@ test("failed version checks notify compact status surfaces", async () => {
   assert.deepEqual(signals, ["Unable to check for updates"]);
 });
 
-test("app update client preserves FastAPI error details", async () => {
+test("app update client preserves API error details", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () =>
     new Response(

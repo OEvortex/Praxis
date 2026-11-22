@@ -13,7 +13,7 @@
  * Each client gets its own controller and event queue, so events are scoped to
  * the client that issued the command.
  *
- * NOTE: the Python source is SSE-only (no WebSocket endpoint); the `ws`
+ * NOTE: the original implementation is SSE-only (no WebSocket endpoint); the `ws`
  * dependency is not needed here. The channel/subscription logic
  * (judge/books/mastery/progress channels, seq-based event replay, post-done
  * grace forwarding) is ported faithfully below.
@@ -539,7 +539,6 @@ export class ClientSession {
       });
     }
     // A frame resolving at the same tick as settled/timeout still goes out
-    // (Python emitted ``getter.result()`` whenever the getter was done).
     await Promise.resolve();
     if (got !== undefined) {
       const v = got;
@@ -738,7 +737,6 @@ interface AppStateLike {
 let cachedHub: RealtimeHub | null = null;
 
 /**
- * Resolve the shared hub. ``request.app.state.realtime`` in Python maps to
  * ``appState.realtime`` exported by main.ts; resolved lazily to avoid a
  * static import cycle (main.ts imports this router). Mirrors handlers.ts.
  */
@@ -842,7 +840,6 @@ realtimeRouter.delete("/api/realtime/clients/:client_id", async (c) => {
   return c.json({ closed: true });
 });
 
-// Re-export for parity with Python's ``client_for(request)``.
 export async function clientFor(): Promise<RealtimeHub> {
   return hubFor();
 }

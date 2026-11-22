@@ -398,7 +398,7 @@ export async function retryKnowledgeBase(
  * Deletes by name in the body, not in the path.
  *
  * A name registered before the `register_*` methods validated one can contain
- * a `/`. uvicorn decodes `%2F` back to a separator before routing, so the
+ * a `/`. The server decodes `%2F` back to a separator before routing, so the
  * path route cannot match such a name and answers 404 — leaving a KB that is
  * listed but not removable from the UI. A body has no such limit, so this is
  * the one delete that reaches every registered entry.

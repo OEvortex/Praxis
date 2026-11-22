@@ -3,7 +3,7 @@
  *
  * The pipeline is two passes: a cheap **scan** that lists projects/sessions for
  * selection, and a full **parse** of only the chosen sessions into the
- * {@link NormalizedSession} shape that mirrors the backend Pydantic models.
+ * {@link NormalizedSession} shape that mirrors the backend wire models.
  */
 
 /** Provider whose local folder or exported chat history we know how to read. */

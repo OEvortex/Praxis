@@ -15,7 +15,6 @@
 
 import { AsyncLocalStorage } from "node:async_hooks";
 
-// TODO(verify): Python uses logging.getLogger(__name__); no logger module is
 // ported yet — console.error is the closest equivalent.
 const logger = {
   exception: (msg: string, err?: unknown) =>
@@ -27,7 +26,6 @@ type BroadcastFn = (frame: Record<string, unknown>) => Promise<void> | void;
 let _broadcast: BroadcastFn | null = null;
 let _runtime: any = null; // TODO(verify): AgentRuntime type once src/agent/runtime.ts lands
 
-// Python contextvars.ContextVar("dt_notebook_turn", default=None).
 // Node equivalent: AsyncLocalStorage. Tokens emulate ContextVar.set/reset.
 const _turnStorage = new AsyncLocalStorage<any>();
 
@@ -57,7 +55,6 @@ export function reset_current_turn(token: any): void {
     const prev = token && typeof token === "object" ? (token as { prev?: unknown }).prev : undefined;
     _turnStorage.enterWith(prev);
   } catch {
-    // best effort, mirrors Python's (ValueError, RuntimeError) guard
   }
 }
 
@@ -118,7 +115,6 @@ export function progress_callback(tool_call_id: string, payload: Record<string, 
       subagent: "co-writer",
     },
   };
-  // Python: loop.create_task(_emit_progress(...)) — fire and forget.
   // Node has no get_running_loop check; _emit_progress never rejects.
   void _emit_progress(runtime, turn, content, meta);
 }
@@ -130,7 +126,6 @@ async function _emit_progress(
   meta: Record<string, any>,
 ): Promise<void> {
   try {
-    // TODO(verify): lazy import mirrors Python's function-level
     // `from ..runtime import AgentRuntime`.
     const { AgentRuntime } = await import("../runtime.js");
     const event = AgentRuntime._stream_event(turn, "progress", {

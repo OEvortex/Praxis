@@ -9,9 +9,8 @@
 // date for all-day events, the UTC instant (`%Y-%m-%dT%H:%M:%SZ`) for timed
 // ones. Exdates and override rows refer to instances by this key.
 //
-// NOTE: the Python version delegates RRULE evaluation to dateutil.rrule. This
+// NOTE: the original implementation delegates RRULE evaluation to dateutil.rrule. This
 // port re-implements the subset used here (HOURLY..YEARLY, all BYxxx parts)
-// dependency-free. Behaviour was differentially tested against python-dateutil
 // 2.9; exotic combinations (BYWEEKNO edge cases, BYSETPOS across month
 // boundaries) may still deviate — see TODO markers below.
 
@@ -320,7 +319,6 @@ export function parse_rule(value: string, strict = true): RuleParts {
   }
   if ("UNTIL" in parts) parse_until(parts.UNTIL);
   if (strict) validate_by_parts(parts);
-  // Reorder: FREQ first (Python returns {"FREQ": ..., **parts}).
   const { FREQ, ...rest } = parts;
   return { FREQ, ...rest };
 }
@@ -663,7 +661,6 @@ function days_of_month(y: number, mo: number): number[] {
 /**
  * Days generated inside one monthly-style period for (y, mo).
  * BYMONTHDAY and BYDAY combine by intersection (verified against
- * python-dateutil: MONTHLY;BYMONTHDAY=10;BYDAY=MO yields the 10ths that are
  * Mondays; adding an ordinal BYDAY intersects to (usually) empty).
  */
 function monthly_days(ctx: RuleContext, y: number, mo: number): number[] {
@@ -931,7 +928,6 @@ export class Timing {
   private rule_parts(): RuleParts {
     // Lenient: stored rules were validated on write, but Timing must also
     // tolerate rules dateutil accepts that parse_rule rejects (e.g. COUNT and
-    // UNTIL together) — the Python Timing feeds rrulestr directly.
     if (!this._ruleParts) this._ruleParts = parse_rule(this.rrule as string, false);
     return this._ruleParts;
   }

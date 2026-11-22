@@ -1,6 +1,5 @@
 // Pure-TS bcrypt port (vendored bcrypt.js 2.4.3 algorithm, Apache-2.0).
-// Upstream deeptutor/services/auth.py uses Python `bcrypt` ($2b$ hashes);
-// this wrapper exposes the same hash/verify contract without a native dep.
+// Exposes the bcrypt ($2b$ hash) contract without a native dependency.
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import bcryptUntyped from "./bcryptjs.js";
 
@@ -17,7 +16,7 @@ bcrypt.setRandomFallback((len: number) =>
   Array.from(randomBytes(len) as unknown as ArrayLike<number>),
 );
 
-const BCRYPT_COST = 12; // matches Python bcrypt.gensalt() default
+const BCRYPT_COST = 12;
 
 export function hashPassword(plain: string): string {
   return bcrypt.hashSync(plain, bcrypt.genSaltSync(BCRYPT_COST));

@@ -107,7 +107,7 @@ interface QuoteSpan {
 
 function findQuoteSpan(text: string, selector: TextQuoteSelector): QuoteSpan | null {
   const words = selector.exact.split(/\S+/).filter(Boolean);
-  // Python: re.findall(r"\S+", exact) then join with \s+
+  // Split on whitespace and rejoin.
   const parts = selector.exact.match(/\S+/g) ?? [];
   if (!parts.length) return null;
   const pattern = new RegExp(parts.map(escapeRe).join("\\s+"));
@@ -115,7 +115,7 @@ function findQuoteSpan(text: string, selector: TextQuoteSelector): QuoteSpan | n
   if (!match) return null;
   const span = { start: match.index, end: match.index + match[0].length };
   if (quoteContextMatches(text, span, selector)) return span;
-  // Python tries every match and returns the first context match.
+  // Try every match and return the first context match.
   let m: RegExpExecArray | null;
   const global = new RegExp(pattern.source, "g");
   while ((m = global.exec(text)) !== null) {
@@ -156,7 +156,7 @@ function escapeRe(s: string): string {
 }
 
 // Conservative Markdown → rendered-text projection for quote grounding.
-// TODO: port deeptutor.services.session.selection_grounding.rendered_markdown_text
+// TODO: implement selection_grounding.rendered_markdown_text
 // faithfully (KaTeX-aware). This approximation strips inline markup so quotes
 // taken from the rendered view still resolve.
 export function renderedMarkdownText(unitText: string): string {

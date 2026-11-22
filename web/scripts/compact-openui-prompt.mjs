@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const generatedDir = resolve(here, "../lib/openui/generated");
-const backendPrompt = resolve(here, "../../backend/app/agent/openui_prompt.txt");
+const backendPrompt = resolve(here, "../../backend-ts/src/agent/openui_prompt.txt");
 
 const MARKER = "## Function Reference";
 const SECTION = "## Built-in Functions";

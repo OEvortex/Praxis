@@ -40,16 +40,13 @@ const _now = (): number => Date.now() / 1000;
 /**
  * Replicates ``json.dumps(value, sort_keys=True)`` closely enough for stable
  * card hashing: sorted keys, ``, ``/``: `` separators, ensure_ascii escaping.
- * TODO(verify): Python distinguishes int/float on round-trip (``1`` vs ``1.0``);
  * JSON.parse collapses both to JS numbers, so float-valued card fields may
- * hash differently than in Python.
  */
 function py_dumps(value: unknown): string {
   if (value === null || value === undefined) return "null";
   if (typeof value === "boolean") return value ? "true" : "false";
   if (typeof value === "number") {
     if (!Number.isFinite(value)) return "null";
-    // Python repr-style for floats that are integral: json.dumps(1.0) == "1.0".
     // JSON.parse already lost the distinction, so emit JS shortest form.
     return String(value);
   }

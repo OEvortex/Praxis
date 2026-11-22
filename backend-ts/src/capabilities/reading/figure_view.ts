@@ -25,7 +25,7 @@ import { bindMaterial, resolveBinding } from "./mode.js";
 // capped so a media-heavy material does not answer one typo with a wall of
 // file names.
 const FIGURE_NAME_LIST_LIMIT = 20;
-/** Mirrors deeptutor.utils.document_images.MAX_IMAGE_BYTES. */
+/** Maximum accepted image size. */
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 /** Mirrors image_description_limits() default timeout. */
 const VISION_TIMEOUT_MS = 60_000;

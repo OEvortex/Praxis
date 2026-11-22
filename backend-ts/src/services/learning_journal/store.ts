@@ -385,7 +385,6 @@ export class LearningJournalStore {
 
   private mutate(mutator: (journal: LearningJournal) => JournalWriteResult): JournalWriteResult {
     const path = this.journalPath();
-    // Node is single-threaded and every step is synchronous, so the Python
     // threading.Lock + fcntl.flock pair collapses to a plain read-modify-write.
     const journal = this.load();
     journal.updated_at = utcNow();

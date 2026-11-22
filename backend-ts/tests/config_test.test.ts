@@ -1,7 +1,7 @@
 // draft catalog resolution and
 // provider request shaping for the Settings "Test this model" probe.
 //
-// Differences from the Python version:
+// Differences from the original implementation:
 // * ``_request_parts`` is private in the TS module, so the request-shape
 //   assertions go through ``completeWithConfig`` with a stubbed ``fetch``.
 // * ``context_window_for`` cannot be monkey-patched (module-local call), so the

@@ -1,11 +1,11 @@
 /**
- * NoteUI Lang — TypeScript port of the backend compiler
- * (backend/app/services/documents/noteui.py). A ```noteui fence in page
+ * NoteUI Lang — the backend compiler (backend-ts/src/services/documents/noteui.ts).
+ * A ```noteui fence in page
  * Markdown holds a small openui-style program that compiles to BlockNote
  * blocks, so live drafts, legacy imports and previews render the same rich
  * content the backend produces for nb_patch writes.
  *
- * Keep this file in sync with the Python original: same components, same
+ * Keep this file in sync with the backend implementation: same components, same
  * @functions, same syntax.
  */
 

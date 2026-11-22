@@ -430,7 +430,6 @@ function isDstAt(tz: string, utcMs: number): boolean {
   return tzOffsetMs(tz, utcMs) > std;
 }
 
-// Python calls .dst()/.tzname() on the zoned datetime; expose small wrappers
 // used by vtimezone.
 function isDst(tz: string, utcMs: number): boolean {
   return isDstAt(tz, utcMs);
@@ -456,5 +455,5 @@ function wallMsFrom(y: string | number, mo: string | number, d: string | number,
   return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(s));
 }
 
-// silence unused-import warnings for helpers kept for parity with the Python API
+// silence unused-import warnings for helpers kept for parity with the original API
 void wallToUtc;

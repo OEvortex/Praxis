@@ -2,7 +2,7 @@
 // servers, credential references, the vendored catalog, and Test probes.
 //
 // Persistence: the shared kv store / ext_items in the canonical DB (the
-// Python version used JSON files under data/system). Secrets live under a
+// original implementation used JSON files under data/system). Secrets live under a
 // dedicated kv namespace so they never appear in config payloads.
 
 import { readFileSync } from "node:fs";

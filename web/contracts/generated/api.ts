@@ -3648,7 +3648,6 @@ export interface paths {
      *
      *     ``retrieval_profile`` is what is *configured*; ``effective_retrieval_profile``
      *     is what would actually run — a hybrid configuration degrades to vector-only
-     *     when the BM25 package is missing (e.g. Python 3.14 installs, #1792).
      */
     readonly get: operations["get_llamaindex_pipeline_config_api_knowledge_bases_rag_pipelines_llamaindex_config_get"];
     /**
@@ -8714,7 +8713,6 @@ export interface paths {
      *     Runs the engine's downloader console script (``docling-tools models
      *     download``) as a background subprocess; progress is polled via the shared job
      *     status endpoint. The engine must be in ``ENGINE_MODEL_DOWNLOADERS`` and its
-     *     script reachable next to the server's python or on PATH.
      */
     readonly post: operations["start_document_parsing_model_download_api_settings_document_parsing_models_download_post"];
     readonly delete?: never;

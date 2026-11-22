@@ -1,6 +1,5 @@
 // Shared WebSocket upgrade dispatcher for the node http.Server returned by
-// serve() in main.ts. Upstream deeptutor mounts every WS endpoint under /ws
-// (see deeptutor/modules/manifests/*.json route prefixes):
+// serve() in main.ts. Every WS endpoint is mounted under /ws:
 //
 //   /ws                        → unified turn protocol (unified_ws.py)
 //   /ws/questions/judge        → AI quiz judge      (quiz_judge.py)
@@ -51,8 +50,7 @@ function loadMastery() {
 const KB_PROGRESS_RE = /^\/ws\/knowledge-bases\/([^/]+)\/progress$/;
 const PARTNER_WS_RE = /^\/ws\/partners\/([^/]+)$/;
 const PARTNER_GROUP_WS_RE = /^\/ws\/partner-groups\/([^/]+)$/;
-// Route-table marker (scripts/route-table-upstream.mjs scans for quoted
-// literals): the live path is "/ws/knowledge-bases/{kb_name}/progress".
+// The live path is "/ws/knowledge-bases/{kb_name}/progress".
 const KB_PROGRESS_WS_PATH = "/ws/knowledge-bases/:kb_name/progress";
 void KB_PROGRESS_WS_PATH;
 

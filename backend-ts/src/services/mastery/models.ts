@@ -1,9 +1,9 @@
 // the Mastery Path aggregate shapes.
 //
-// Upstream these are pydantic models; here the persisted state is plain JSON
+// Upstream these are wire models; here the persisted state is plain JSON
 // (the store round-trips ``state_json`` verbatim), so the "models" are
 // TypeScript interfaces plus the default/fill logic that makes a partially
-// populated record behave like the pydantic defaults did.
+// populated record behave like the defaults did.
 
 export type KnowledgeType = "memory" | "concept" | "procedure" | "design";
 export const KNOWLEDGE_TYPES: KnowledgeType[] = [

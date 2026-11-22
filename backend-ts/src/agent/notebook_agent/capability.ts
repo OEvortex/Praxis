@@ -23,10 +23,10 @@ const MAX_TURNS = 60;
 // ---------------------------------------------------------------------------
 // vtx SDK bridge
 //
-// TODO(verify): the Python module lazily imports `vtx.agent.dispatcher`
+// TODO(verify): the original module lazily imports `vtx.agent.dispatcher`
 // (`get_context`), `vtx.agent.tools.task` (`SubagentSpec`,
 // `resolve_subagent_runner`), `vtx.agent.background` (`get_manager`) and
-// `vtx.core` (`UserMessage`). The vtx SDK is Python-only — same seam as
+// `vtx.core` (`UserMessage`). The vtx SDK is not available in TypeScript — same seam as
 // src/agent/video_lesson/capability.ts. These helpers isolate the gap so the
 // rest of the port stays faithful.
 // ---------------------------------------------------------------------------

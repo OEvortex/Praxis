@@ -76,7 +76,6 @@ function splitInlineMath(input: string): MathSegment[] {
     const char = input[i];
 
     // Code spans and fences are literal: a formula-looking `$` in a snippet of
-    // Python is not maths.
     if (char === "`") {
       const fence = input.startsWith("```", i);
       const token = fence ? "```" : "`";

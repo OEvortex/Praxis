@@ -23,14 +23,13 @@ export const calendarRouter = new Hono();
 const UNSAFE = /[^\w.\- ]+/g;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// -- error mapping (Python `errors()` context manager) ------------------------
 
 function mapError(e: unknown): never {
   if (e instanceof HTTPException) throw e;
   const name = e instanceof Error ? e.name : "";
   const message = e instanceof Error ? e.message : String(e);
   // TODO(verify): depends on how the ported store/models signal
-  // KeyError / pydantic ValidationError / ValueError.
+  // KeyError / validation errors / ValueError.
   if (name === "KeyError" || name === "NotFoundError" || name === "CalendarNotFound") {
     throw new HTTPException(404, { message: "Calendar item not found." });
   }
@@ -68,7 +67,6 @@ function bounds(start: string, end: string, tz: string): [number, number] {
     zone(tz);
     const span = last - first;
     if (!(span > 0) || span > 400 * DAY_MS) {
-      // Named so mapError maps it to 400 like Python's ValueError.
       const e = new Error("Choose a range between one second and 400 days.");
       e.name = "ValueError";
       throw e;
@@ -237,7 +235,6 @@ calendarRouter.delete("/api/calendar/automations/:job_id", async (c) => {
   const jobId = c.req.param("job_id");
   const job = await withErrorsAsync(() => service.getJob(jobId));
   const owner = job?.owner as { kind?: string; workspace_id?: string } | undefined;
-  // CronOwner.key is a @property in Python; the port computes it via
   // ownerKey(owner) in services/cron/service.ts — equivalent comparison.
   const key = job ? cronOwnerKey(job.owner) : "";
   if (

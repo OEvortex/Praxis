@@ -5,11 +5,11 @@
 // — the days the learner actually studied — are derived from session
 // transcripts.
 //
-// NOTE: the Python version imports the reviews/cron/session services lazily
+// NOTE: the original implementation imports the reviews/cron/session services lazily
 // inside try/except so a broken store degrades to empty layers. The TS port
 // keeps those stores behind static imports plus the same try/except
 // degradation inside each helper; `read_layers` is async to match the
-// Python signature.
+// original signature.
 
 import { get_settings } from "../../config.js";
 import type { Settings } from "../../config.js";

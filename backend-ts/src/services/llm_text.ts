@@ -197,7 +197,7 @@ export async function completeText(
   return cleanThinkingTags(chunks.join(""));
 }
 
-// snake_case aliases mirroring the Python module surface.
+// snake_case aliases mirroring the module surface.
 export const clean_thinking_tags = cleanThinkingTags;
 export const stream_text = streamText;
 export const complete_text = completeText;

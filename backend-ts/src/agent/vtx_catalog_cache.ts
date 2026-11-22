@@ -20,7 +20,7 @@
  * Nothing here changes what a lookup returns — the fast path applies the same
  * predicate, in the same order, to the same table.
  *
- * NOTE(TS port): vtx is a Python-only SDK, so there is no module to monkeypatch
+ * NOTE(TS port): vtx is not available in TypeScript, so there is no module to monkeypatch
  * at import time. Both installers accept the vtx-internal object to patch
  * explicitly (structurally typed); with no argument they are no-ops. The caching
  * logic itself is ported 1:1 so it can be applied to a compatible object (tests,
@@ -65,7 +65,7 @@ let _installed = false;
 
 /**
  * Memoise + de-quadratic ``context_length_manager.get_limits`` (idempotent).
- * Mirrors the Python implementation: exact hit → memo → normalised-substring
+ * Mirrors the original implementation: exact hit → memo → normalised-substring
  * scan over a per-table-size index.
  */
 export function install_context_limit_cache(

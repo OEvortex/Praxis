@@ -327,9 +327,8 @@ function serveAttachment(c: Context, sessionId: string, attachmentId: string, fi
   });
 }
 
-// Literal upstream shape first so the route-table diff sees
-// GET /files/attachments/{session_id}/{attachment_id}/{filename:path}; the
-// wildcard below remains for nested filenames.
+// Literal path with the filename captured as a wildcard; nested filenames are
+// supported by the remaining path segment below.
 mediaRouter.get("/files/attachments/:session_id/:attachment_id/*", (c) => {
   const filename = c.req.path.split(`/files/attachments/${c.req.param("session_id")}/${c.req.param("attachment_id")}/`)[1] ?? "";
   return serveAttachment(c, c.req.param("session_id") ?? "", c.req.param("attachment_id") ?? "", decodeURIComponent(filename));

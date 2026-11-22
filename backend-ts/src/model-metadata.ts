@@ -3,7 +3,6 @@
 // vtx resolves model limits/efforts from the models.dev catalog
 // (https://models.dev/api.json), cached at ~/.vtx/models_dev_limits.json and
 // parsed by `ContextLengthManager._parse_limits`. The TS backend has no vtx
-// Python runtime, so the parsed table is vendored as `model-metadata.json`
 // (generated from the same models.dev payload vtx caches; see the header of
 // the generator output for provenance) and looked up here with the same
 // semantics:
@@ -70,7 +69,6 @@ function _load(): void {
       row,
     };
     _rows.push(indexed);
-    // Last write wins on duplicates, matching the Python dict assignment;
     // insertion position (first occurrence) is preserved for fuzzy order.
     _exact.set(id, row);
   }

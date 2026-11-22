@@ -1351,8 +1351,7 @@ export function releaseBooksChannel(clientKey: string): void {
   }
 }
 
-// Tag book chat sessions — thin port of deeptutor/book/chat_sessions.py.
-// (Kept in a sibling module to keep this file focused.)
+// Tag book chat sessions. (Kept in a sibling module to keep this file focused.)
 void tag_book_chat_session;
 void get_book_stream;
 void get_book_bus;

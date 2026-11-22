@@ -105,7 +105,7 @@ function _turnCount(turns: unknown): number {
 // -- helpers -------------------------------------------------------------------
 
 function httpError(c: Context, status: number, detail: string) {
-  // FastAPI error shape: {"detail": ...}
+  // error shape: {"detail": ...}
   return c.json({ detail }, status as never);
 }
 
@@ -242,7 +242,6 @@ handlersRouter.get("/api/sessions/search", async (c) => {
   const limit = Math.min(Math.max(qInt(c, "limit", 50), 1), 500);
   const offset = Math.max(qInt(c, "offset", 0), 0);
   const res = (await store.search(q, limit, offset)) as unknown;
-  // TODO(port): search() may return [hits, total] (Python tuple) or an object.
   let hits: AnyRecord[];
   let total: number;
   if (Array.isArray(res)) {
@@ -1020,7 +1019,6 @@ async function workspaceSystemSnapshot(c: Context) {
     }
     return c.json(await workspaceSnapshot(_settings()));
   } catch (e) {
-    // Python catches (WorkspaceError, OSError, ValueError) -> 409.
     if (isWorkspaceError(e) || e instanceof Error) {
       return httpError(c, 409, String((e as Error).message ?? e));
     }
@@ -1241,7 +1239,6 @@ handlersRouter.get("/api/sessions/:session_id/threads", (c) =>
 // ==========================================================================
 
 // Map the old ``ext/<dir>/<kind>`` path segments to one SQLite collection.
-// Mirrors Python: all parts except the last, joined by "/".
 function _collection(...parts: string[]): string {
   return parts.length > 1 ? parts.slice(0, -1).join("/") : parts[0] ?? "misc";
 }
@@ -1479,7 +1476,7 @@ handlersRouter.get(
       ) ?? null;
     }
     if (hit === null) {
-      // FastAPI raises HTTPException(204|404, detail="not found").
+      // A missing resource yields 204 or 404.
       if (missingOk) return new Response(null, { status: 204 });
       return httpError(c, 404, "not found");
     }

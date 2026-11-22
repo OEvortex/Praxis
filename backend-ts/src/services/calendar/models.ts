@@ -3,7 +3,7 @@
 // *exclusive* end date, timed events carry UTC instants on the wire and local
 // wall time in `tzid` in storage.
 //
-// Pydantic validators are ported as explicit validate/parse functions that
+// Validators are ported as explicit validate/parse functions that
 // throw Error on invalid input; the interfaces are the wire/storage shapes.
 
 import {
@@ -357,7 +357,7 @@ export interface CalendarOk {
   ok: boolean;
 }
 
-// ── Input validation (pydantic model_validate equivalents) ───────────────────
+// ── Input validation (model_validate equivalents) ───────────────────
 
 const EVENT_INPUT_FIELDS = new Set([
   "calendar_id", "title", "notes", "location", "all_day", "start", "end",

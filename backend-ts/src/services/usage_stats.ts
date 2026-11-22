@@ -2,7 +2,6 @@
 // `GET /api/settings/usage`. vtx records provider-reported token usage on every
 // assistant message; we reconstruct one `usage_turns` row per model call.
 //
-// Differences from Python: zoneinfo is replaced by Intl-based timezone
 // helpers; everything else maps onto store/database.connect(settings).
 import type { DatabaseSync } from "node:sqlite";
 import type { Settings } from "../config.js";

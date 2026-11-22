@@ -7,7 +7,7 @@
 //    (``current_session_id`` context var / ctx.sessionId), instead of the
 //    ``_mastery_path_id`` / ``_mastery_session_mode`` kwargs the upstream
 //    loop capability injected. ``paramsSchema`` JSON schemas replace the
-//    pydantic ToolParameter lists; descriptions are verbatim ports.
+//    ToolParameter lists; descriptions are verbatim ports.
 //  * ``ensure_mode`` gating happens at call time via mode.ts, exactly like
 //    upstream — every tool is mounted every turn.
 //  * The deterministic engine lives in engine.ts; LLM judgement (semantic

@@ -29,7 +29,6 @@ const BUILD_TIMEOUT_S = 600;
 const INSTALL_TIMEOUT_S = 900;
 const RENDER_TIMEOUT_S = 180;
 
-// Simple async mutex for the one-time npm install (Python: asyncio.Lock).
 let installLock: Promise<void> = Promise.resolve();
 function withInstallLock<T>(fn: () => Promise<T>): Promise<T> {
   const run = installLock.then(fn, fn);

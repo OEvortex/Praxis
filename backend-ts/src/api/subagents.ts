@@ -223,7 +223,6 @@ subagentsRouter.post("/api/subagents/connections/:name/message", async (c) => {
       try {
         // Real consult: spawn the backend CLI non-interactively and stream
         // its output as text events. This is the same trust model as the
-        // Python consult() path (bypassPermissions / dontAsk defaults).
         const { spawn } = await import("node:child_process");
         const cfg: BackendConfig = backend_config(load_subagent_settings(), kind);
         const args = buildConsultArgs(kind, cfg, message, cwd);

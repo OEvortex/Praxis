@@ -50,7 +50,6 @@ export function utcNow(): string {
 export type UserRecord = Record<string, unknown>;
 
 // Node is single-threaded and every mutation below is synchronous, so the
-// Python threading.Lock collapses to nothing — read-modify-write cannot
 // interleave within one process.
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -1,9 +1,8 @@
 // generates concise
 // summaries for notebook records (favorites).
 //
-// Prompts live under deeptutor/agents/notebook/prompts/en/summarize_agent.yaml
-// upstream; inlined here verbatim so the summarizer never hard-codes prompt
-// strings at the call site.
+// Prompts are inlined here so the summarizer never hard-codes prompt strings
+// at the call site.
 
 import { get_settings } from "../../config.js";
 import { cleanThinkingTags, streamText } from "../../services/llm_text.js";

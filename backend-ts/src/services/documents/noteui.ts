@@ -25,7 +25,6 @@ export class NoteUIError extends Error {
 }
 
 // ---------------------------------------------------------------------------
-// Python-semantics helpers
 // ---------------------------------------------------------------------------
 
 type AnyDict = Record<string, any>;
@@ -40,7 +39,6 @@ function pyGet(o: any, key: string, def: any): any {
   return def;
 }
 
-/** Python truthiness. */
 function pyTruthy(v: any): boolean {
   if (v === null || v === undefined || v === false) return false;
   if (typeof v === "number") return v !== 0 && !Number.isNaN(v);
@@ -50,21 +48,18 @@ function pyTruthy(v: any): boolean {
   return true;
 }
 
-/** number|boolean -> number, else null (Python isinstance (int,float) incl. bool). */
 function pyNumOrNull(v: any): number | null {
   if (typeof v === "number") return v;
   if (typeof v === "boolean") return v ? 1 : 0;
   return null;
 }
 
-/** number|boolean -> number, else throw (Python numeric operand requirement). */
 function pyNumReq(v: any): number {
   const n = pyNumOrNull(v);
   if (n === null) throw new TypeError("unsupported operand type(s)");
   return n;
 }
 
-/** Python float(): bool->1/0, number->itself, numeric string parsed, else throw. */
 function pyFloat(v: any): number {
   if (typeof v === "number") return v;
   if (typeof v === "boolean") return v ? 1 : 0;
@@ -82,7 +77,6 @@ function pyFloat(v: any): number {
   throw new Error("float() argument must be a string or a number");
 }
 
-/** Python int(): truncates floats, parses integer strings, else throw. */
 function pyInt(v: any): number {
   if (typeof v === "boolean") return v ? 1 : 0;
   if (typeof v === "number") {
@@ -97,7 +91,6 @@ function pyInt(v: any): number {
   throw new Error("int() argument must be a string, a bytes-like object or a real number");
 }
 
-/** Python str() for container-ish values (repr of elements inside). */
 function pyRepr(v: any): string {
   if (v === null || v === undefined) return "None";
   if (typeof v === "boolean") return v ? "True" : "False";
@@ -118,7 +111,6 @@ function pyRepr(v: any): string {
   return String(v);
 }
 
-/** Python str(value). */
 function pyStr(v: any): string {
   if (v === null || v === undefined) return "None";
   if (typeof v === "boolean") return v ? "True" : "False";
@@ -144,7 +136,6 @@ function dslStr(v: any): string {
   return pyStr(v);
 }
 
-/** Python ``==`` (deep for lists/dicts, bool==number coercion). */
 function pyEq(a: any, b: any): boolean {
   if (a === undefined) a = null;
   if (b === undefined) b = null;
@@ -168,7 +159,6 @@ function pyEq(a: any, b: any): boolean {
   return false;
 }
 
-/** Ordering comparison; throws TypeError on incomparable types like Python. */
 function pyCompare(op: string, l: any, r: any): boolean {
   const ln = pyNumOrNull(l);
   const rn = pyNumOrNull(r);
@@ -194,14 +184,12 @@ function pyCompare(op: string, l: any, r: any): boolean {
   }
 }
 
-/** Python ``a % b`` (sign of divisor), for numbers. */
 function pyMod(a: number, b: number): number {
   const r = a % b;
   if (r !== 0 && (r < 0) !== (b < 0)) return r + b;
   return r;
 }
 
-/** Python non-string ``+``: numbers, list concat, dict merge; else TypeError. */
 function pyAdd(l: any, r: any): any {
   if (Array.isArray(l) && Array.isArray(r)) return [...l, ...r];
   if (isPlainObj(l) && isPlainObj(r)) return { ...l, ...r };
@@ -211,7 +199,6 @@ function pyAdd(l: any, r: any): any {
   throw new TypeError("unsupported operand type(s) for +");
 }
 
-/** Python ``*``: numbers, or sequence repetition by int. */
 function pyMul(l: any, r: any): any {
   const ln = pyNumOrNull(l);
   const rn = pyNumOrNull(r);
@@ -1230,7 +1217,7 @@ function strftime(fmt: string, d: Date): string {
       case "B": return MONTHS_FULL[d.getUTCMonth()];
       case "b": return MONTHS_SHORT[d.getUTCMonth()];
       case "A": {
-        const wd = (d.getUTCDay() + 6) % 7; // Python weekday(): Monday=0
+        const wd = (d.getUTCDay() + 6) % 7;
         return DAYS_FULL[wd];
       }
       case "a": {
@@ -1261,7 +1248,6 @@ function fixedGrouped(v: number, d: number): string {
   return (neg ? "-" : "") + grouped + fracPart;
 }
 
-/** Python f"{v:g}" — 6 significant digits. */
 function pyG(v: number): string {
   if (v === 0) return "0";
   if (!Number.isFinite(v)) return String(v);
@@ -1410,7 +1396,6 @@ function fnGroupBy(args: any[]): any {
   return out;
 }
 
-/** sorted() key comparator; throws on unorderable mixed types like Python. */
 function cmpKeys(x: any, y: any): number {
   const xn = pyNumOrNull(x);
   const yn = pyNumOrNull(y);
@@ -1429,7 +1414,6 @@ function fnFilter(args: any[]): any {
   for (const row of rows) {
     if (!isPlainObj(row)) continue;
     const val = pyGet(row, field, null);
-    // Python builds this dict eagerly: every comparison runs (and may throw).
     const isNum = pyNumOrNull(val) !== null;
     const okMap: Record<string, boolean> = {
       "==": pyEq(val, want),
@@ -1559,7 +1543,6 @@ function fnStats(args: any[]): any {
 }
 
 function pyRound(v: number, n = 0): number {
-  // Python round(): half-to-even.
   const f = 10 ** n;
   const x = v * f;
   const fl = Math.floor(x);
@@ -1588,7 +1571,6 @@ function guardArgs(args: any[]): any[] {
 
 const _FUNCTIONS: Record<string, (a: any[]) => any> = {
   // Lists
-  // NB: Python ``len(a)`` here is len(args) — args is always a list.
   Count: (a) => a.length,
   First: (a) => (Array.isArray(a[0]) && a[0].length ? a[0][0] : null),
   Last: (a) => (Array.isArray(a[0]) && a[0].length ? a[0][a[0].length - 1] : null),
@@ -1609,7 +1591,7 @@ const _FUNCTIONS: Record<string, (a: any[]) => any> = {
   },
   IndexOf: (a) => {
     if (!Array.isArray(a[0])) return -1;
-    const needle = a[1]; // IndexError if missing, like Python's `a[1] in a[0]`
+    const needle = a[1];
     return a[0].findIndex((x) => pyEq(x, needle));
   },
   Take: (a) => {
@@ -1714,7 +1696,7 @@ const _FUNCTIONS: Record<string, (a: any[]) => any> = {
     if (a.length > 1 && pyTruthy(a[1])) {
       items = pluck(a[0], pyStr(a[1]));
     } else {
-      items = Array.isArray(a[0]) ? a[0] : [a[0]]; // a[0] IndexError if empty, like Python
+      items = Array.isArray(a[0]) ? a[0] : [a[0]];
     }
     const sep = a.length > 2 ? pyStr(a[2]) : ", ";
     return items
@@ -1954,7 +1936,6 @@ function evalNode(node: Node, env: Map<string, any>): any {
 }
 
 // ---------------------------------------------------------------------------
-// Python-compatible json.dumps (ensure_ascii=False, default separators)
 // ---------------------------------------------------------------------------
 
 /** json.dumps(v, ensure_ascii=False) — ", " / ": " separators unless compact. */

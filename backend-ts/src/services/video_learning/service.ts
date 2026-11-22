@@ -917,7 +917,7 @@ export async function testInvidiousConnection(
   }
 }
 
-// snake_case aliases mirroring the Python module surface.
+// snake_case aliases mirroring the module surface.
 export const parse_timestamp = parseTimestamp;
 export const parse_youtube_url = parseYoutubeUrl;
 export const normalize_cues = normalizeCues;

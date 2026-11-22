@@ -62,7 +62,7 @@ const DEFAULTS: Required<
 
 /**
  * Which knobs each backend kind actually honors — the editor renders from this
- * table instead of per-kind branches. Mirrors what the Python backend reads:
+ * table instead of per-kind branches. Mirrors what the backend reads:
  * e.g. Claude Code / Antigravity / Grok use `permission_mode`, only Codex has its
  * sandbox family, kimi/hermes/opencode/mimo take the `auto_approve` switch.
  */

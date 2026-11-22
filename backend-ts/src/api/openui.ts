@@ -53,21 +53,18 @@ const wikiCache = new BoundedCache<unknown>(500);
 // -- helpers -----------------------------------------------------------------
 
 function words(text: string): string[] {
-  // Python re.split(r"[^\w]+", text.lower()) — \w is unicode-aware there.
   return text
     .toLowerCase()
     .split(/[^\p{L}\p{N}_]+/u)
     .filter((w) => w.length > 3);
 }
 
-/** Python f"{n:g}" — 6 significant digits, trailing zeros stripped. */
 function fmtG(n: number): string {
   if (!Number.isFinite(n)) return String(n);
   if (n === 0) return "0";
   const exp = Math.floor(Math.log10(Math.abs(n)));
   let s: string;
   if (exp < -4 || exp >= 6) {
-    // %e style; Python pads exponent to two digits ("1e-05"), JS does not.
     s = n
       .toExponential(5)
       .replace(/(\.\d*?)0+e/, "$1e")
@@ -187,7 +184,6 @@ openuiRouter.get("/api/openui/image-search", async (c) => {
 
 /**
  * Parse ``lng,lat;lng,lat;...`` into 2–25 valid finite coordinate pairs.
- * Returns null on any malformed pair (mirrors Python's None).
  */
 export function parseCoords(coords: string): [number, number][] | null {
   const rawPairs = coords ? coords.split(";") : [];
@@ -198,7 +194,6 @@ export function parseCoords(coords: string): [number, number][] | null {
     if (parts.length !== 2) return null;
     const lng = Number(parts[0]);
     const lat = Number(parts[1]);
-    // Number("") is 0 — guard like Python float() which rejects empty strings.
     if (parts[0].trim() === "" || parts[1].trim() === "") return null;
     if (
       !Number.isFinite(lng) ||

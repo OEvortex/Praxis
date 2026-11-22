@@ -1,6 +1,6 @@
 // built-in cron service:
 // scheduled tasks for chat, with a WAL SQLite repository and an in-process
-// scheduler (the Python version used asyncio; here it is a Node timer loop).
+// scheduler (the original implementation used asyncio; here it is a Node timer loop).
 import { randomBytes } from "node:crypto";
 import { join } from "node:path";
 import type { Settings } from "../../config.js";
@@ -124,7 +124,6 @@ export function cronJobFromDict(data: Record<string, unknown>): CronJob {
   };
 }
 
-// Python ``dataclasses.asdict(job)`` — deep-plain-object serialization.
 function jobToDict(job: CronJob): CronPayload {
   return JSON.parse(JSON.stringify(job)) as CronPayload;
 }

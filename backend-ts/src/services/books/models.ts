@@ -1,6 +1,6 @@
 // data models for the Book Engine.
 //
-// Pydantic ``model_dump(mode="json")`` maps to plain JSON objects here; the
+// schema validation ``model_dump(mode="json")`` maps to plain JSON objects here; the
 // models are interfaces plus small helpers. Enum values are kept as string
 // unions / const objects so serialized payloads match upstream exactly.
 
@@ -179,7 +179,7 @@ export interface Chapter {
   page_ids: string[];
   summary: string;
   order: number;
-  // Extra keys the upstream pydantic model allows (extra="allow") — e.g.
+  // Extra keys the upstream model allows (extra="allow") — e.g.
   // ``auto_overview`` / ``deep_dive`` markers — ride along here.
   [k: string]: unknown;
 }
@@ -278,7 +278,7 @@ export interface Page {
   error: string;
   created_at: number;
   updated_at: number;
-  // Upstream stores this as a pydantic extra on user-added section pages.
+  // Upstream stores this as a extra on user-added section pages.
   section?: boolean;
   [k: string]: unknown;
 }

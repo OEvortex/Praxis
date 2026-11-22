@@ -73,7 +73,7 @@ export const PROVIDER_ICONS: Readonly<Record<string, ProviderIconSpec>> = {
   xiaomi_mimo: { file: "xiaomimimo.svg", mono: true },
   zhipu: { file: "zhipu-color.svg" },
 
-  // Praxis's built-in LLM provider catalog (backend/app/provider_catalog.json).
+  // Praxis's built-in LLM provider catalog (backend-ts/src/provider-catalog.json).
   aerolink: { file: "aerolink.png" },
   airouter: { file: "airouter.png" },
   apertis: { file: "apertis.ico" },

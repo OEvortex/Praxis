@@ -12,7 +12,7 @@ import {
   co_writer_tools,
   is_co_writer_turn,
 } from "./co_writer.js";
-// Upstream chat capabilities (deeptutor/capabilities/*) ported as agent tools.
+// Chat capabilities exposed as agent tools.
 import { MASTERY_TOOLS } from "../capabilities/mastery/index.js";
 import { READING_TOOLS } from "../capabilities/reading/index.js";
 import { SOLVE_TOOLS } from "../capabilities/solve/index.js";
@@ -26,7 +26,6 @@ import { MARGINNOTE_TOOLS } from "../capabilities/marginnote4/index.js";
 import { SUBAGENT_EXT_TOOLS } from "../capabilities/subagent_ext/index.js";
 import { propose_partner, invoke_other } from "../capabilities/partners/tools.js";
 import { notes_tools } from "../capabilities/notes/index.js";
-// Side effect in Python: keep params named "title" in the model-facing tool
 // schema. The TS shim is a no-op without a vtx module, but keep the import for
 // parity with modules that install it explicitly.
 import "./_vtx_compat.js";

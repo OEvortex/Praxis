@@ -8,6 +8,7 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  type ComponentProps,
 } from "react";
 
 import dynamic from "@/shared/router/dynamic";
@@ -18,6 +19,7 @@ import ViewerLauncher, {
 import ConsultationTabBody from "@/components/chat/home/ConsultationTabBody";
 import QuizFollowupTabBody from "@/components/quiz/QuizFollowupTabBody";
 import {
+  QuizFollowupProvider,
   type QuizFollowupTabContext,
   useOptionalQuizFollowupController,
 } from "@/context/QuizFollowupContext";
@@ -921,13 +923,13 @@ function SessionViewerPanelInner(
             sessionId={sessionId}
           />
         ) : activeTab?.kind === "quiz-followup" ? (
-          <QuizFollowupTabBody
+          <QuizFollowupTabBodyScoped
             key={activeTab.context.questionKey}
             context={activeTab.context}
             resourceCatalog={resourceCatalog}
           />
         ) : activeTab?.kind === "side-chat" ? (
-          <QuizFollowupTabBody
+          <QuizFollowupTabBodyScoped
             key={activeTab.context.questionKey}
             context={activeTab.context}
             resourceCatalog={resourceCatalog}
@@ -986,6 +988,20 @@ function SessionViewerPanelInner(
       </div>
     </div>
   );
+}
+
+/**
+ * QuizFollowupTabBody needs a QuizFollowupController. Surfaces that mount
+ * this panel without a QuizFollowupProvider (tests, embeds) still get a
+ * working thread via a local provider; where one exists we reuse it so
+ * state stays shared with the QuizViewer badge.
+ */
+function QuizFollowupTabBodyScoped(
+  props: ComponentProps<typeof QuizFollowupTabBody>,
+) {
+  const outer = useOptionalQuizFollowupController();
+  const body = <QuizFollowupTabBody {...props} />;
+  return outer ? body : <QuizFollowupProvider>{body}</QuizFollowupProvider>;
 }
 
 const ScopedViewerPanel = forwardRef(SessionViewerPanelInner);

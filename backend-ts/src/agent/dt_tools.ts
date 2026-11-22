@@ -1,5 +1,5 @@
 // Praxis's built-in tools as
-// vtx ``BaseTool`` classes. Pydantic param models become TS interfaces plus
+// vtx ``BaseTool`` classes. param models become TS interfaces plus
 // JSON-schema ``params`` objects with the same field descriptions.
 
 import { mkdir, readdir, readFile, rm, stat, unlink, writeFile } from "node:fs/promises";
@@ -368,7 +368,6 @@ export class MasteryTool extends BaseTool<MasteryParams> {
 export const mastery = new MasteryTool();
 
 // ---------------------------------------------------------------------------
-// video / notebook (lazy imports mirror the Python local imports)
 // ---------------------------------------------------------------------------
 export interface VideoParams { query: string; title?: string }
 export const videoParamsSchema: ToolParamsSchema = { type: "object", required: ["query"], properties: {

@@ -76,7 +76,6 @@ function deepCopy<T>(value: T): T {
   return value === undefined ? value : (JSON.parse(JSON.stringify(value)) as T);
 }
 
-/** Python ``str(value)[:300]``-ish preview for outline rows. */
 function previewText(value: unknown): string {
   const text =
     typeof value === "string" ? value : JSON.stringify(value ?? "");

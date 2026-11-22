@@ -7,7 +7,6 @@
 //
 // TS port notes:
 //  - Upstream keeps a dedicated ``session_handoff.sqlite3`` under AUTH_DIR and
-//    encrypts tickets with python-jose (JWE dir + A256GCM). Here the records
 //    live in the shared Praxis database (own tables, created lazily) and the
 //    JWE is implemented directly on node:crypto — same compact serialization:
 //    ``b64(header)."".b64(iv).b64(ct).b64(tag)`` with alg=dir, enc=A256GCM and
@@ -179,7 +178,6 @@ function _jwe_key(): Buffer {
 const _b64u = (buf: Buffer | string): string =>
   Buffer.from(buf as never).toString("base64url");
 
-/** JWE compact serialization, alg=dir enc=A256GCM (python-jose compatible). */
 export function encrypt_ticket_payload(payload: Record<string, unknown>): string {
   const plaintext = Buffer.from(JSON.stringify(payload), "utf8");
   try {

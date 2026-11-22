@@ -5,12 +5,10 @@
  *
  *
  * TS port notes:
- *  - Python introspected the function signature + type hints to build a pydantic
  *    params model. TypeScript cannot; tool functions declare their schema via an
  *    optional static ``paramsSchema`` (a JSON-schema object) which is used
  *    verbatim. Functions without one get an empty object schema — TODO(verify)
  *    that sibling tool ports attach ``paramsSchema`` where the model needs args.
- *  - Python splatted ``params.model_dump()`` as ``**kwargs``; TS tool functions
  *    take a single params object, so ``execute`` passes it through directly.
  */
 
@@ -27,7 +25,7 @@ export interface ToolParamsSchemaSource {
 
 export interface ToolFunction {
   (params: Record<string, unknown>, ctx?: Ctx): unknown;
-  /** Optional JSON schema for the model-facing params (replaces pydantic introspection). */
+  /** Optional JSON schema for the model-facing params (replaces schema introspection). */
   paramsSchema?: ToolParamsSchemaSource;
   name?: string;
   description?: string;
@@ -112,7 +110,6 @@ export class FunctionTool extends BaseTool<Record<string, unknown>> {
 export interface ToolDecoratorOptions {
   mutating?: boolean;
   toolIcon?: string;
-  /** Python-style alias for toolIcon. */
   tool_icon?: string;
 }
 

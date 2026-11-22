@@ -40,7 +40,7 @@ const SQLITE_MAGIC = Buffer.from("SQLite format 3\0", "latin1");
 
 function sleepMs(ms: number): void {
   // Sync sleep for the migration lock (constructor is synchronous, matching
-  // the Python API). Atomics.wait is available on the Node main thread.
+  // the original API). Atomics.wait is available on the Node main thread.
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
@@ -59,7 +59,6 @@ export class SQLiteCronRepository implements CronRepository {
   }
 
   // -- migration lock -------------------------------------------------------
-  // Python used fcntl.flock/msvcrt.locking on an open file handle. Node has no
   // flock; emulate with an exclusive-create lockfile + stale-PID retry.
   // TODO: replace with a proper inter-process lock (e.g. proper-lockfile)
   // if cron repositories are ever opened concurrently across processes.

@@ -582,7 +582,6 @@ function generateTaskId(taskType: string, taskKey: string): string {
 }
 
 function simpleHash(text: string): string {
-  // Stable stand-in for Python's hash() (which is process-salted anyway).
   let h = 0;
   for (let i = 0; i < text.length; i++) {
     h = (h * 31 + text.charCodeAt(i)) | 0;

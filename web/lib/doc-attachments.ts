@@ -28,7 +28,7 @@ const OFFICE_EXTS = [".pdf", ".docx", ".xlsx", ".pptx"] as const;
 
 /**
  * Text-like formats — decoded server-side with multi-encoding fallback.
- * Mirrors `FileTypeRouter.TEXT_EXTENSIONS` in the Python codebase. Adding
+ * Mirrors `FileTypeRouter.TEXT_EXTENSIONS` in the backend. Adding
  * a new extension here without also adding it to the backend will cause
  * the upload to be silently dropped.
  */
@@ -81,7 +81,6 @@ export const TEXT_LIKE_EXTS = [
   // Web frameworks
   ".vue",
   ".svelte",
-  // Python
   ".py",
   // JVM languages
   ".java",
@@ -271,7 +270,6 @@ const CODE_EXTS = new Set([
   ".tsx",
   ".vue",
   ".svelte",
-  // Python
   ".py",
   // JVM
   ".java",

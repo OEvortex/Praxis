@@ -11,7 +11,7 @@
  * session. Sessions created outside that context stay in memory (still no vtx
  * files) — that covers sub-agents and other incidental Session.create() calls.
  *
- * TS port notes: vtx's pydantic entry models are represented as plain
+ * TS port notes: vtx's entry models are represented as plain
  * type-tagged JSON objects; ``model_validate``/``model_dump`` map to
  * ``validateEntry``/identity. The persistence hook names are kept snake_case to
  * mirror the vtx ``Session`` overrides 1:1.
@@ -35,7 +35,7 @@ export interface SessionStoreLike {
 
 // -- vtx session entry types ---------------------------------------------------
 // vtx.agent.session entry models, flattened to plain JSON objects. The `type`
-// discriminator mirrors the pydantic ``type`` literal on each entry class.
+// discriminator mirrors the ``type`` literal on each entry class.
 
 export interface VtxSessionEntry {
   type: string;
@@ -70,10 +70,9 @@ const ENTRY_TYPES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Minimal stand-in for pydantic ``model_validate``: accepts a plain object
+ * Minimal stand-in for schema validation ``model_validate``: accepts a plain object
  * with a known ``type`` and string ``id``, returns it as a session entry.
  * Returns null (and the caller skips) on anything malformed — same as the
- * Python ``except Exception: continue`` path.
  */
 function validateEntry(data: unknown): VtxSessionEntry | null {
   if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
@@ -136,7 +135,6 @@ export class PraxisSession {
     this._dt_store = context ? context[0] : null;
     this._dt_record = context ? context[1] : null;
     // Persistence is handled by the overrides below, not by vtx's file I/O.
-    // (Python passes kwargs["persist"] = True to super().__init__.)
     this._load_from_record();
   }
 

@@ -74,7 +74,7 @@ it('counts snapshots once, preserves merged turns and old usage', () => {
 })
 it('opens details, switches scope and requests, dismisses with Escape', () => {
   render(<UsageFooter turn={turn} session={combineUsage([turn, other])} />)
-  const trigger = screen.getByRole('button', { name: /140 tokens/ })
+  const trigger = screen.getByRole('button', { name: /40 output tokens/ })
   expect(trigger).not.toHaveTextContent('$')
   fireEvent.click(trigger)
   const panel = screen.getByRole('dialog')
@@ -91,7 +91,7 @@ it('opens details, switches scope and requests, dismisses with Escape', () => {
 })
 it('keeps unknown cache unknown and closes on outside pointer', () => {
   render(<UsageFooter turn={{ total_tokens: 50 }} session={{ total_tokens: 50 }} />)
-  fireEvent.click(screen.getByRole('button', { name: /50 tokens/ }))
+  fireEvent.click(screen.getByRole('button', { name: /0 output tokens/ }))
   expect(screen.getAllByText('—').length).toBeGreaterThan(0)
   fireEvent.pointerDown(document.body)
   expect(screen.queryByRole('dialog')).toBeNull()

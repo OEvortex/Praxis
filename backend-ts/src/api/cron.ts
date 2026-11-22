@@ -31,7 +31,7 @@ function workspace(c: Context): string {
   return value || "";
 }
 
-// -- CreateJob (pydantic: extra="forbid") --------------------------------------
+// -- CreateJob (schema validation: extra="forbid") --------------------------------------
 
 interface CreateJobBody {
   message: string;
@@ -110,9 +110,7 @@ function buildSchedule(payload: CreateJobBody): CronSchedule {
     badRequest("Provide exactly one of: at, every_seconds or cron_expr.");
   }
   if (payload.at.trim()) {
-    // Python datetime.fromisoformat; JS Date parses ISO 8601. A bare date
     // ("2026-06-12") is UTC midnight in JS but local midnight after
-    // astimezone() in Python — append T00:00:00 to match. A space separator
     // ("2026-06-12 09:00") is also accepted by fromisoformat.
     // TODO(verify): confirm the ported runtime treats naive ISO as local time.
     let text = payload.at.trim();
@@ -189,7 +187,6 @@ function queryLimit(c: Context, fallback = 20): number {
 }
 
 // -- routes ---------------------------------------------------------------------
-// NOTE: Python mounts this router without a prefix; paths are absolute.
 
 cronRouter.get("/api/cron/jobs", (c) => {
   const service = getCronService();
@@ -217,7 +214,6 @@ cronRouter.post("/api/cron/jobs", async (c) => {
   } catch (e) {
     if (e instanceof HTTPException) throw e;
     // validateSchedule/addJob raise plain Errors for bad schedules;
-    // Python mapped ValueError -> 400.
     throw new HTTPException(400, { message: e instanceof Error ? e.message : String(e) });
   }
   return c.json({ job: jobPayload(job as CronJobLike), ok: true }, 201);
@@ -228,7 +224,6 @@ cronRouter.delete("/api/cron/jobs/:job_id", (c) => {
   const jobId = c.req.param("job_id");
   const job = service.getJob(jobId);
   const owner = job?.owner as { kind?: string; workspace_id?: string } | undefined;
-  // Python compares job.owner.key (a property) to owner_key(); the port
   // exposes ownerKey(owner) — same computation.
   const key = job ? jobOwnerKey(job.owner) : "";
   if (
@@ -271,7 +266,6 @@ cronRouter.post("/api/reviews/:key/grade", (c) => {
     const card = grade(key, correct);
     return c.json({ ok: true, card });
   } catch (e) {
-    // TODO(verify): Python mapped KeyError -> 404; the ported grade() throws a
     // plain Error with an "unknown review key" message.
     if (e instanceof Error && /unknown review key/i.test(e.message)) {
       throw new HTTPException(404, { message: "Review card not found." });

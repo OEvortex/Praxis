@@ -7,7 +7,6 @@
  * as tool arguments (the model must never choose them). ``AgentRuntime.start_turn``
  * sets them before it creates the turn task.
  *
- * Python ``contextvars.ContextVar`` is emulated with ``AsyncLocalStorage`` +
  * ``enterWith``: ``set`` returns a token and ``reset`` restores the previous
  * value. Because ``enterWith`` swaps the store for the *current* async context
  * only, async resources created earlier (e.g. a previous turn's task) keep their

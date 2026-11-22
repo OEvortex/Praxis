@@ -28,7 +28,7 @@ import { NotebookSummarizeAgent } from "../agent/notebook/summarize_agent.js";
 
 const coWriterRouter = new Hono();
 
-// ── HTTP error plumbing (FastAPI HTTPException equivalent) ───────────────
+// ── HTTP error plumbing (HTTP error equivalent) ───────────────
 
 class HttpError extends Error {
   constructor(public status: StatusCode, public detail: unknown) {

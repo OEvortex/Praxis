@@ -1,7 +1,7 @@
 // run a due cron job for its
-// owner (a Praxis chat session). The AgentRuntime is Python-only; it is
+// owner (a Praxis chat session). The AgentRuntime is not available in TypeScript; it is
 // injected via setRuntime() and accessed through a minimal structural
-// interface mirroring the attributes the Python code touches.
+// interface mirroring the attributes the original code touches.
 import type { CronJob } from "./service.js";
 import { record as recordReport } from "./reports.js";
 

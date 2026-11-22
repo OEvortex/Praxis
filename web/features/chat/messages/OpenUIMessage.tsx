@@ -15,7 +15,7 @@ import { resolveTheme, getStoredThemePreference, subscribeToThemeChanges } from 
 /**
  * Renders an assistant turn written in OpenUI Lang as live components inside
  * the main chat, instead of Markdown. The model is instructed to emit UI
- * programs (see backend/app/agent/prompt.py), which stream into msg.content.
+ * programs (see backend-ts/src/agent/prompt.ts), which stream into msg.content.
  *
  * Every answer goes through here. A reply that begins with a sentence of prose
  * before `root = …` is split so the program still renders (and the prose is

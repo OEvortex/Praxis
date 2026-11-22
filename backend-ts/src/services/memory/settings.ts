@@ -140,7 +140,7 @@ export function memory_settings_dict(): Dict {
   return { ...load_memory_settings() } as Dict;
 }
 
-// snake_case aliases mirroring the Python module surface.
+// snake_case aliases mirroring the module surface.
 export const loadMemorySettings = load_memory_settings;
 export const saveMemorySettings = save_memory_settings;
 export const memorySettingsDict = memory_settings_dict;

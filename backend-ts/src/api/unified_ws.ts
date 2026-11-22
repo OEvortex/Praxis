@@ -1,7 +1,7 @@
 // the unified WebSocket turn
 // protocol at /ws. The TS realtime hub is SSE+REST (realtime.ts); this adds
 // the upstream WS transport on top of the SAME ClientSession command handler,
-// so every command type the Python socket accepts works identically: frames
+// so every command type the original socket accepts works identically: frames
 // produced by ClientSession.handle are forwarded verbatim as WS text frames.
 //
 // @hono/node-server has no WS upgrade helper, so this module exports

@@ -1,9 +1,7 @@
 /**
- * Per-turn wiring for the upstream chat-loop capabilities
- * (``deeptutor/capabilities/*`` LoopExtension hooks).
+ * Per-turn wiring for the chat-loop capabilities.
  *
- * Port of the pipeline-side calls in
- * ``deeptutor/agents/loop/pipeline.py``:
+ * Pipeline-side calls:
  *
  *   * ``_capability_system_blocks``  → ordered prompt blocks appended to the
  *     system prompt (upstream places them after the foundation blocks, before

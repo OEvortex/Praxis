@@ -1,4 +1,4 @@
-// Common ported types — mirrors pydantic models in the Python backend.
+// Common ported types — mirrors the wire models.
 export type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
 export type Dict = Record<string, unknown>;
 

@@ -164,7 +164,7 @@ function _env_section(cwd: string): string {
  * Resolve the system prompt for a runtime used by Praxis.
  *
  * A clean context keeps project discovery out of the prompt: only the env
- * section and tool guidelines are appended, matching the Python port's
+ * section and tool guidelines are appended, matching the original implementation's
  * ``include_git_context=False`` / ``include_ponytail=False`` / ``skills=[]``.
  */
 export function build_praxis_prompt(

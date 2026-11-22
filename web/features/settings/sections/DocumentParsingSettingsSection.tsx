@@ -1243,16 +1243,16 @@ function NotInstalledSection({
           <h3 className="font-medium text-[var(--foreground)]">{"Docker"}</h3>
           <p>{"Add this extra to PRAXIS_EXTRAS in your existing deployment configuration, preserving other extras. Recreate the same service with its existing configuration and mounts."}</p>
           <code className={commandClass}>parse-{engineId}</code>
-          <p className="mt-1">{"Startup reapplies extras. Installation failures do not stop the server: inspect startup logs, then recheck availability. Data mounts preserve user data, not installed Python packages."}</p>
+          <p className="mt-1">{"Startup reapplies extras. Installation failures do not stop the server: inspect startup logs, then recheck availability. Data mounts preserve user data, not installed parser packages."}</p>
         </div>
         <div>
           <h3 className="font-medium text-[var(--foreground)]">{"Source checkout"}</h3>
-          <p>{"Stop Praxis. Run from the checkout in the server's Python environment, then restart the same instance."}</p>
-          <code className={commandClass}>python scripts/install_extras.py parse-{engineId}</code>
+          <p>{"Stop Praxis. Add this extra to PRAXIS_EXTRAS in the server's environment, then restart the same instance."}</p>
+          <code className={commandClass}>parse-{engineId}</code>
         </div>
         <div>
           <h3 className="font-medium text-[var(--foreground)]">{"Wheel installation"}</h3>
-          <p>{"Stop Praxis. Run in the server's Python environment, then restart with the same runtime home. Do not run this over a source checkout."}</p>
+          <p>{"Stop Praxis. Run in the server's environment, then restart with the same runtime home. Do not run this over a source checkout."}</p>
           <code className={commandClass}>praxis module install parser-{engineId}</code>
         </div>
       </div>

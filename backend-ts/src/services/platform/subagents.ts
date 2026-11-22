@@ -2,7 +2,6 @@
 // the persisted per-backend run settings.
 //
 // Detection is machine-global: local CLIs run on the host with the host
-// user's credentials. Persistence uses the shared kv store (the Python
 // version wrote data/user/settings/subagent.json; here the canonical DB is
 // the single store, keyed "subagent_settings").
 
@@ -414,7 +413,6 @@ export function get_connection(name: string): Record<string, unknown> | null {
   return { name, ...meta };
 }
 
-/** Name validation mirrors the Python manager's register_subagent_connection. */
 const SAFE_NAME_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/;
 
 export function create_connection(

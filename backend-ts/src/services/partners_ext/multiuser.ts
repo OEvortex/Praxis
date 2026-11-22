@@ -1,8 +1,8 @@
 // multi-user routers need: local user records, per-user grants, guardian
 // relationships, book permissions and the audit log. Stored in ext_items.
 //
-// The Python backend delegates identity to PocketBase or its local user
-// store; this backend is auth-free, so the "current user" is a seeded local
+// The identity store delegates to the local user store; this backend is
+// auth-free, so the "current user" is a seeded local
 // admin unless the caller supplies ``x-praxis-user-id`` (used by tests and
 // the guardian flows). Grants/guardians follow the upstream JSON shapes.
 import { COL, getItem, isoNow, listItems, putItem, deleteItem, uuid32, type AnyRecord } from "./store.js";

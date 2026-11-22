@@ -44,7 +44,6 @@ export interface Proposal {
 
 const _now = (): number => Date.now() / 1000;
 
-// Sentinel mirroring Python's ``expected_original=_UNSET`` default argument.
 const _UNSET = Symbol("unset");
 
 /**
@@ -184,7 +183,7 @@ export function propose(
   const expected_original: unknown =
     "expected_original" in opts ? opts.expected_original : _UNSET;
   const source_turn_id = opts.source_turn_id ?? "";
-  // workspace_id is accepted for parity with the Python signature but unused.
+  // workspace_id is accepted for parity with the original signature but unused.
   void opts.workspace_id;
 
   if (!["insert", "replace", "delete", "comment"].includes(operation)) {
@@ -307,7 +306,7 @@ export function review(
           "The suggested block changed. Ask Dito to revise the suggestion.",
         );
       }
-      // Python: `blocks if blocks is not None else proposal.get("blocks")` —
+      // The blocks fallback:
       // null/undefined fall back to the stored proposal blocks.
       let replacement: Block[] | null | undefined =
         blocks_arg ?? proposal.blocks;
@@ -357,7 +356,6 @@ export function review(
       doc.revision = (doc.revision ?? 0) + 1;
       doc.updated_at = _now();
       doc.applied_suggestion_ids = [...appliedIds, proposal_id].slice(-1000);
-      // TODO(verify): Python storage._write(doc, source="suggestion"); _write is
       // private in the TS port — reached through a cast, positional source.
       (storage as unknown as Record<string, any>)._write?.(doc, "suggestion");
     }
@@ -413,7 +411,6 @@ function deep_copy<T>(value: T): T {
     : (JSON.parse(JSON.stringify(value)) as T);
 }
 
-/** Order-insensitive deep equality mirroring Python ``==`` on dicts/lists. */
 function deep_equal(a: unknown, b: unknown): boolean {
   if (a === b) return true;
   if (typeof a !== typeof b) return false;

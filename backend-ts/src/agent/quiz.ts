@@ -29,7 +29,6 @@ function _str(value: unknown): string {
 /**
  * One completion through Praxis's selected model.
  *
- * TODO(verify): Python cached a vtx ConversationRuntime per resolved
  * provider/model and streamed TextDeltaEvents. The TS port uses the shared
  * one-shot LLM helper until agent/runtime.ts exposes an equivalent runner.
  */

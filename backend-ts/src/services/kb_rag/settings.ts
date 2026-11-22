@@ -129,7 +129,7 @@ function _envValue(key: string): string {
 
 // ---------------------------------------------------------------------------
 // LightRAG role-model contract (port of services/config/lightrag_roles.py —
-// credential-free pydantic shapes only; catalog validation happens in the
+// credential-free shapes only; catalog validation happens in the
 // router layer).
 // ---------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ function _fail(message: string): never {
 }
 
 function _strictInt(value: unknown, field: string): number {
-  // Pydantic strict=True ints: booleans and floats are rejected.
+  // schema validation strict=True ints: booleans and floats are rejected.
   if (typeof value !== "number" || !Number.isInteger(value)) {
     _fail(`${field} must be an integer.`);
   }
@@ -251,7 +251,7 @@ function _parseRoleModel(
 }
 
 function _clampedIntCheck(value: number, low: number, high: number, label: string): number {
-  // Pydantic ge/le constraints: reject rather than clamp.
+  // schema validation ge/le constraints: reject rather than clamp.
   if (value < low || value > high) {
     _fail(`${label} must be between ${low} and ${high}.`);
   }

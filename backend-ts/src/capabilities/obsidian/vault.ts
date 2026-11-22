@@ -37,7 +37,6 @@ function isIgnored(rel: string): boolean {
 
 async function* iterMarkdown(root: string): AsyncGenerator<string> {
   // Yield every user-facing .md file under root (ignored dirs skipped),
-  // sorted for deterministic output like Python's sorted(root.rglob).
   const stack: string[] = [root];
   const files: string[] = [];
   while (stack.length) {
@@ -66,7 +65,6 @@ async function* iterMarkdown(root: string): AsyncGenerator<string> {
 
 async function readText(path: string): Promise<string> {
   // Decode tolerating bad bytes — TextDecoder's default replaces them,
-  // matching Python's errors="replace".
   const buf = await readFile(path);
   return new TextDecoder("utf-8", { fatal: false }).decode(buf);
 }

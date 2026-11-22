@@ -15,7 +15,7 @@
 //    keep writing): ``<root>/<content_id>/{manifest.json, outline.json,
 //    unit_refs.json, units/%04d.txt, media.json, media/, annotations/<id>.json,
 //    raw/, render/}`` plus the ``_catalog.sqlite3`` material→content index.
-//    The catalog sqlite schema mirrors deeptutor/reading/catalog_store.py.
+//    The catalog sqlite schema is shared with the reading service.
 //
 // Everything degrades gracefully: a missing catalog, missing material or
 // unreadable file yields null/empty rather than throwing, so a turn on a

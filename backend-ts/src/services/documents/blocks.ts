@@ -59,7 +59,6 @@ function newId(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Python-semantics helpers (mirrors noteui.py)
 // ---------------------------------------------------------------------------
 
 type AnyDict = Record<string, any>;
@@ -83,7 +82,6 @@ function pyTruthy(v: any): boolean {
   return true;
 }
 
-/** Python str(value) (repr of elements inside containers). */
 function pyRepr(v: any): string {
   if (v === null || v === undefined) return "None";
   if (typeof v === "boolean") return v ? "True" : "False";
@@ -108,7 +106,6 @@ function pyStr(v: any): string {
   return String(v);
 }
 
-/** Python int(): truncates floats, parses integer strings, else throw. */
 function pyInt(v: any): number {
   if (typeof v === "boolean") return v ? 1 : 0;
   if (typeof v === "number") {
@@ -743,7 +740,6 @@ export function blocks_to_markdown(blocks: AnyDict[], depth = 0): string {
               : ""
       );
       if (kind === "learning") {
-        // NB: Python does not guard this json.loads — invalid data raises.
         const data = JSON.parse(pyGet(props, "data", "{}") ?? "{}");
         if (pyGet(props, "kind", null) === "flashcards" && pyTruthy(pyGet(data, "cards", null))) {
           text = pyGet(data, "cards", [])
@@ -908,7 +904,6 @@ function photoKey(url: string): string {
   return filename.replace(/^\d+px-/, "");
 }
 
-/** Python urllib.parse.quote(s, safe="") — encodeURIComponent plus !'()* escaped. */
 function quotePy(s: string): string {
   return encodeURIComponent(s).replace(/[!'()*]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase());
 }

@@ -1,4 +1,4 @@
-// TS port of backend/app/main.py — Hono app: REST API + SSE transport.
+// Hono app: REST API + SSE transport.
 //
 // Turn commands and legacy feature-channel messages are handled by the plain
 // REST controller in ./api/realtime.js, which streams frames to the browser

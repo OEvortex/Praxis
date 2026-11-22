@@ -3,12 +3,12 @@
  *
  *
  * ``vtx.agent.tools._slim_schema`` strips every dict key named ``"title"``
- * wherever it appears — meant to remove pydantic's ``"title": "<Label>"``
+ * wherever it appears — meant to remove schema validation's ``"title": "<Label>"``
  * annotations, but it also deletes a *parameter* literally named ``title``
  * from ``properties``, so the model never sees that argument and every call
  * fails validation (``notes``/``video``/``note_create`` were all affected).
  *
- * The Python module monkeypatches ``vtx.agent.tools._slim_schema`` at import
+ * The original module monkeypatches ``vtx.agent.tools._slim_schema`` at import
  * time. There is no vtx SDK in TypeScript, so this module exports the corrected
  * ``slimSchema`` implementation plus ``installVtxCompat`` which applies the same
  * monkeypatch to a supplied vtx-tools-like module object (used by tests / a
@@ -33,7 +33,6 @@ function isDict(node: unknown): node is Record<string, unknown> {
 
 /**
  * Corrected version of vtx's ``_slim_schema``: keeps property *names* intact
- * and only slims each property's schema. Mirrors the Python shim exactly —
  * including the anyOf-null collapse — but recurses into ``properties`` values
  * instead of dropping keys wholesale.
  */
@@ -76,7 +75,7 @@ export function slimSchema(node: Json): Json {
   return node;
 }
 
-/** Aliases matching the Python private name for drop-in parity. */
+/** Aliases matching the private name for drop-in parity. */
 export const _slim_schema = slimSchema;
 export const slim_schema = slimSchema;
 
@@ -84,7 +83,7 @@ export const slim_schema = slimSchema;
  * Apply the shim to a vtx-tools-like module: replaces its ``_slim_schema``
  * (and ``slimSchema`` if present) with the corrected implementation.
  *
- * In the Python backend this ran as an import side effect against the real
+ * This originally ran as an import side effect against the real
  * vtx package. In TS there is no vtx module, so callers pass the target
  * explicitly; with no argument this is a no-op.
  */

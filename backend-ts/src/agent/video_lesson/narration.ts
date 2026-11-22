@@ -3,7 +3,6 @@
 // available.
 //
 // TTS fallback chain (first engine that produces audio wins):
-//   1. `msedge-tts` — npm port of the Python `edge-tts` package; streams mp3
 //      audio plus sentence-boundary metadata from the Edge read-aloud service.
 //   2. System TTS CLIs detected at runtime: espeak-ng/espeak, flite,
 //      text2wave (festival), pico2wave, `say` (macOS). These emit WAV.
@@ -68,7 +67,6 @@ export function estimate(text: string): Clip {
 }
 
 // ---------------------------------------------------------------------------
-// Engine 1: msedge-tts (Edge read-aloud, same protocol as Python edge-tts)
 // ---------------------------------------------------------------------------
 
 // Minimal structural typing for the `msedge-tts` CommonJS module — we require
@@ -640,4 +638,3 @@ export function voiceModule(clips: Map<string, Clip>): string {
   return "export const VOICE = " + JSON.stringify(data) + ";\n";
 }
 
-// Python __all__ parity: Clip, NarrationLine, VOICE, estimate, narrate, speak, voice_module.

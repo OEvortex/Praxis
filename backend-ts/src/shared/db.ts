@@ -1,4 +1,4 @@
-// Thin wrapper over node:sqlite mirroring backend/app/store/database.py helpers.
+// Thin wrapper over node:sqlite shared storage helpers.
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * `bun start` — build, then serve Vite preview + FastAPI backend.
+ * `bun start` — build, then serve Vite preview + the API backend.
  */
 
 import { spawn } from "node:child_process";
@@ -12,10 +12,8 @@ const PORT = process.env.PORT ?? "3000";
 const HOST = "127.0.0.1";
 const BASE = `http://${HOST}:${PORT}`;
 const VITE_BIN = path.join(WEB_DIR, "node_modules", "vite", "bin", "vite.js");
-const BACKEND_DIR = path.join(WEB_DIR, "..", "backend");
-const PYTHON = process.platform === "win32"
-  ? path.join(BACKEND_DIR, ".venv", "Scripts", "python.exe")
-  : path.join(BACKEND_DIR, ".venv", "bin", "python");
+const BACKEND_DIR = path.join(WEB_DIR, "..", "backend-ts");
+const BACKEND_MAIN = path.join(BACKEND_DIR, "dist", "main.js");
 
 function run(cmd, args) {
   return new Promise((resolve) => {
@@ -47,11 +45,10 @@ if (buildCode !== 0) {
   process.exit(buildCode);
 }
 
-const backend = spawn(PYTHON, ["-m", "uvicorn", "app.main:app",
-  "--host", "127.0.0.1", "--port", "8001"], {
+const backend = spawn(process.execPath, [BACKEND_MAIN], {
   cwd: BACKEND_DIR,
   stdio: "inherit",
-  env: { ...process.env, PYTHONPATH: BACKEND_DIR },
+  env: process.env,
 });
 backend.on("exit", (code) => {
   if (code && !shuttingDown) console.error(`[start-all] backend exited ${code}`);

@@ -29,7 +29,6 @@ const _BOLD = /\*\*(.+?)\*\*|__(.+?)__/g;
 const _ITALIC =
   /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<![A-Za-z0-9_])_(?!_)(.+?)(?<![A-Za-z0-9_])_(?![A-Za-z0-9_])/g;
 const _CONTROL_CHARS = /[\x00-\x1f\x7f]/g;
-// TODO(verify): Python \w is Unicode-aware; approximated with \p{L}\p{N}_.
 const _SLUG_SPLIT = /[^\p{L}\p{N}_]+/gu;
 const _SLOT = /\x00(\d+)\x00/g;
 
@@ -50,7 +49,6 @@ export function note_tags(title: string): string {
   return `praxis ${slug}`;
 }
 
-/** html.escape(s) with quote=True (Python default). */
 function html_escape(s: string): string {
   return s
     .replaceAll("&", "&amp;")

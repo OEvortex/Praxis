@@ -256,7 +256,7 @@ export function startDocumentParsingInstall(engineName: string): Json {
   };
   const spec = specs[engine];
   if (!spec) return { ok: false, message: `No installable package for engine '${engine}'.` };
-  return { ok: false, message: `Live package installation is disabled. Stop DeepTutor, install ${spec.join(", ")} in the server Python environment, then restart. Docker deployments should add the corresponding parser extra and recreate the service.` };
+  return { ok: false, message: `Live package installation is disabled. Stop DeepTutor, install ${spec.join(", ")} in the server environment, then restart. Docker deployments should add the corresponding parser extra and recreate the service.` };
 }
 export function startDocumentParsingModelDownload(engineName: string): Json {
   const engine = normalizeEngine(engineName);

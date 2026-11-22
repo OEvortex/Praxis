@@ -1,4 +1,4 @@
-// Missing upstream settings endpoints ported from deeptutor/api/routers/settings.py.
+// Upstream settings endpoints not already served by handlers.ts.
 // Mounted with absolute /api/settings paths; routes already served by
 // handlers.ts are intentionally not duplicated here.
 import { Hono } from "hono";

@@ -1,5 +1,5 @@
 // auth router mounted at /api/auth.
-// Hono equivalent of the FastAPI router: login/logout/status/registration,
+// Hono equivalent of the original router: login/logout/status/registration,
 // profile, device credentials, session handoff, and admin user management.
 import { Hono } from "hono";
 import type { Context } from "hono";
@@ -132,7 +132,7 @@ function noStore(c: Context): void {
 }
 
 // ---------------------------------------------------------------------------
-// HTTP error helper (FastAPI HTTPException equivalent)
+// HTTP error helper (HTTP error equivalent)
 // ---------------------------------------------------------------------------
 
 class HttpError extends Error {
@@ -149,7 +149,7 @@ function fail(status: number, detail: string): never {
   throw new HttpError(status, detail);
 }
 
-// Install a catch-all that renders HttpError like FastAPI's {"detail": ...}.
+// Install a catch-all that renders HttpError like the API's {"detail": ...}.
 authRouter.onError((err, c) => {
   if (err instanceof HttpError) {
     for (const [k, v] of Object.entries(err.headers)) c.header(k, v);
@@ -257,7 +257,7 @@ async function optionalPayload(c: Context): Promise<TokenPayload | null> {
 }
 
 // ---------------------------------------------------------------------------
-// Validation helpers (pydantic-equivalent)
+// Validation helpers (schema-validation)
 // ---------------------------------------------------------------------------
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -314,7 +314,7 @@ function validPreset(value: unknown): string {
 // Public endpoints
 // ---------------------------------------------------------------------------
 
-// TODO(port): upstream proxies this to deeptutor.services.codex_auth — the
+// TODO(port): upstream proxies this to the codex OAuth service — the
 // codex OAuth subsystem is not part of the TS backend yet, so the callback
 // always reports the controlled failure page.
 authRouter.get("/openai-codex/callback", (c) => {

@@ -1,5 +1,5 @@
-// Minimal TS port of the vtx SDK surface the Python backend uses.
-// The real vtx SDK is Python-only; these interfaces mirror the parts
+// Minimal TS port of the vtx SDK surface.
+// The real vtx SDK is not available in TypeScript; these interfaces mirror the parts
 // Praxis touches (tools, sessions, subagents, events).
 
 export interface ToolParamField {
@@ -30,7 +30,6 @@ export abstract class BaseTool<P = unknown> {
   toolIcon?: string;
   mutating?: boolean;
   abstract description: string;
-  // Python assigns a pydantic params *model class*; in TS ports this is a
   // ToolParamsSchema (JSON schema) or a constructor — kept loose deliberately.
   params?: unknown;
   abstract execute(params: P, ctx?: Ctx): Promise<ToolResultLike>;
@@ -155,7 +154,6 @@ export interface AskUserQuestion {
 
 // -- events (vtx.core.events) -------------------------------------------------
 // One class per SDK event so `instanceof` checks in the runtime map 1:1 onto
-// the Python isinstance() chain.
 
 export class VtxEvent {
   constructor(public type: string) {}

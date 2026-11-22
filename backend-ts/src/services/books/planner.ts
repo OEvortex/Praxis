@@ -1,7 +1,6 @@
 // deterministic concept-graph mermaid renderer.
 //
 // The upstream LLM planning layer (SectionArchitect.plan_blocks_async) is
-// replaced by the static template plan always — same fallback the Python
 // engine uses when the LLM call fails — so behaviour stays deterministic.
 
 import {

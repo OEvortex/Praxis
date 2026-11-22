@@ -9,7 +9,6 @@ import { randomBytes } from "node:crypto";
 
 import { get_settings } from "../../config.js";
 import { get_state, put_state } from "../../store/database.js";
-// TODO(verify): services/llm_text.ts is ported separately; Python name kept.
 import { clean_thinking_tags } from "../llm_text.js";
 
 export const MAX_HISTORY = 200;
@@ -143,7 +142,6 @@ export function record(opts: {
 }): void {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
-  // time.strftime("%Y-%m-%dT%H:%M:%S") — local time, like Python.
   const timestamp =
     `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}` +
     `T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;

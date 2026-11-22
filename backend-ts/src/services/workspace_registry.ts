@@ -129,7 +129,6 @@ function hasAccess(p: string, mode: number): boolean {
 }
 
 // Settings (src/config.ts) carries workspace_dir/data_dir as resolved paths,
-// matching the Python Settings fields used below.
 function settingsWorkspaceDir(settings: Settings): string {
   return resolveLocal(settings.workspace_dir ?? join(settings.data_dir, "workspace"));
 }
@@ -177,7 +176,6 @@ export interface WorkspaceDescriptor {
 
 export class WorkspaceRegistry {
   private readonly settings: Settings;
-  // Python used threading.RLock; the Node backend is single-threaded for these
   // synchronous fs operations, so no lock is needed.
 
   constructor(settings: Settings) {
@@ -515,7 +513,6 @@ export class WorkspaceRegistry {
     if (!containing.length) {
       throw new WorkspaceError("This folder is outside the configured browsing roots.");
     }
-    // Python: max(containing, key=lambda item: len(item.parts))
     const partsCount = (p: string) => p.split(/[\\/]/).filter(Boolean).length;
     const root = containing.reduce((a, b) => (partsCount(a) >= partsCount(b) ? a : b));
     const folders: Array<{ name: string; path: string }> = [];
@@ -527,7 +524,6 @@ export class WorkspaceRegistry {
         if (entry.name.startsWith(".")) continue;
         try {
           const target = resolveLocal(join(current, entry.name));
-          // Python's entry.is_dir() follows symlinks; Dirent.isDirectory() does not.
           const isFolder = entry.isDirectory() || (entry.isSymbolicLink() && isDir(target));
           if (
             isFolder &&

@@ -1,5 +1,4 @@
-// Port of the GitHub/web source registry methods on upstream
-// KnowledgeBaseManager (deeptutor/knowledge/manager.py). Upstream persists the
+// GitHub/web source registry methods. The sources are persisted
 // lists inside ``<kb>/metadata.json``; this backend keeps KB payloads in the
 // shared ``kb_meta`` sqlite table (same pattern as ``linked_folders``), so the
 // ``github_sources`` / ``web_sources`` arrays live on the KB entry verbatim.

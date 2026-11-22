@@ -37,7 +37,6 @@ export type SessionDict = Record<string, any>;
 // the explicit root edit signalled by ``null``.
 export const AUTO_PARENT_MESSAGE: unique symbol = Symbol("AUTO_PARENT_MESSAGE");
 
-// Python ``re.compile(r"[^\W_]+", re.UNICODE)`` — unicode letters/digits/marks,
 // excluding underscore. JS ``\w`` is ASCII-only, so use unicode property
 // escapes for a close semantic match.
 const WORD = /[\p{L}\p{N}\p{M}]+/gu;
@@ -147,7 +146,6 @@ CREATE VIRTUAL TABLE IF NOT EXISTS session_fts USING fts5(
 );
 `;
 
-// node:sqlite cannot bind undefined/boolean; normalise to what Python's
 // sqlite3 module would have produced (None -> NULL, bool -> 0/1).
 function normParam(v: unknown): unknown {
   if (v === undefined) return null;
@@ -183,7 +181,6 @@ export class SessionStore {
     // Tools construct a store per call (session search, calendar layers).
     // Schema creation and the one-shot JSON import only need to run once
     // per database per process. (JS is single-threaded and the constructor is
-    // synchronous, so the Python _INIT_LOCK is unnecessary.)
     if (INITIALIZED.has(this._dbPath) && existsSync(this._dbPath)) {
       return;
     }
@@ -279,7 +276,7 @@ export class SessionStore {
     }
   }
 
-  // TODO(port): Python used fcntl.flock/msvcrt.locking on a `.boot.lock` file.
+  // TODO(port): The original used a `.boot.lock` file for cross-process boot locking.
   // Node has no flock builtin in the standard library; the critical section is
   // synchronous so it is already serialised within one process, and the lock
   // file is still created/appended for parity and future cross-process use.
@@ -697,7 +694,6 @@ export class SessionStore {
 
     // ``first_linked`` is the index of the first message with a parent link,
     // or ``messages.length`` when the whole session is flat. ``legacy_run``
-    // equals it in both cases (the Python conditional is redundant).
     const firstLinkedIndex = messages.findIndex(
       (m: SessionDict) =>
         m.parent_message_id !== null && m.parent_message_id !== undefined,

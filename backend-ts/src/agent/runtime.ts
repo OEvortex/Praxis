@@ -19,7 +19,7 @@
  *
  * TS port notes
  * ---------------
- * vtx is a Python-only SDK: there is no ``ConversationRuntime``, ``Session`` or
+ * vtx is not available in TypeScript: there is no ``ConversationRuntime``, ``Session`` or
  * event bus to import. This module therefore implements a **minimal local
  * agent loop** (``LocalAgentRuntime`` / ``LocalAgent`` at the bottom) that
  * reproduces the observable contract: an async stream of ``VtxEvent`` objects,
@@ -27,9 +27,7 @@
  * calls, and OpenAI-compatible chat-completions streaming via ``fetch``
  * against the resolved ``base_url``. Everything above the
  * ``// -- local agent loop`` marker is a faithful structural port of the
- * Python runtime; the marker section is the vtx stand-in.
  *
- * Known SDK gaps we design around (unchanged from Python):
  *  * ``thinking`` wire event is therefore unused until vtx exposes them.
  *  * Approvals pause a run via futures but cannot be resumed through the
  *    public API — Praxis auto-approves, same as before.
@@ -230,7 +228,6 @@ export function _tool_result_is_error(out: any, text: string): boolean {
 
 /**
  * vtx's initialize() persists last_selected/recent_models into its own config
- * file. Praxis owns selection now, so those writes were no-ops in Python.
  * There is no vtx module to patch in TS — kept as a documented no-op for
  * structural parity (the local agent loop never performs selection writes).
  */
@@ -359,7 +356,6 @@ export class AgentRuntime {
     install_context_limit_cache();
     install_model_fetch_cache();
     // The notebook writer reports progress through this runtime; mirror the
-    // Python call that happened on the first vtx turn.
     try {
       notebookEvents.set_runtime(this);
     } catch {
@@ -479,7 +475,10 @@ export class AgentRuntime {
   }
 
   /** Provider usage in the shape the chat footer's `combineUsage` expects. */
-  static _usage_summary(usage: UsageStats | null | undefined): AnyDict {
+  static _usage_summary(
+    usage: UsageStats | null | undefined,
+    timing?: { started_at?: number; first_token_at?: number | null; ended_at?: number } | null,
+  ): AnyDict {
     if (!usage) return {};
     const u = usage as AnyDict;
     const input = Number(u.input_tokens ?? 0) || 0;
@@ -488,6 +487,15 @@ export class AgentRuntime {
     const cacheWrite = Number(u.cache_write_tokens ?? 0) || 0;
     const calls = Math.max(1, Number(u.calls ?? 1) || 1);
     const reported = Boolean(u.cache_reported);
+
+    // Stream timings are gathered in _run but were never put on the wire, so
+    // the footer's Model time / TTFT / TPS rows only ever showed dashes.
+    const started = Number(timing?.started_at ?? 0) || 0;
+    const first = Number(timing?.first_token_at ?? 0) || 0;
+    const ended = Number(timing?.ended_at ?? 0) || 0;
+    const ttft = first && started ? Math.max(0, first - started) : 0;
+    const generation = ended && first ? Math.max(0, ended - first) : 0;
+
     return {
       total_tokens: Number(u.total_tokens ?? 0) || input + output,
       prompt_tokens: input,
@@ -497,8 +505,20 @@ export class AgentRuntime {
       cache_creation_input_tokens: cacheWrite,
       cache_input_tokens: reported ? input : 0,
       cache_reported_calls: reported ? calls : 0,
+      cache_write_reported_calls: reported ? calls : 0,
       cache_hit_rate: reported && input > 0 ? cacheRead / input : null,
       reasoning_tokens: Number(u.reasoning_tokens ?? 0) || 0,
+      // "Model time" in the footer matches the usage page: time from the
+      // first token to the end of generation, not the whole turn incl. tools.
+      duration_seconds: generation ? Math.round(generation * 1000) / 1000 : 0,
+      ttft_seconds: ttft ? Math.round(ttft * 1000) / 1000 : null,
+      ttft_calls: ttft ? calls : 0,
+      generation_seconds: generation ? Math.round(generation * 1000) / 1000 : 0,
+      timed_completion_tokens: generation ? output : 0,
+      tokens_per_second:
+        generation > 0 && output > 0
+          ? Math.round((output / generation) * 10) / 10
+          : null,
     };
   }
 
@@ -1081,7 +1101,6 @@ export class AgentRuntime {
           usage = event.total_usage ?? null;
         } else if (event instanceof AgentStartEvent) {
           // stage_start is emitted once per turn before the loop; the SDK's
-          // agent-start is intentionally not double-mapped (Python relied on
           // _AgentStartEvent for the same single frame — see header table).
         }
       }
@@ -1115,7 +1134,11 @@ export class AgentRuntime {
       metadata: {
         metadata: {
           context_budget: AgentRuntime._context_budget(runtime, session, usage),
-          usage_summary: AgentRuntime._usage_summary(usage),
+          usage_summary: AgentRuntime._usage_summary(usage, {
+            started_at: turn_started_at,
+            first_token_at,
+            ended_at: now(),
+          }),
         },
       },
     }));
@@ -1127,6 +1150,7 @@ export class AgentRuntime {
         model: String(runtime.model ?? ""),
         provider: String(runtime.model_provider ?? ""),
         usage,
+        duration_s: first_token_at !== null ? now() - first_token_at : 0,
         ttft_s: first_token_at !== null ? first_token_at - turn_started_at : 0,
       });
       if (first_token_at !== null) {
@@ -1177,7 +1201,11 @@ export class AgentRuntime {
       status,
       user_message_id: user_message.id ?? null,
       assistant_message_id: assistant_message ? assistant_message.id : null,
-      usage_summary: AgentRuntime._usage_summary(usage),
+      usage_summary: AgentRuntime._usage_summary(usage, {
+        started_at: turn_started_at,
+        first_token_at,
+        ended_at: now(),
+      }),
     };
     await this._emit(handle, AgentRuntime._stream_event(handle, "done", {
       source: capability,
@@ -1191,7 +1219,6 @@ export class AgentRuntime {
     return true;
   }
 
-  /** Kept for name parity with the Python ``_run_vtx`` entry point. */
   private async _run_vtx(
     handle: TurnHandle,
     session: SessionDict,
@@ -1222,7 +1249,6 @@ export class AgentRuntime {
     /** Generate title asynchronously and emit session_meta immediately. */
     try {
       // TODO(verify): generate_title(user_text, assistant_text="", settings=…)
-      // in Python; assuming the same positional order in the TS port.
       const title = await generate_title(user_text, "", this._settings);
       if (!title) return null;
       session.title = title;
@@ -1283,7 +1309,7 @@ function _new_id(prefix: string): string {
 // ============================================================================
 // -- local agent loop (vtx stand-in) -----------------------------------------
 //
-// vtx's ConversationRuntime/Agent/Session are Python-only. This section is a
+// vtx's ConversationRuntime/Agent/Session are not available in TypeScript. This section is a
 // minimal equivalent that preserves the contract the runtime above relies on:
 //
 //   * per-session cached runtime holding the conversation history;
@@ -1530,7 +1556,6 @@ export class LocalAgent {
           yield new AskUserEvent(questions, future, call.id);
           // Race the learner's answer against turn cancellation — without
           // this a cancelled turn stays parked on the question forever
-          // (vtx's cancel_event interrupts the same wait in Python).
           const response = await Promise.race([
             future.promise,
             new Promise<never>((_res, rej) => {
@@ -1558,7 +1583,6 @@ export class LocalAgent {
         }
 
         // Approvals: vtx pauses for permission; Praxis auto-approves. The
-        // runtime's event loop resolves the deferred (same as Python).
         const approval = deferred<typeof ApprovalResponse.APPROVE>();
         yield new ToolApprovalEvent(approval, name, call.id);
         await approval.promise;

@@ -47,8 +47,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
     for (const engine of ["docling", "markitdown", "pymupdf4llm", "liteparse"]) {
       await page.getByRole("button", { name: new RegExp(`^${engine} `) }).click();
       await expect(page.getByRole("heading", { name: "Docker", exact: true })).toBeVisible();
-      await expect(page.getByText(`parse-${engine}`, { exact: true })).toBeVisible();
-      await expect(page.getByText(`python scripts/install_extras.py parse-${engine}`, { exact: true })).toBeVisible();
+      await expect(page.getByText(`parse-${engine}`, { exact: true }).first()).toBeVisible();
       await expect(page.getByText(`praxis module install parser-${engine}`, { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Download & install", exact: true })).toHaveCount(0);
     }

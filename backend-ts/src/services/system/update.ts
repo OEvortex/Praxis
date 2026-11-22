@@ -1,8 +1,8 @@
 // Port of the self-update machinery in
 //
 // Scope notes for the TS backend:
-//   * Version checks hit the same public GitHub latest-release endpoint the
-//     Python backend uses (HKUDS/DeepTutor), with the same 24h process cache.
+//   * Version checks hit the same public GitHub latest-release endpoint
+//     (HKUDS/DeepTutor), with the same 24h process cache.
 //   * Installation detection is simplified: this backend is not a PyPI
 //     install under a launcher, so `detect_installation` reports
 //     mode "source"/automatic_update=false and POST /update fails closed with

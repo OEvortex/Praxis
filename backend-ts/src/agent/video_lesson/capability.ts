@@ -31,9 +31,9 @@ const MAX_ATTEMPTS = 4;
 // ---------------------------------------------------------------------------
 // vtx SDK bridge
 //
-// TODO(verify): the Python module lazily imports `vtx.agent.dispatcher`
+// TODO(verify): the original module lazily imports `vtx.agent.dispatcher`
 // (`get_context`) and `vtx.agent.tools.task` (`SubagentSpec`,
-// `resolve_subagent_runner`). The vtx SDK is Python-only — see the stub
+// `resolve_subagent_runner`). The vtx SDK is not available in TypeScript — see the stub
 // `SubagentSpec` in src/shared/vtx.ts. Until a TS dispatcher lands, these
 // helpers isolate the seam so the rest of the port stays faithful.
 // ---------------------------------------------------------------------------
@@ -189,7 +189,6 @@ export async function createLesson(
   mkdirSync(artifactsDir, { recursive: true });
 
   // Start the npm install while the first LLM call is in flight. The AbortSignal
-  // mirrors Python's task cancellation in the `finally` below.
   const runtimeAbort = new AbortController();
   const runtimeReady = ensureRuntime(runtimeAbort.signal);
   // Avoid an unhandled rejection while the install is still in flight; the

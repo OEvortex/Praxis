@@ -101,5 +101,4 @@ export function loadInstructions(): string {
   return template.replace("{kit_source}", kit);
 }
 
-// Python __all__ parity: LessonDraft, NarrationLine, load_instructions, parse_draft.
 export type { NarrationLine };

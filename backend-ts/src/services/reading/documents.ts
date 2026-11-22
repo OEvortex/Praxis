@@ -3,7 +3,6 @@
 // (normalize_epub_archive). All parsing is dependency-free: shared/zip.ts for
 // the container and services/documents/docx.ts for the minimal XML parser.
 //
-// Upstream resolves optional parser libraries (python-pptx/openpyxl) first and
 // falls back to raw OOXML; this backend only has the OOXML path, which is the
 // same fallback upstream uses for archives without usable metadata.
 

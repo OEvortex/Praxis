@@ -60,7 +60,7 @@ async function main() {
   }
 
   // 3. Session create — sessions are created by a realtime start_turn command
-  //    (there is no POST /api/sessions; mirrors the Python backend).
+  //    (there is no POST /api/sessions; this matches the original behaviour).
   let createdSessionId = null;
   try {
     const r = await get(base, "/api/realtime/commands?client_id=smoke", {

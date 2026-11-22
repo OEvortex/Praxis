@@ -100,7 +100,6 @@ export class ConfigTestRunner {
   start(service: string, catalog: Catalog): TestRun {
     const run = makeTestRun(`${service}-${randomBytes(5).toString("hex")}`, service);
     this.runs.set(run.id, run);
-    // Python spawned a daemon thread running asyncio.run(...); here the probe
     // is just an async task — fire and forget, errors are captured in events.
     void this.runAsync(run, catalog);
     return run;
@@ -276,7 +275,6 @@ export function resolveDraftConfig(catalog: Catalog, service: string): ResolvedD
   conn =
     conn ??
     ((findConnection(catalog, asRecord(modelEntry.provider_ref).connection_id) as Record<string, unknown> | null) ?? null);
-  // Python: ref = model_entry.provider_ref or profile.provider_ref or {}
   // (first non-empty wins).
   const refRaw =
     (modelEntry.provider_ref && typeof modelEntry.provider_ref === "object" && Object.keys(modelEntry.provider_ref as object).length
