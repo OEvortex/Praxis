@@ -63,7 +63,7 @@ export const propose_partner: FunctionTool = tool({
       description:
         "Complete Markdown system profile: identity, educational role, goals, teaching style, interaction rules, boundaries, and routines.",
     },
-    language: { type: "string", description: "Preferred response language, normally en or zh." },
+    language: { type: "string", description: "Preferred response language, normally en." },
     emoji: { type: "string", description: "One representative emoji." },
     color: {
       type: "string",
@@ -189,10 +189,6 @@ export const invoke_other: FunctionTool = tool({
 // Capability metadata + the pure intent gate (port of binding.py).
 export const PARTNER_AUTHORING_CAPABILITY_NAME = "partner_authoring";
 
-const ZH_ACTION =
-  "(?:创建|新建|生成|设计|定制|帮我做|帮我建|做一个|来一个|来个|加一个|(?:想要|需要)(?:一个|一位|个|位))";
-const ZH_OBJECT = "(?:partner|伙伴|学习搭子|陪伴者|陪练|助教|导师|教练|学伴|智能体|角色)";
-const ZH_GAP = "(?:(?!关于|有关|提到|讨论)[^。！？!?；;，,、\\n]){0,16}?";
 const EN_ACTION =
   "(?:\\b(?:create|make|build|design|generate|add|set\\s+up)\\b(?:\\s+(?:me|us))?|\\b(?:want|need)\\b)";
 const EN_DETERMINER = "\\s+(?:a|an|another|one|my\\s+own|our\\s+own|a\\s+new|new)\\b";
@@ -201,16 +197,16 @@ const EN_OBJECT =
   "\\s+(?:partners?|companions?|tutors?|mentors?|coach(?:es)?|study\\s+budd(?:y|ies))(?![\\w-])";
 
 const AUTHORING_REQUEST = new RegExp(
-  `${ZH_ACTION}${ZH_GAP}${ZH_OBJECT}|${EN_ACTION}${EN_DETERMINER}${EN_GAP}${EN_OBJECT}`,
+  `${EN_ACTION}${EN_DETERMINER}${EN_GAP}${EN_OBJECT}`,
   "i",
 );
-const QUOTED_OR_CODE = /```[\s\S]*?```|~~~[\s\S]*?~~~|(?m:^>[^\n]*)|`[^`\n]*`|"[^"\n]*"|“[^”\n]*”|「[^」\n]*」|『[^』\n]*』|(?<!\w)'[^'\n]+'(?!\w)/g;
-const CLAUSE_END = /[。！？!?；;，,\n]/g;
+const QUOTED_OR_CODE = /```[\s\S]*?```|~~~[\s\S]*?~~~|(?m:^>[^\n]*)|`[^`\n]*`|"[^"\n]*"|“[^”\n]*”|(?<!\w)'[^'\n]+'(?!\w)/g;
+const CLAUSE_END = /[!?;,\n]/g;
 const NEGATED_ACTION =
-  /(?:\b(?:don't|do\s+not|never|not|can't|cannot)\s*(?:want|need)?(?:\s+(?:you\s+)?to)?\s*|(?:不|别|不要|不用|无需|不必|不想(?:让你)?|不需要)\s*)$/i;
-const MENTION_QUESTION = /^\s*(?:(?:explain\s+)?(?:why|how|what)\b|(?:请)?(?:解释)?(?:为什么|为何|怎么|如何))/i;
+  /(?:\b(?:don't|do\s+not|never|not|can't|cannot)\s*(?:want|need)?(?:\s+(?:you\s+)?to)?\s*)$/i;
+const MENTION_QUESTION = /^\s*(?:(?:explain\s+)?(?:why|how|what)\b)/i;
 const NON_PARTNER_TARGET =
-  /^\s+(?:issue|bug|report|checklist|style|tone|feature|setting|ticket)\b|^(?:功能|问题|报告|文档|风格|语气|清单|按钮|页面)/i;
+  /^\s+(?:issue|bug|report|checklist|style|tone|feature|setting|ticket)\b/i;
 
 /** "explicit" | "heuristic" | null — port of partner_authoring_trigger. */
 export function partnerAuthoringTrigger(input: {

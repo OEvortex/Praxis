@@ -1,4 +1,3 @@
-// Port of deeptutor/agents/question/mimic_source.py +
 // tools/question/question_extractor.py — exam-paper → QuizTemplate[] for
 // mimic mode.
 //

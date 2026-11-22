@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/trace.py — L1 raw event trace:
+// L1 raw event trace:
 // append-only JSONL files, one per surface per UTC day. Writes never throw.
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";

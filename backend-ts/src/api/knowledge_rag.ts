@@ -1,4 +1,3 @@
-// Port of the RAG-pipeline slice of deeptutor/api/routers/knowledge.py —
 // engine/provider config, model options, preflight and the GraphRAG
 // compatibility probe. Mounted alongside handlersRouter at ``/api/*``.
 //

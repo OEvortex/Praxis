@@ -1,5 +1,4 @@
 // Port of the self-update machinery in
-// deeptutor/services/app_update.py used by api/routers/system.py.
 //
 // Scope notes for the TS backend:
 //   * Version checks hit the same public GitHub latest-release endpoint the

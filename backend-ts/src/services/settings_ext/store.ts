@@ -207,8 +207,6 @@ export function saveMineru(settings: Settings, value: Json): Json {
 
 export const UI_DEFAULTS: Json = {
   theme: "system",
-  language: "en",
-  response_language: "en",
   content_font_scale: 100,
   content_line_spacing: "normal",
   sidebar_description: "Data Intelligence Lab",

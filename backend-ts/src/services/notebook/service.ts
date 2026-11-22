@@ -1,4 +1,4 @@
-// Port of deeptutor/services/notebook/service.py — shared notebook manager.
+// shared notebook manager.
 //
 // Favorites notebooks are plain JSON files under
 // `<data_dir>/user/workspace/notebook/` (`{id}.json` + `notebooks_index.json`),

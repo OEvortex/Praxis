@@ -1,6 +1,6 @@
 /**
  * OpenUI server-side proxy endpoints (image search, street routing, Wikipedia).
- * Port of backend/app/api/openui.py — httpx replaced with fetch.
+ * httpx replaced with fetch.
  */
 
 import { Hono } from "hono";

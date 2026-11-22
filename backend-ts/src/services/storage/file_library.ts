@@ -1,4 +1,4 @@
-// Port of deeptutor/services/storage/file_library.py — persistent file
+// persistent file
 // library (issue #1437). SQLite metadata + files on disk, SHA-256 dedup,
 // soft delete/restore. Backed by its own database file under the data dir.
 import { createHash, randomUUID } from "node:crypto";

@@ -1,4 +1,3 @@
-// Port of deeptutor/multi_user/learner_profile.py.
 
 const FIELDS = [
   "age",

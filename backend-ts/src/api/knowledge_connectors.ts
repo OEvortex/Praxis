@@ -1,5 +1,4 @@
 // Port of the connector/probe/task/files subset of
-// deeptutor/api/routers/knowledge.py. Mounted by the orchestrator under /api.
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { createReadStream, existsSync, statSync } from "node:fs";

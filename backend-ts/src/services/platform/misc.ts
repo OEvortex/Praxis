@@ -1,6 +1,3 @@
-// Port of deeptutor/services/cli_apps/{catalog,state}.py,
-// deeptutor/plugins/registry.py (sqlite-backed record store),
-// deeptutor/api/routers/{capabilities,capabilities_settings,tools,agent_config}.py
 // service halves, and the vendored CLI-app catalog loader.
 
 import { readFileSync } from "node:fs";

@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/video_learning.py — authenticated video
+// authenticated video
 // providers, invidious account endpoints and timed-media material routes.
 import { Hono } from "hono";
 import type { Context } from "hono";

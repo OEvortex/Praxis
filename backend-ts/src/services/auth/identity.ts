@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/identity.py — canonical identity store.
+// canonical identity store.
 // Users live in <data>/system/auth/users.json; avatar images beside it.
 import { randomBytes, randomUUID } from "node:crypto";
 import {

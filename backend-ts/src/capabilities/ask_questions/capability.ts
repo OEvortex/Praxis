@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/ask_questions/{capability,loop}.py — the
+// the
 // Ask Questions capability: an explicit user-selected interview mode that
 // contributes an adaptive questioning policy to the normal chat loop.
 //

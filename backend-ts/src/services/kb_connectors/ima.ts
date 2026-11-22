@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/pipelines/ima/{transport,envelope,models,client,probe,config}.py
 // — Tencent IMA OpenAPI client (subset: list/probe used by connector routes).
 import type { AnyRecord } from "./types.js";
 import type { Settings } from "../../config.js";
@@ -50,11 +49,6 @@ function unwrap(payload: unknown, statusCode: number): AnyRecord {
     return data !== null && typeof data === "object" && !Array.isArray(data)
       ? (data as AnyRecord)
       : {};
-  }
-  if (message.includes("订阅知识库") && message.includes("没有权限")) {
-    throw new ImaContentAccessError(
-      "IMA permits searching this subscribed library, but its files can only be read in the IMA client.",
-    );
   }
   if (code !== null && CREDENTIAL_CODES.has(code)) {
     throw new ImaAuthError(message || "IMA rejected the client ID / API key.");

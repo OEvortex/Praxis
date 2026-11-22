@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/storage.py — Co-Writer document store.
+// Co-Writer document store.
 //
 // Notebook pages live in the shared SQLite database: each page is one row in
 // `documents`, with the review queue, margin threads and flashcard scheduling

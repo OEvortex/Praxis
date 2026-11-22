@@ -1,4 +1,4 @@
-// Port of backend/app/services/cron/service.py — built-in cron service:
+// built-in cron service:
 // scheduled tasks for chat, with a WAL SQLite repository and an in-process
 // scheduler (the Python version used asyncio; here it is a Node timer loop).
 import { randomBytes } from "node:crypto";

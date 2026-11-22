@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/embedding_signature.py (relevant subset) —
 // stable embedding identity used by probe-folder compatibility checks.
 import { createHash } from "node:crypto";
 import type { Settings } from "../../config.js";

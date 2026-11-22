@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/topic_generation.py — bounded mixed-source
+// bounded mixed-source
 // route generation for Mastery Topics.
 import { randomBytes } from "node:crypto";
 

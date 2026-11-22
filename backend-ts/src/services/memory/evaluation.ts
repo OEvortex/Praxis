@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/evaluation.py — evaluation-only
+// evaluation-only
 // history/L3 snapshot comparison harness. Never opens active user memory;
 // snapshots are supplied artifacts. Readers/token counters are injected.
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";

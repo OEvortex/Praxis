@@ -1,4 +1,3 @@
-// Port of deeptutor/api/routers/question_notebook.py + quiz_judge.py —
 // question-notebook HTTP surface (full upstream fidelity; the legacy shim in
 // handlers.ts returns different shapes for categories/materials/stats and is
 // missing PATCH/DELETE routes, so mount this router FIRST or remove the shim)
@@ -12,7 +11,6 @@ import { basename, join } from "node:path";
 import { get_settings, type Settings } from "../config.js";
 import { completeText, streamText } from "../services/llm_text.js";
 import * as qn from "../services/question_notebook.js";
-import { loadUi } from "../services/settings_ext/store.js";
 import {
   QuestionPipeline,
   QuestionStream,
@@ -276,115 +274,16 @@ questionNotebookRouter.delete("/api/question-notebook/categories/:category_id", 
 
 // -- quiz judge (WebSocket upstream; HTTP fallback + WS handler) -------------------
 
-const JUDGE_SYSTEM_PROMPTS: Record<string, string> = {
-  zh:
-    "你是一名严谨且鼓励学习者的助教，正在批改一道测验题。" +
-    "请基于题目、参考答案与解析，对学习者的作答给出针对性的判定与反馈。\n\n" +
-    "回答要求：\n" +
-    "- 先用一行明确结论：✅ 正确 / ⚠️ 部分正确 / ❌ 不正确，并简短点明关键判定依据。\n" +
-    "- 然后分条列出：哪里做对了、哪里出错或缺漏、应该如何改正。\n" +
-    "- 若题目本身有多种合理答案，请承认学习者的合理之处。\n" +
-    "- 直接以学习者的作答为对象，不要泛泛而谈。\n" +
-    "- 全程使用中文。",
-  en:
-    "You are a rigorous yet encouraging teaching assistant grading a learner's quiz answer. " +
-    "Use the question, reference answer, and explanation to deliver a targeted assessment.\n\n" +
-    "Requirements:\n" +
-    "- Open with one line that states the verdict: ✅ Correct / ⚠️ Partially correct / ❌ Incorrect, " +
-    "and the key reason.\n" +
-    "- Then list: what the learner got right, what is wrong or missing, and how to fix it.\n" +
-    "- If multiple reasonable answers exist, acknowledge what the learner did well.\n" +
-    "- Speak directly to the learner's submission — do not give a generic lecture.\n" +
-    "- Reply in English.",
-  de:
-    "Du bist eine gründliche, aber ermutigende Lehrkraft und bewertest die Antwort " +
-    "einer lernenden Person auf eine Quizfrage. Stütze dich auf Frage, Musterlösung " +
-    "und Erklärung.\n\n" +
-    "Anforderungen:\n" +
-    "- Beginne mit einer Zeile, die das Ergebnis nennt: ✅ Richtig / ⚠️ Teilweise richtig " +
-    "/ ❌ Falsch, und kurz den entscheidenden Grund.\n" +
-    "- Liste danach auf: was richtig ist, was falsch ist oder fehlt und wie es sich verbessern lässt.\n" +
-    "- Wenn mehrere sinnvolle Antworten möglich sind, erkenne an, was gut gelöst ist.\n" +
-    "- Sprich direkt über diese Antwort, ohne allgemeinen Vortrag.\n" +
-    "- Antworte auf Deutsch und duze die lernende Person.",
-  uk:
-    "Ти вимогливий, але доброзичливий асистент учителя, який перевіряє відповідь учня " +
-    "на тестове завдання. Спирайся на умову, еталонну відповідь і пояснення.\n\n" +
-    "Вимоги до відповіді:\n" +
-    "- Почни одним рядком із вердиктом: ✅ Правильно / ⚠️ Частково правильно / ❌ Неправильно " +
-    "і коротко назви головну підставу.\n" +
-    "- Далі по пунктах: що учень зробив правильно, де помилка або чого бракує, як це виправити.\n" +
-    "- Якщо можливі кілька слушних відповідей, визнай те, що учень зробив добре.\n" +
-    "- Звертайся саме до цієї відповіді, без загальних лекцій.\n" +
-    "- Відповідай українською.",
-  pt:
-    "Você é um assistente de ensino rigoroso e encorajador que avalia a resposta de um aluno a um teste. " +
-    "Use a pergunta, a resposta de referência e a explicação para fornecer uma avaliação direcionada.\n\n" +
-    "Requisitos:\n" +
-    "- Comece com uma linha informando o veredito: ✅ Correto / ⚠️ Parcialmente correto / ❌ Incorreto, " +
-    "e o motivo principal.\n" +
-    "- Em seguida, liste: o que o aluno acertou, o que está errado ou faltando e como corrigir.\n" +
-    "- Se houver várias respostas válidas, reconheça os acertos do aluno.\n" +
-    "- Comente diretamente a resposta enviada pelo aluno — não dê uma explicação genérica.\n" +
-    "- Responda em português.",
-  vi:
-    "Bạn là trợ giảng nghiêm túc nhưng luôn khích lệ, đang chấm câu trả lời của người học " +
-    "cho một câu hỏi kiểm tra. Hãy dựa vào câu hỏi, đáp án tham khảo và phần giải thích " +
-    "để đưa ra nhận xét sát với bài làm.\n\n" +
-    "Yêu cầu:\n" +
-    "- Mở đầu bằng một dòng nêu kết luận: ✅ Đúng / ⚠️ Đúng một phần / ❌ Sai, " +
-    "kèm lý do chính.\n" +
-    "- Sau đó nêu: người học đã làm đúng gì, chỗ nào sai hoặc còn thiếu, và cách sửa.\n" +
-    "- Nếu có nhiều đáp án hợp lý, hãy ghi nhận những gì người học đã làm tốt.\n" +
-    "- Nhận xét trực tiếp vào bài làm này, không giảng lý thuyết chung chung.\n" +
-    "- Trả lời bằng tiếng Việt.",
-  fr:
-    "Tu es un assistant pédagogique rigoureux et encourageant qui corrige la réponse " +
-    "d’un apprenant à un quiz. Appuie-toi sur la question, la réponse de référence et " +
-    "l’explication pour fournir une évaluation ciblée.\n\n" +
-    "Exigences :\n" +
-    "- Commence par une ligne indiquant le verdict : ✅ Correct / ⚠️ Partiellement correct / " +
-    "❌ Incorrect, avec la raison principale.\n" +
-    "- Liste ensuite : ce que l’apprenant a juste, ce qui est faux ou manquant, et comment corriger.\n" +
-    "- Si plusieurs réponses raisonnables existent, reconnais ce que l’apprenant a bien fait.\n" +
-    "- Adresse-toi directement à la réponse de l’apprenant, sans discours générique.\n" +
-    "- Réponds en français et tutoie l’apprenant.",
-  tr:
-    "Siz titiz ama cesaretlendirici bir öğretim asistanısınız ve bir öğrencinin test sorusuna " +
-    "verdiği yanıtı değerlendiriyorsunuz. Soruyu, örnek yanıtı ve açıklamayı temel alın.\n\n" +
-    "Yanıt gereksinimleri:\n" +
-    "- Sonucu belirten tek bir satırla başlayın: ✅ Doğru / ⚠️ Kısmen doğru / ❌ Yanlış " +
-    "ve temel gerekçeyi kısaca yazın.\n" +
-    "- Ardından madde madde yazın: öğrencinin neyi doğru yaptığı, neyin yanlış ya da eksik olduğu " +
-    "ve nasıl düzeltileceği.\n" +
-    "- Birden fazla makul yanıt mümkünse öğrencinin iyi yaptığı yönleri belirtin.\n" +
-    "- Doğrudan bu yanıta odaklanın, genel bir ders vermeyin.\n" +
-    '- Öğrenciye "siz" diye hitap edin.\n' +
-    "- Yanıtı ve geri bildirimi Türkçe yazın.",
-  it:
-    "Sei un assistente didattico rigoroso ma incoraggiante che corregge la risposta " +
-    "di uno studente a una domanda di un quiz. Basati sulla domanda, sulla risposta di riferimento " +
-    "e sulla spiegazione per fornire una valutazione mirata.\n\n" +
-    "Requisiti:\n" +
-    "- Inizia con una riga che esprime il verdetto: ✅ Corretto / ⚠️ Parzialmente corretto / ❌ Non corretto, " +
-    "e la motivazione principale.\n" +
-    "- Quindi elenca: cosa lo studente ha fatto bene, cosa è errato o mancante e come correggerlo.\n" +
-    "- Se esistono più risposte ragionevoli, riconosci i punti validi dello studente.\n" +
-    "- Rivolgiti direttamente alla risposta dello studente, senza lezioni generiche.\n" +
-    "- Rispondi in italiano.",
-  hu:
-    "Ön szigorú, de bátorító tanársegéd, aki egy tanuló kvízkérdésre adott válaszát értékeli. " +
-    "A kérdés, a mintaválasz és a magyarázat alapján adjon célzott értékelést.\n\n" +
-    "Követelmények:\n" +
-    "- Egy sorral kezdje az ítélettel: ✅ Helyes / ⚠️ Részben helyes / ❌ Helytelen, " +
-    "és a döntő indokkal.\n" +
-    "- Ezután sorolja fel: mit tudott jól a tanuló, mi hibás vagy hiányzik, és hogyan javítható.\n" +
-    "- Ha több elfogadható válasz is létezik, ismerje el, amit a tanuló jól tett.\n" +
-    "- Közvetlenül a tanuló megoldására reagáljon — ne tartson általános előadást.\n" +
-    "- Magyarul válaszoljon.",
-};
-
-const SUPPORTED_JUDGE_LANGUAGES = new Set(Object.keys(JUDGE_SYSTEM_PROMPTS));
+const JUDGE_SYSTEM_PROMPT =
+  "You are a rigorous yet encouraging teaching assistant grading a learner's quiz answer. " +
+  "Use the question, reference answer, and explanation to deliver a targeted assessment.\n\n" +
+  "Requirements:\n" +
+  "- Open with one line that states the verdict: ✅ Correct / ⚠️ Partially correct / ❌ Incorrect, " +
+  "and the key reason.\n" +
+  "- Then list: what the learner got right, what is wrong or missing, and how to fix it.\n" +
+  "- If multiple reasonable answers exist, acknowledge what the learner did well.\n" +
+  "- Speak directly to the learner's submission — do not give a generic lecture.\n" +
+  "- Reply in English.";
 
 interface JudgeRequest {
   question?: string;
@@ -396,7 +295,6 @@ interface JudgeRequest {
   user_answer_images?: Array<Record<string, unknown>> | null;
   user_answer_image?: string | null;
   image_filename?: string | null;
-  language?: string;
 }
 
 function guessImageMime(filename: string | null | undefined): string {
@@ -416,7 +314,6 @@ function dataUrlMime(value: string): string | null {
 }
 
 function buildJudgeUserPrompt(args: {
-  language: string;
   question: string;
   question_type: string;
   options: Record<string, string> | null;
@@ -430,13 +327,7 @@ function buildJudgeUserPrompt(args: {
     ? Object.entries(args.options).map(([k, v]) => `  ${k}. ${v}`).join("\n")
     : "";
   const parts: string[] = [];
-  const isZh = args.language === "zh";
-  const isFr = args.language === "fr";
-  const labels = isZh
-    ? { qt: "题目类型", q: "题干", opts: "选项", ref: "参考答案", exp: "参考解析", ans: "学习者作答", imgNone: "（仅提交了图片，无文字作答）", imgOne: "学习者另附了一张图片作为作答内容，", imgMany: (n: number) => `学习者另附了 ${n} 张图片作为作答内容`, final: "请针对该学习者的具体作答给出 AI 评判。" }
-    : isFr
-      ? { qt: "Type de question", q: "Question", opts: "Options", ref: "Réponse de référence", exp: "Explication de référence", ans: "Réponse de l’apprenant", imgNone: "(seule une image a été soumise, sans réponse écrite)", imgOne: "L’apprenant a joint une image à sa réponse. Lis son texte, ses formules et ses croquis, et prends-la en compte dans l’évaluation.", imgMany: (n: number) => `L’apprenant a joint ${n} images à sa réponse. Lis leur texte, leurs formules et leurs croquis, et prends-les en compte dans l’évaluation.`, final: "Produis une évaluation qui porte sur la réponse précise de cet apprenant." }
-      : { qt: "Question type", q: "Question", opts: "Options", ref: "Reference answer", exp: "Reference explanation", ans: "Learner's answer", imgNone: "(only an image was submitted, no typed answer)", imgOne: "The learner attached an image as part of the answer. Read its text/formulas/sketches and factor it into the judgment.", imgMany: (n: number) => `The learner attached ${n} images as part of the answer. Read their text/formulas/sketches and factor them into the judgment.`, final: "Produce an AI judgment that addresses this learner's specific answer." };
+  const labels = { qt: "Question type", q: "Question", opts: "Options", ref: "Reference answer", exp: "Reference explanation", ans: "Learner's answer", imgNone: "(only an image was submitted, no typed answer)", imgOne: "The learner attached an image as part of the answer. Read its text/formulas/sketches and factor it into the judgment.", imgMany: (n: number) => `The learner attached ${n} images as part of the answer. Read their text/formulas/sketches and factor them into the judgment.`, final: "Produce an AI judgment that addresses this learner's specific answer." };
   parts.push(`${labels.qt}: ${args.question_type || "unknown"}`);
   parts.push(`${labels.q}:\n${args.question}`);
   if (optionsBlock) parts.push(`${labels.opts}:\n${optionsBlock}`);
@@ -446,8 +337,6 @@ function buildJudgeUserPrompt(args: {
   parts.push(`${labels.ans}:\n${typed || labels.imgNone}`);
   if (args.hasImage) {
     parts.push(args.imageCount > 1 ? labels.imgMany(args.imageCount) : labels.imgOne);
-    if (isZh && args.imageCount > 1) parts[parts.length - 1] = `学习者另附了 ${args.imageCount} 张图片作为作答内容，请结合图片中的文字/公式/草图一并判定。`;
-    if (isZh && args.imageCount <= 1) parts[parts.length - 1] = "学习者另附了一张图片作为作答内容，请结合图片中的文字/公式/草图一并判定。";
   }
   parts.push(labels.final);
   return parts.join("\n\n");
@@ -458,14 +347,11 @@ interface ResolvedJudgeInput {
   error?: string;
   systemPrompt?: string;
   userPrompt?: string;
-  language?: string;
 }
 
 function resolveJudgeInput(data: JudgeRequest): ResolvedJudgeInput {
   const questionText = String(data.question ?? "").trim();
   if (!questionText) return { ok: false, error: "Question is required" };
-  let requestedLanguage = String(data.language ?? "").trim().toLowerCase();
-  if (!SUPPORTED_JUDGE_LANGUAGES.has(requestedLanguage)) requestedLanguage = "en";
   const userAnswer = String(data.user_answer ?? "");
 
   // Resolve image records (list form + legacy single-image form).
@@ -512,9 +398,8 @@ function resolveJudgeInput(data: JudgeRequest): ResolvedJudgeInput {
     data.options !== null && typeof data.options === "object" && !Array.isArray(data.options)
       ? data.options
       : null;
-  const systemPrompt = JUDGE_SYSTEM_PROMPTS[requestedLanguage] ?? JUDGE_SYSTEM_PROMPTS.en;
+  const systemPrompt = JUDGE_SYSTEM_PROMPT;
   const userPrompt = buildJudgeUserPrompt({
-    language: requestedLanguage,
     question: questionText,
     question_type: String(data.question_type ?? ""),
     options: optionsValue,
@@ -527,7 +412,7 @@ function resolveJudgeInput(data: JudgeRequest): ResolvedJudgeInput {
   if (!userAnswer.trim() && !hasImage) {
     return { ok: false, error: "No answer to judge — submit a typed answer or attach an image." };
   }
-  return { ok: true, systemPrompt, userPrompt, language: requestedLanguage };
+  return { ok: true, systemPrompt, userPrompt };
 }
 
 /**
@@ -627,22 +512,12 @@ quizRouter.post("/api/questions/judge", async (c) => {
 
 // -- question.py WebSocket endpoints (/mimic, /generate) -----------------------
 //
-// Ports of deeptutor/api/routers/question.py backed by the QuestionPipeline
 // port in src/capabilities/question/. Frame protocol:
 //   inbound : one JSON config frame, then the socket is server-driven.
 //   outbound: upstream StreamEvent dicts ({type:"stage_start"|"stage_end"|
 //     "thinking"|"content"|"tool_call"|"tool_result"|"progress"|"result"|...})
 //     plus endpoint-level {type:"status"|"task_id"|"batch_summary"|"complete"|
 //     "error"} frames.
-
-function responseLanguage(settings: Settings): string {
-  try {
-    const ui = loadUi(settings) as Record<string, unknown>;
-    return String(ui["response_language"] ?? ui["language"] ?? "en") || "en";
-  } catch {
-    return "en";
-  }
-}
 
 function questionWorkspaceDir(settings: Settings): string {
   const root = settings.workspace_dir || join(settings.data_dir ?? "./data", "workspace");
@@ -777,7 +652,7 @@ export async function handleQuestionGenerateWebSocket(ws: WebSocket): Promise<vo
     wsSend(ws, { type: "status", content: "started" });
     const userMessage = preference ? `${userTopic}\n\n${preference}` : userTopic;
     const pipeline = new QuestionPipeline({
-      language: responseLanguage(settings),
+      language: "en",
       kb_name: kbName,
       settings,
       session_id: taskId,
@@ -927,7 +802,7 @@ export async function handleMimicWebSocket(ws: WebSocket): Promise<void> {
     }
 
     const pipeline = new QuestionPipeline({
-      language: responseLanguage(settings),
+      language: "en",
       kb_name: kbName,
       settings,
       session_id: basename(outputDir),

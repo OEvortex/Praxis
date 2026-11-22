@@ -1,4 +1,4 @@
-// Port of backend/app/agent/video_lesson/runtime.py — Remotion runtime for
+// Remotion runtime for
 // video lessons: install once, compile per lesson, wrap in a page.
 //
 // The model writes `Lesson.tsx` against the shipped kit (`remotion/kit.tsx`).

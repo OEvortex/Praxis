@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/notebook.py — Favorites notebooks REST API.
+// Favorites notebooks REST API.
 //
 // Upstream mounts this router next to co_writer.py; the co-writer document
 // surface (`/api/documents/*`) is already ported in src/api/documents.ts, so

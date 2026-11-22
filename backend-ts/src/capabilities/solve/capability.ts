@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/solve/capability.py + loop.py — Deep Solve:
+// Deep Solve:
 // problem solving driven by the chat agent loop with a deterministic spine
 // (committed plan, per-step done gate, bounded replan).
 //

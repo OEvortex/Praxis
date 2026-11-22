@@ -1,4 +1,3 @@
-// Port of deeptutor/services/mcp/{config,user_config,secrets,catalog}.py +
 // the probe half of manager.py — the deployment MCP registry, per-user MCP
 // servers, credential references, the vendored catalog, and Test probes.
 //

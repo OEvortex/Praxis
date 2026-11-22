@@ -1,4 +1,3 @@
-import type { AppLanguage } from "@/context/languages";
 import type { LearningDisplay } from "@/lib/learning-display";
 import type {
   Catalog,
@@ -10,7 +9,6 @@ import type {
 
 export type UiSettings = LearningDisplay & {
   theme: "system" | "light" | "dark" | "glass" | "snow";
-  language: AppLanguage;
   code_block_theme: string;
   code_block_show_line_numbers: boolean;
   code_block_wrap_long_lines: boolean;

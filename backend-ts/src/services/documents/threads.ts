@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/threads.py — conversations held at
+// conversations held at
 // one line of a note page.
 //
 // The transcript itself lives in the chat session; the page only keeps where

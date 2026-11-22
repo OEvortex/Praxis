@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/mastery/mode.py — what a mastery
+// what a mastery
 // conversation is doing right now.
 
 export const OUTLINE = "outline";

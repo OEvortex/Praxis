@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/marginnote4/{models,store}.py — SQLite-backed
+// SQLite-backed
 // storage for MarginNote 4 objects synced by the MN4 Add-on.
 //
 // Schema mirrors upstream: mn4_objects / mn4_devices / mn4_cursors /

@@ -1,5 +1,4 @@
 // Mastery capability — TypeScript port of
-// deeptutor/capabilities/mastery (upstream Python).
 //
 // Exports the mastery_* BaseTool objects for the orchestrator to register,
 // plus the prompt-assembly helpers (pipeline.ts) and the session/path

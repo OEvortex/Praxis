@@ -1,7 +1,6 @@
 /**
  * Validate portable BlockNote JSON and derive a read-only Markdown projection.
  *
- * Faithful TypeScript port of backend/app/services/documents/blocks.py.
  */
 
 import { randomUUID } from "node:crypto";

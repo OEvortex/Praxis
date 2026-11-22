@@ -1,4 +1,4 @@
-// Port of deeptutor/services/storage/attachment_store.py — local-disk chat
+// local-disk chat
 // attachment storage used by api/routers/attachments.py and file-preview.
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, join, resolve, sep } from "node:path";

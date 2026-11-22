@@ -1,4 +1,4 @@
-// Port of backend/tests/test_noteui.py — NoteUI Lang: DSL -> BlockNote blocks,
+// NoteUI Lang: DSL -> BlockNote blocks,
 // fences, and Markdown round-trips.
 import { describe, expect, it } from "vitest";
 import {

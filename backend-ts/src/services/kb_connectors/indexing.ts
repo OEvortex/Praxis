@@ -1,4 +1,3 @@
-// Port of deeptutor/knowledge/{progress_tracker,indexing_run}.py plus the
 // reindex/readiness routes' backing state: per-KB ``.progress.json`` snapshots,
 // the ``.indexing-run.json`` / ``.indexing-cancel.json`` durable journals, and
 // the in-process task registry that decides whether a "running" journal entry

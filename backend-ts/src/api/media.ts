@@ -1,4 +1,3 @@
-// Ports of deeptutor/api/routers/{voice,visualizers,outputs,attachments,
 // file_preview,file_library,render_storage}.py — media/file surfaces.
 import { Hono } from "hono";
 import type { Context } from "hono";

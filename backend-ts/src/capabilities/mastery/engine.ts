@@ -1,4 +1,3 @@
-// Port of the deterministic mastery engine (deeptutor.learning): mastery
 // scoring, per-type gates, next-objective policy, spaced-repetition
 // scheduling, deterministic grading and the learning-service mutations the
 // mastery tools call. LLM-dependent judgement (semantic grading of free-text
@@ -654,18 +653,18 @@ export function isReadableChoiceAnswer(answer: string, options: Record<string, s
   const candidate = String(answer ?? "").trim();
   const resolved = resolveChoiceSubmission(candidate, optionMap);
   if (!resolved) return false;
-  if (new RegExp(`^${resolved.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[。.!！]?$`, "i").test(candidate)) {
+  if (new RegExp(`^${resolved.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[.!]?$`, "i").test(candidate)) {
     return true;
   }
   const prefix = OPTION_PREFIX_RE.exec(candidate);
   if (prefix && prefix[1].toUpperCase() === resolved) return true;
   if (squeezed(candidate) === squeezed(optionMap[resolved])) return true;
-  if (/[?？]|\b(?:why|what|how|can|could|would|explain)\b|(?:为什么|为何|怎么|如何|什么|解释一下|请解释)/i.test(candidate)) {
+  if (/[?]|\b(?:why|what|how|can|could|would|explain)\b/i.test(candidate)) {
     return false;
   }
   const label = resolved.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(
-    `(?:\\b(?:answer(?:\\s+is)?|choose|pick|select|think(?:\\s+it(?:'s|\\s+is))?|go\\s+with)\\s*(?:option\\s*)?${label}\\b|(?:答案(?:是|为)?|我?选(?:择)?|应该是|我觉得是)\\s*${label})`,
+    `\\b(?:answer(?:\\s+is)?|choose|pick|select|think(?:\\s+it(?:'s|\\s+is))?|go\\s+with)\\s*(?:option\\s*)?${label}\\b`,
     "i",
   ).test(candidate);
 }

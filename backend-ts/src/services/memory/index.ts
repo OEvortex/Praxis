@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/__init__.py — public surface.
+// public surface.
 export {
   is_entry_id,
   is_trace_id,

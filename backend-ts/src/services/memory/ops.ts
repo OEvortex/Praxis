@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/ops.py — atomic add/edit/delete batches.
+// atomic add/edit/delete batches.
 // Pure functions; no I/O.
 import { is_entry_id, is_valid_ref, new_entry_id } from "./ids.js";
 import {

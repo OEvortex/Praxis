@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/explore_context/capability.py — the
+// the
 // explore-context loop capability: a near-invisible pre-pass that activates
 // whenever the chat turn carries any readable (non-image) attached source.
 // It runs the ContextExplorer before the answer loop's first LLM call and
@@ -48,7 +48,7 @@ export function pre_loop_seed(_metadata?: Dict): string {
 const _explorerCache = new Map<string, ContextExplorer>();
 
 function _explorer(language: string): ContextExplorer {
-  const lang = String(language || "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+  const lang = "en";
   let explorer = _explorerCache.get(lang);
   if (explorer === undefined) {
     explorer = new ContextExplorer({

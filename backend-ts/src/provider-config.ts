@@ -1,4 +1,4 @@
-// Port of backend/app/provider_config.py — Praxis-owned provider / model
+// Praxis-owned provider / model
 // configuration.
 //
 // This module is the *only* source of truth for which providers and models the

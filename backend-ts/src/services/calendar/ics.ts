@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/ics.py
 // Render stored calendar events as RFC 5545 iCalendar text.
 //
 // Timed events use local wall time with `TZID` and a `VTIMEZONE` per used

@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/proposals.py — durable, reviewable
+// durable, reviewable
 // edits with per-block conflict detection.
 
 import { randomBytes } from "node:crypto";

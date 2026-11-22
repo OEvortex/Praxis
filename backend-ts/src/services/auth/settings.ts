@@ -1,5 +1,4 @@
 // Port of the auth/integrations slices of
-// deeptutor/services/config/runtime_settings.py — JSON settings files under
 // `<data>/user/settings/` plus the same process-env overrides upstream honors.
 //
 // Upstream resolves the settings dir through the admin PathService

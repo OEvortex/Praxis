@@ -1,4 +1,4 @@
-// Port of deeptutor/services/pocketbase_client.py — minimal PocketBase HTTP
+// minimal PocketBase HTTP
 // client (no SDK dependency). Active only when integrations.pocketbase_url is
 // set and auth is enabled.
 import { loadIntegrationsSettings } from "./settings.js";

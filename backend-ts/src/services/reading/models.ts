@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/models.py — data model for immersive reading.
+// data model for immersive reading.
 //
 // The central abstraction is the **locator**: a 1-indexed address into a
 // material that means "page" for a PDF, "chapter" for an EPUB, "slide" for a

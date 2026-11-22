@@ -27,14 +27,11 @@ import {
   DEFAULT_CODE_BLOCK_SHOW_LINE_NUMBERS,
   DEFAULT_CODE_BLOCK_THEME,
   DEFAULT_CODE_BLOCK_WRAP_LONG_LINES,
-  LANGUAGE_EVENT,
-  LANGUAGE_STORAGE_KEY,
   SIDEBAR_COLLAPSED_EVENT,
   SIDEBAR_COLLAPSED_STORAGE_KEY,
   normalizeCodeBlockShowLineNumbers,
   normalizeCodeBlockTheme,
   normalizeCodeBlockWrapLongLines,
-  normalizeLanguage,
   readStoredActiveSessionId,
   readStoredCodeBlockShowLineNumbers,
   readStoredCodeBlockTheme,
@@ -44,9 +41,7 @@ import {
   writeStoredCodeBlockShowLineNumbers,
   writeStoredCodeBlockTheme,
   writeStoredCodeBlockWrapLongLines,
-  writeStoredLanguage,
   writeStoredSidebarCollapsed,
-  type AppLanguage,
 } from "@/context/app-shell-storage";
 import {
   DEFAULT_LEARNING_DISPLAY,
@@ -59,9 +54,6 @@ import {
 interface AppShellContextValue {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  language: AppLanguage;
-  languageReady: boolean;
-  setLanguage: (language: AppLanguage) => void;
   activeSessionId: string | null;
   setActiveSessionId: (sessionId: string | null) => void;
   sidebarCollapsed: boolean;
@@ -80,9 +72,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     return getStoredTheme() ?? getSystemTheme();
   });
-  // Always start with "en" to match SSR; hydrate from localStorage after mount
-  const [language, setLanguageState] = useState<AppLanguage>("en");
-  const [languageReady, setLanguageReady] = useState(false);
   const [activeSessionId, setActiveSessionIdState] = useState<string | null>(
     () => readStoredActiveSessionId(),
   );
@@ -160,13 +149,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // English is the only interface language. Keep the state aligned with the
-    // SSR default and mark it ready without consulting a server preference.
-    setLanguageState("en");
-    setLanguageReady(true);
-  }, []);
-
-  useEffect(() => {
     // ThemeScript paints before hydration. This starts the live
     // prefers-color-scheme listener when the choice is system or unset.
     setThemeState(initializeTheme());
@@ -182,9 +164,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return;
 
     const onStorage = (event: StorageEvent) => {
-      if (event.key === LANGUAGE_STORAGE_KEY) {
-        setLanguageState(normalizeLanguage(event.newValue));
-      }
       if (event.key === ACTIVE_SESSION_STORAGE_KEY) {
         setActiveSessionIdState(event.newValue);
       }
@@ -204,11 +183,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
           normalizeCodeBlockWrapLongLines(event.newValue),
         );
       }
-    };
-
-    const onLanguage = (event: Event) => {
-      const detail = (event as CustomEvent<{ language?: AppLanguage }>).detail;
-      setLanguageState(normalizeLanguage(detail?.language));
     };
 
     const onActiveSession = (event: Event) => {
@@ -245,14 +219,12 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
     };
 
     window.addEventListener("storage", onStorage);
-    window.addEventListener(LANGUAGE_EVENT, onLanguage);
     window.addEventListener(ACTIVE_SESSION_EVENT, onActiveSession);
     window.addEventListener(SIDEBAR_COLLAPSED_EVENT, onSidebarCollapsed);
     window.addEventListener(CODE_BLOCK_SETTINGS_EVENT, onCodeBlockSettings);
 
     return () => {
       window.removeEventListener("storage", onStorage);
-      window.removeEventListener(LANGUAGE_EVENT, onLanguage);
       window.removeEventListener(ACTIVE_SESSION_EVENT, onActiveSession);
       window.removeEventListener(SIDEBAR_COLLAPSED_EVENT, onSidebarCollapsed);
       window.removeEventListener(
@@ -265,12 +237,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useCallback((nextTheme: Theme) => {
     applyThemePreference(nextTheme);
     setThemeState(nextTheme);
-  }, []);
-
-  const setLanguage = useCallback((nextLanguage: AppLanguage) => {
-    writeStoredLanguage(nextLanguage);
-    setLanguageState(nextLanguage);
-    setLanguageReady(true);
   }, []);
 
   const setActiveSessionId = useCallback((sessionId: string | null) => {
@@ -303,9 +269,6 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
     () => ({
       theme,
       setTheme,
-      language,
-      languageReady,
-      setLanguage,
       activeSessionId,
       setActiveSessionId,
       sidebarCollapsed,
@@ -322,13 +285,10 @@ export function AppShellProvider({ children }: { children: React.ReactNode }) {
       codeBlockShowLineNumbers,
       codeBlockTheme,
       codeBlockWrapLongLines,
-      language,
-      languageReady,
       setActiveSessionId,
       setCodeBlockShowLineNumbers,
       setCodeBlockTheme,
       setCodeBlockWrapLongLines,
-      setLanguage,
       setSidebarCollapsed,
       setTheme,
       sidebarCollapsed,

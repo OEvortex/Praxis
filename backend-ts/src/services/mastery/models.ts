@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/models.py — the Mastery Path aggregate shapes.
+// the Mastery Path aggregate shapes.
 //
 // Upstream these are pydantic models; here the persisted state is plain JSON
 // (the store round-trips ``state_json`` verbatim), so the "models" are
@@ -13,12 +13,7 @@ export const KNOWLEDGE_TYPES: KnowledgeType[] = [
   "design",
 ];
 
-const KNOWLEDGE_TYPE_LEGACY: Record<string, KnowledgeType> = {
-  记忆型: "memory",
-  概念型: "concept",
-  程序型: "procedure",
-  设计型: "design",
-};
+const KNOWLEDGE_TYPE_LEGACY: Record<string, KnowledgeType> = {};
 
 export function normalizeKnowledgeType(value: unknown): KnowledgeType {
   const raw = String(value ?? "").trim();

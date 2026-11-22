@@ -1,4 +1,3 @@
-// Port of the deeptutor.services.creations subset the creator capability and
 // its propose_creation tool need: the two creation kinds (skill, persona),
 // input normalization, and the per-session draft store.
 //

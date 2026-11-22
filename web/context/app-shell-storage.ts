@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  normalizeLanguage as normalizeAppLanguage,
-  type AppLanguage,
-} from "@/context/languages";
-
 import { browserStorage } from "@/shared/storage";
 import { activeWorkspaceId } from "@/lib/workspace-scope";
 
-export type { AppLanguage } from "@/context/languages";
-
 export const ACTIVE_SESSION_STORAGE_KEY = "praxis.activeSessionId.tab";
-export const LANGUAGE_STORAGE_KEY = "praxis-language";
 export const SIDEBAR_COLLAPSED_STORAGE_KEY = "praxis.sidebarCollapsed";
 const CHAT_RESPONSE_TIMEOUT_STORAGE_KEY =
   "praxis.chatResponseTimeout";
@@ -67,56 +59,8 @@ export function writeStoredChatResponseTimeout(seconds: number): void {
 }
 
 export const ACTIVE_SESSION_EVENT = "praxis:active-session";
-export const LANGUAGE_EVENT = "praxis:language";
 export const SIDEBAR_COLLAPSED_EVENT = "praxis:sidebar-collapsed";
 export const CODE_BLOCK_SETTINGS_EVENT = "praxis:code-block-settings";
-
-export function normalizeLanguage(
-  value: string | null | undefined,
-): AppLanguage {
-  return normalizeAppLanguage(value);
-}
-
-export function readStoredLanguage(): AppLanguage {
-  if (typeof window === "undefined") return "en";
-  try {
-    return normalizeLanguage(
-      browserStorage.readRaw("local", LANGUAGE_STORAGE_KEY),
-    );
-  } catch {
-    return "en";
-  }
-}
-
-/** Whether this browser has ever recorded a choice.
- *
- * ``readStoredLanguage`` cannot answer this: it normalizes a missing value to
- * "en", which is indistinguishable from an explicit English selection. The
- * bootstrap needs the difference — it may only consult the server-side
- * preference when the browser has no choice of its own to honour.
- */
-export function hasStoredLanguage(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return browserStorage.readRaw("local", LANGUAGE_STORAGE_KEY) !== null;
-  } catch {
-    return false;
-  }
-}
-
-export function writeStoredLanguage(language: AppLanguage): void {
-  if (typeof window === "undefined") return;
-  try {
-    browserStorage.writeRaw("local", LANGUAGE_STORAGE_KEY, language);
-    window.dispatchEvent(
-      new CustomEvent(LANGUAGE_EVENT, {
-        detail: { language },
-      }),
-    );
-  } catch {
-    // localStorage may be unavailable
-  }
-}
 
 export function readStoredActiveSessionId(): string | null {
   if (typeof window === "undefined") return null;

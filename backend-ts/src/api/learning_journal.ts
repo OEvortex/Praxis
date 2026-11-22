@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/learning_journal.py — read-only view of the
+// read-only view of the
 // workspace's conversational learning journal.
 import { Hono } from "hono";
 import { get_learning_journal_store } from "../services/learning_journal/store.js";

@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/handoff/capability.py — hand the turn over:
+// hand the turn over:
 // a partner or a connected agent answers it, not the tutor.
 //
 // TS port notes / TODOs:

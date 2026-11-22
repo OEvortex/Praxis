@@ -1,4 +1,4 @@
-// Port of deeptutor/services/github_source/{client,sync}.py — pull Markdown
+// pull Markdown
 // and MDX from a GitHub repo into a KB's raw/ dir and index changed files
 // through the deployment's document store.
 import { mkdirSync, writeFileSync, unlinkSync, existsSync, readFileSync } from "node:fs";

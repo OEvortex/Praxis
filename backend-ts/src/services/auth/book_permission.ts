@@ -1,4 +1,3 @@
-// Port of deeptutor/multi_user/book_permission.py.
 import { getUser } from "./identity.js";
 import type { CurrentUser } from "./paths.js";
 

@@ -1,4 +1,4 @@
-// Port of deeptutor/book/engine.py — BookEngine orchestrator.
+// BookEngine orchestrator.
 //
 // Faithful port of the observable contract: same storage layout, same status
 // machine, same revision/breaker semantics, same event kinds. The upstream
@@ -635,7 +635,7 @@ export class BookEngine {
       spine.chapters.forEach((c, i) => (c.order = i));
       return spine;
     }
-    const copy = overview_copy(book.language);
+    const copy = overview_copy();
     const overview = make_chapter({
       title: String(copy["chapter_title"]),
       learning_objectives: [...(copy["objectives"] as string[])],
@@ -661,7 +661,7 @@ export class BookEngine {
     const overview_page = pages.find((p) => p.chapter_id === overview_chapter.id);
     if (!overview_page || overview_page.status === "ready") return;
 
-    const copy = overview_copy(book.language);
+    const copy = overview_copy();
     const chapter_index = spine.chapters
       .filter((ch) => ch.content_type !== "overview")
       .map((ch) => ({

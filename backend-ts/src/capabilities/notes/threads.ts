@@ -1,4 +1,4 @@
-// Port of deeptutor/notes/threads.py — conversations held at a line of a
+// conversations held at a line of a
 // note page, adapted to the Praxis document store.
 //
 // Upstream keeps threads in `<doc_root>/threads.json`; the Praxis port of the
@@ -201,11 +201,10 @@ export function thread_anchor_context(
   storage: CoWriterStorage,
   doc_id: string,
   session_id: string,
-  opts: { zh?: boolean } = {},
+  opts: {} = {},
 ): string {
   /** Which line of the page this conversation is held at, or "". */
   if (!doc_id || !session_id) return "";
-  const zh = Boolean(opts.zh);
   const thread = find_thread(storage, doc_id, session_id);
   if (thread === null) return "";
   const doc = storage.loadDocument(doc_id);
@@ -217,33 +216,18 @@ export function thread_anchor_context(
   const quote = String(thread["quote"] ?? "").trim();
   const content = block !== null ? card_content(block) : "";
   const lines: string[] = [];
-  if (zh) {
-    lines.push(
-      `这段对话是在页面的块 ${blockId} 处发起的` +
-        (block === null
-          ? "（该块已被删除）。"
-          : `：「${block_text(block)}」。`),
-    );
-    if (quote) lines.push(`用户当时选中的文字：「${quote}」。`);
-    lines.push(
-      "用户说「这里」「这段」「这句」时指的就是它；插入、改写、生成的内容默认放在这个块附近，" +
-        "其余部分保持不动。",
-    );
-    if (content) lines.push(`这个块的内容如下：\n${content}`);
-  } else {
-    lines.push(
-      `This conversation was opened at block ${blockId} of the page` +
-        (block === null
-          ? " (that block has since been deleted)."
-          : `: "${block_text(block)}".`),
-    );
-    if (quote) lines.push(`The learner had selected: "${quote}".`);
-    lines.push(
-      '"Here", "this part" and "this sentence" mean that block. Place inserted, ' +
-        "rewritten or generated material next to it and leave the rest of the page alone.",
-    );
-    if (content) lines.push(`The block holds:\n${content}`);
-  }
+  lines.push(
+    `This conversation was opened at block ${blockId} of the page` +
+      (block === null
+        ? " (that block has since been deleted)."
+        : `: "${block_text(block)}".`),
+  );
+  if (quote) lines.push(`The learner had selected: "${quote}".`);
+  lines.push(
+    '"Here", "this part" and "this sentence" mean that block. Place inserted, ' +
+      "rewritten or generated material next to it and leave the rest of the page alone.",
+  );
+  if (content) lines.push(`The block holds:\n${content}`);
   return lines.join(" ");
 }
 

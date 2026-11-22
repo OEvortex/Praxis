@@ -1,4 +1,3 @@
-// Port of deeptutor/video_learning/invidious_account{,_storage,_client}.py —
 // per-owner Invidious account connections (authorize → callback → token store).
 import { createHash, randomBytes } from "node:crypto";
 import {

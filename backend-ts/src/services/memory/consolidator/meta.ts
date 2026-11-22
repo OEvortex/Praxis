@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/consolidator/meta.py — per-doc
+// per-doc
 // *.meta.json sidecars capturing "seen ids" for update diffs.
 import {
   existsSync,

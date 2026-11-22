@@ -1,6 +1,5 @@
 /**
  * REST + SSE transport for turns and legacy feature channels.
- * Port of backend/app/api/realtime.py.
  *
  * There is no ACP / JSON-RPC layer: command bodies are the frontend's native
  * protocol objects, and outbound frames are the raw event objects the frontend's

@@ -1,4 +1,4 @@
-// Port of backend/app/services/cron/reports.py — recent reminders that
+// recent reminders that
 // actually fired, kept in the shared SQLite kv store for live in-app delivery.
 import { get_settings } from "../../config.js";
 import { get_state, put_state } from "../../store/database.js";

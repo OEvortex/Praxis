@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/editing.py — prompts and operation
+// prompts and operation
 // history for Co-Writer AI edits.
 //
 // Three entry points share one shape: take draft text, ask the configured

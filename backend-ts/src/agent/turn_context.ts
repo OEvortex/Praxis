@@ -1,7 +1,6 @@
 /**
  * Per-turn context available to tools that must know who is asking.
  *
- * Port of ``backend/app/agent/turn_context.py``.
  *
  * Tools are plain functions, so the session, workspace and bound notebook page
  * of the running turn are published in context variables instead of being passed

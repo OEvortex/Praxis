@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/auth.py — auth router mounted at /api/auth.
+// auth router mounted at /api/auth.
 // Hono equivalent of the FastAPI router: login/logout/status/registration,
 // profile, device credentials, session handoff, and admin user management.
 import { Hono } from "hono";

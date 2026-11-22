@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/consolidator/parse.py — tolerant JSON
+// tolerant JSON
 // parsers shared across the consolidator.
 import type { Op } from "../ops.js";
 import type { Dict } from "../../../shared/types.js";

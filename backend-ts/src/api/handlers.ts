@@ -1,4 +1,4 @@
-// Port of backend/app/api/handlers.py — the Praxis REST API mounted at
+// the Praxis REST API mounted at
 // ``/api/*``. Implements auth-free session/settings/knowledge-base surfaces
 // the frontend uses to boot and hold a conversation.
 //

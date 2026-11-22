@@ -1,14 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { normalizeLanguage } from "../context/languages";
 import { formatDate, formatTime, getLocale } from "../lib/datetime";
-
-test("only English is a supported interface locale", () => {
-  for (const raw of ["en", "en-US", "en_US", "english", "xx"]) {
-    assert.equal(normalizeLanguage(raw), "en");
-  }
-});
 
 test("dates and times use the English locale", () => {
   const date = new Date("2026-03-05T14:05:00Z");

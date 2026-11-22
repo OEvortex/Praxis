@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/store.py — MemoryStore facade.
+// MemoryStore facade.
 import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { l2_file, l3_file, memory_root, backup_root, SURFACES, L3_SLOTS, type L3Slot, type Surface } from "./paths.js";

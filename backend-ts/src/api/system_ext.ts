@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/system.py — system endpoints not already in
+// system endpoints not already in
 // handlers.ts: /api/system/memory, /api/system/test/{llm,embeddings,search}
 // and the self-update surface (/api/system/update*).
 import { Hono } from "hono";

@@ -1,4 +1,3 @@
-// Port of deeptutor/services/web_source/{crawler,sync,repository,scheduler}.py
 // — bounded doc-site crawl, hash diff into a KB's raw/ dir, and the SQLite
 // job repository + interval scheduler that drives auto-sync.
 import { createHash } from "node:crypto";

@@ -1,4 +1,4 @@
-// Port of deeptutor/tools/builtin ReadSourceTool — loads the full text of an
+// loads the full text of an
 // attached turn source by its manifest id. The per-turn ``{source_id: text}``
 // map is injected by the caller (upstream ``source_index`` kwarg; here the
 // ``source_index`` param or ``current_source_index`` context var).

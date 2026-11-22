@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/store.py + search.py + service.py — the reading
+// the reading
 // engine the immersive-reading capability's tools sit on.
 //
 // Two persistence layers live here:
@@ -186,10 +186,9 @@ export const readingModeStore = new ReadingModeStore();
 // ---------------------------------------------------------------------------
 
 const WS_RUN = /\s+/g;
-const SOFT_PUNCT = /[‘’“”–—\-_'"`，、;；:：.。!！?？()（）[\]【】]/g;
+const SOFT_PUNCT = /[–—\-_'"';:.,!?()[\]]/g;
 const TERM_SPLIT = /[^\p{L}\p{N}_]+/u;
 const MIN_TERM_LEN = 2;
-const CJK = /[㐀-䶿一-鿿豈-﫿぀-ヿ]/;
 
 export const SNIPPET_RADIUS = 140;
 
@@ -208,14 +207,7 @@ export function termsOf(query: string): string[] {
     .filter((t) => t.length > 0);
   const expanded: string[] = [];
   for (const term of raw) {
-    if ([...term].length >= 3 && CJK.test(term)) {
-      const chars = [...term];
-      for (let i = 0; i + 1 < chars.length; i++) {
-        expanded.push(chars[i]! + chars[i + 1]!);
-      }
-    } else if ([...term].length >= MIN_TERM_LEN) {
-      expanded.push(term);
-    }
+    if ([...term].length >= MIN_TERM_LEN) expanded.push(term);
   }
   return [...new Set(expanded)];
 }

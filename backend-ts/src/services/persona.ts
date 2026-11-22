@@ -1,4 +1,4 @@
-// Port of deeptutor/services/persona/service.py — PERSONA.md CRUD under
+// PERSONA.md CRUD under
 // <workspace_dir>/personas/<name>/PERSONA.md with YAML frontmatter, plus the
 // read-only admin preset overlay (bundled peer/teacher/research-assistant).
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";

@@ -11,12 +11,10 @@ type UiSettingsSlice = Pick<
   | "updateContentLineSpacing"
   | "resetLearningText"
   | "theme"
-  | "language"
   | "codeBlockTheme"
   | "codeBlockShowLineNumbers"
   | "codeBlockWrapLongLines"
   | "updateTheme"
-  | "updateLanguage"
   | "updateCodeBlockTheme"
   | "updateCodeBlockShowLineNumbers"
   | "updateCodeBlockWrapLongLines"
@@ -34,12 +32,10 @@ export function UiSettingsProvider({ children }: { children: ReactNode }) {
       updateContentLineSpacing: source.updateContentLineSpacing,
       resetLearningText: source.resetLearningText,
       theme: source.theme,
-      language: source.language,
       codeBlockTheme: source.codeBlockTheme,
       codeBlockShowLineNumbers: source.codeBlockShowLineNumbers,
       codeBlockWrapLongLines: source.codeBlockWrapLongLines,
       updateTheme: source.updateTheme,
-      updateLanguage: source.updateLanguage,
       updateCodeBlockTheme: source.updateCodeBlockTheme,
       updateCodeBlockShowLineNumbers: source.updateCodeBlockShowLineNumbers,
       updateCodeBlockWrapLongLines: source.updateCodeBlockWrapLongLines,
@@ -51,12 +47,10 @@ export function UiSettingsProvider({ children }: { children: ReactNode }) {
       source.updateContentLineSpacing,
       source.resetLearningText,
       source.theme,
-      source.language,
       source.codeBlockTheme,
       source.codeBlockShowLineNumbers,
       source.codeBlockWrapLongLines,
       source.updateTheme,
-      source.updateLanguage,
       source.updateCodeBlockTheme,
       source.updateCodeBlockShowLineNumbers,
       source.updateCodeBlockWrapLongLines,

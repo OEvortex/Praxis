@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/unified_ws.py — the unified WebSocket turn
+// the unified WebSocket turn
 // protocol at /ws. The TS realtime hub is SSE+REST (realtime.ts); this adds
 // the upstream WS transport on top of the SAME ClientSession command handler,
 // so every command type the Python socket accepts works identically: frames

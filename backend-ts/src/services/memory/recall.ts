@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/recall.py — reading memory back:
+// reading memory back:
 // what the learner has been doing lately (snapshot stamps + trace queries).
 import type { Surface } from "./paths.js";
 import { SURFACES } from "./paths.js";

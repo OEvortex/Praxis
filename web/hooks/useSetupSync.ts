@@ -3,10 +3,6 @@
 import { useEffect, useRef } from "react";
 
 import { apiFetch, apiUrl } from "@/shared/api/client";
-import {
-  writeStoredLanguage,
-  type AppLanguage,
-} from "@/context/app-shell-storage";
 import { setTheme, type ThemePreference } from "@/lib/theme";
 import { collectAppliedSettingIds } from "@/lib/setup-signals";
 import type { StreamEvent } from "@/features/chat/model/protocol";
@@ -29,18 +25,14 @@ function asTheme(value: unknown): ThemePreference | null {
 /**
  * Re-read UI preferences after the assistant changes them from within chat.
  *
- * The browser is the source of truth for language and theme: the app shell
- * reads them from localStorage and only consults the server when localStorage
- * holds nothing at all (see `AppShellContext`). That is right for a person
- * switching languages in one tab, but it means a change the assistant makes
- * on the server is invisible here — the user is told "done" while the
+ * The browser owns the cached theme, so a change the assistant makes on the
+ * server is otherwise invisible here — the user is told "done" while the
  * interface stays exactly as it was, which reads as a broken promise.
  *
  * So the backend's `apply_setting` tags its result with `setup_applied`, and
  * this hook treats that tag as "your cached copy is stale": it re-reads the
- * server's UI settings once and writes them through the same storage helpers a
- * manual change would use. Those helpers emit the storage events the app shell
- * already listens to, so the whole UI switches over without a reload.
+ * server's UI settings once and applies the theme through the same helper a
+ * manual change would use.
  *
  * Each tool call is honoured once — replayed history and re-renders must not
  * keep overwriting a preference the user has since changed by hand.
@@ -77,8 +69,6 @@ export function useSetupSync(
           theme?: unknown;
         };
         if (!mountedRef.current || requestRevision !== requestRevisionRef.current) return;
-        // English is the only interface language.
-        writeStoredLanguage("en");
         const theme = asTheme(payload.theme);
         if (theme) setTheme(theme);
       } catch {
@@ -88,5 +78,3 @@ export function useSetupSync(
     })();
   }, [messages]);
 }
-
-export type { AppLanguage };

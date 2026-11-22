@@ -200,10 +200,7 @@ export function servicePendingApply(
   );
 }
 
-export function nextModelName(
-  models: CatalogModel[],
-  language: UiSettings["language"],
-): string {
+export function nextModelName(models: CatalogModel[]): string {
   const prefix = "Model ";
   const used = new Set(models.map((model) => model.name.trim()));
   let index = models.length + 1;

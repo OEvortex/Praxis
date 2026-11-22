@@ -14,7 +14,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import { normalizeLanguage } from "@/context/languages";
 import { formatDate } from "@/lib/datetime";
 
 import { Toggle } from "@/components/settings/Toggle";
@@ -184,11 +183,11 @@ export default function AboutSettingsPage() {
     if (!status?.checked_at) return "";
     const parsed = new Date(status.checked_at);
     if (Number.isNaN(parsed.getTime())) return "";
-    return formatDate(parsed, normalizeLanguage("en"), {
+    return formatDate(parsed, "en", {
       dateStyle: "medium",
       timeStyle: "short",
     });
-  }, ["en", status?.checked_at]);
+  }, [status?.checked_at]);
 
   const installMode = status?.installation.mode ?? "unknown";
   const canUpdate = Boolean(

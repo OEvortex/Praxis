@@ -1,4 +1,4 @@
-// Port of backend/app/services/config_test.py — live configuration diagnostics
+// live configuration diagnostics
 // for the Settings "Test this model" action. The settings editor sends a
 // *draft* catalog; this resolves the addressed profile/model (including
 // `provider_ref` connections), performs a small bounded completion against the

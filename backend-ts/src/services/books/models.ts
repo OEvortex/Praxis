@@ -1,4 +1,4 @@
-// Port of deeptutor/book/models.py — data models for the Book Engine.
+// data models for the Book Engine.
 //
 // Pydantic ``model_dump(mode="json")`` maps to plain JSON objects here; the
 // models are interfaces plus small helpers. Enum values are kept as string

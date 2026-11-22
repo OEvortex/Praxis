@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/obsidian/tools.py — nine agent tools over a
+// nine agent tools over a
 // connected Obsidian vault: six read (search, read, list, backlinks, links,
 // tags) and three write additively (create / append / set property).
 //

@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/snapshot/entity.py — pure data types.
+// pure data types.
 import type { Dict } from "../../../shared/types.js";
 
 export interface Entity {

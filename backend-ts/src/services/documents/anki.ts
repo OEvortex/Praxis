@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/anki.py — render notebook flashcards
+// render notebook flashcards
 // as Anki's tab-separated import text.
 //
 // The format follows Anki 2.1.55+ header lines so File -> Import creates Basic

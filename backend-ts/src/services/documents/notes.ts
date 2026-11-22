@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/notes.py — one-time import of legacy
+// one-time import of legacy
 // markdown notes into the Co-Writer notebook.
 //
 // Older versions wrote standalone markdown files under ``data/notes``; the

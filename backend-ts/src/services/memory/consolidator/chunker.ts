@@ -1,10 +1,10 @@
-// Port of deeptutor/services/memory/consolidator/chunker.py — char-based
+// char-based
 // chunking with boundary expansion. Pure functions.
 
 export type Boundary = "paragraph" | "sentence";
 
 const PARA_BOUNDARY = /\n\s*\n+/g;
-const SENT_BOUNDARY = /[.!?][")»」』]*(?=\s|$)|[。！？][")»」』]*/g;
+const SENT_BOUNDARY = /[.!?][")\]]*(?=\s|$)/g;
 
 export interface ChunkSpan {
   index: number;

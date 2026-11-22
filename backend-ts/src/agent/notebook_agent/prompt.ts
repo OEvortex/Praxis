@@ -1,4 +1,3 @@
-// Port of backend/app/agent/notebook_agent/prompt.py
 //
 // Load the shared Co-writer system prompt.
 //

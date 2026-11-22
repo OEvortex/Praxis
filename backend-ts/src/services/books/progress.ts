@@ -1,4 +1,4 @@
-// Port of deeptutor/book/progress.py — pure functions over Progress.
+// pure functions over Progress.
 import type { Progress, QuizAttempt } from "./models.js";
 import { now } from "./models.js";
 

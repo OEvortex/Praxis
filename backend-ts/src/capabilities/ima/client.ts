@@ -1,4 +1,4 @@
-// Port of deeptutor/services/rag/pipelines/ima/{client,notes,media}.py — the
+// the
 // method table over Tencent IMA's knowledge-base (wiki) and notes OpenAPI.
 //
 // Reading: get_knowledge_list (browse), get_media_info + get_media_content

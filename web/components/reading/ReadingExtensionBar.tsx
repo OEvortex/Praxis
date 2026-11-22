@@ -57,9 +57,6 @@ export function builtInActionLabel(extensionId: string, actionId: string) {
   if (extensionId === "translation" && actionId === "translate_en") {
     return "Translate to English";
   }
-  if (extensionId === "translation" && actionId === "translate_zh") {
-    return "Translate to Chinese";
-  }
   return "";
 }
 

@@ -1,4 +1,3 @@
-// Port of deeptutor/api/routers/question_notebook.py storage semantics —
 // quiz-question notebook entries, bookmarks and categories.
 //
 // Upstream persists via the SQLite session store (notebook_entries +

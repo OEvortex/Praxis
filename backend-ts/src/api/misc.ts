@@ -1,4 +1,3 @@
-// Ports of deeptutor/api/routers/{task_board,personas,modules,capabilities,
 // capabilities_settings,imports,creations,dashboard,practice}.py.
 // NOTE: several paths overlap handlers.ts stubs (personas GET, creations drafts,
 // imports POST, dashboard suggestions/source-library/learning-library,

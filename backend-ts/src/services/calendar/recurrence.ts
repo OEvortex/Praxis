@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/recurrence.py
 // RFC 5545 recurrence: wall-clock expansion, occurrence keys and series splits.
 //
 // Timed events are stored as local wall time in their `tzid` and expanded on

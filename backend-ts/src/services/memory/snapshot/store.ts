@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/snapshot/store.py — on-disk persistence
+// on-disk persistence
 // for snapshot state + change log under <memory>/snapshot/<surface>/.
 import {
   appendFileSync,

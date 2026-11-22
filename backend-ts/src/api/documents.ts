@@ -1,4 +1,4 @@
-// Port of backend/app/api/documents.py — Note pages (the Note tab and
+// Note pages (the Note tab and
 // Co-Writer): pages, review queue, assets, threads.
 //
 // Pages live in the shared SQLite database. A page carries BlockNote blocks, a

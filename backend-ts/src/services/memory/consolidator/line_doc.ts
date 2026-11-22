@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/consolidator/line_doc.py — line-numbered
+// line-numbered
 // view of a memory doc + line-level edit ops (audit/dedup).
 import { is_entry_id, new_entry_id } from "../ids.js";
 import {

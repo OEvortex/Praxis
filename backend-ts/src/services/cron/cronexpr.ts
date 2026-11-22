@@ -1,5 +1,4 @@
 // Minimal cron-expression "next run" evaluator porting the `croniter` usage in
-// backend/app/services/cron/service.py (compute_next_run / validate_schedule).
 //
 // Supports the standard 5-field cron format used by the settings UI:
 //   minute hour day-of-month month day-of-week

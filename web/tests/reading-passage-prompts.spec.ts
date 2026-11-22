@@ -4,16 +4,9 @@ import { translationTarget } from "@/lib/reading-passage-prompts";
 import { selectionTextWithoutLineNumbers } from "@/lib/reading-selection";
 
 describe("translationTarget", () => {
-  it("translates into the learner's language unless the passage is in it", () => {
-    expect(translationTarget("the slope of the line", "zh-CN")).toBe("zh");
-    expect(translationTarget("直线的斜率", "zh")).toBe("en");
-    expect(translationTarget("the slope of the line", "en")).toBe("zh");
-    expect(translationTarget("直线的斜率", "en")).toBe("en");
-    expect(translationTarget("the slope of the line", "fr")).toBe("fr");
-  });
-
-  it("does not take Japanese for Chinese", () => {
-    expect(translationTarget("線の傾きについて", "zh")).toBe("zh");
+  it("is English-only", () => {
+    expect(translationTarget("the slope of the line", "en")).toBe("en");
+    expect(translationTarget("the slope of the line", "fr")).toBe("en");
   });
 });
 

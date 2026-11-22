@@ -1,4 +1,3 @@
-// Port of backend-ts upstream deeptutor/services/learning_journal/ —
 // file-backed learning journal (mission + last-session handoff + ADR-style
 // records) stored as atomic JSON under the data directory.
 import {

@@ -82,7 +82,7 @@ const extraPages: SettingsLeaf[] = [
   {
     key: 'general',
     label: 'General',
-    blurb: 'Interface language, layout, response language, and setup help',
+    blurb: 'Layout and setup help',
     icon: Settings2,
     href: '/settings/general',
     tile: '',

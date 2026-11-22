@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/catalog_store.py + catalog_models.py — SQLite
+// SQLite
 // catalog for private Immersive Reading workspaces. The database lives at
 // <root>/_catalog.sqlite3, same as upstream.
 

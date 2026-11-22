@@ -1,4 +1,3 @@
-// Port of deeptutor/services/practice/{scheduler,answers,importing,storage}.py
 // and the data access behind api/routers/practice.py.
 //
 // Upstream stores review state in SQL tables beside `notebook_entries`. This
@@ -84,8 +83,8 @@ export function schedule(state: AnyDict, rating: Rating, now: number): AnyDict {
 
 function trueFalse(value: unknown): boolean | null {
   const text = String(value ?? "").trim().toLowerCase();
-  if (["true", "t", "对", "正确", "yes", "y", "1"].includes(text)) return true;
-  if (["false", "f", "错", "错误", "no", "n", "0"].includes(text)) return false;
+  if (["true", "t", "yes", "y", "1"].includes(text)) return true;
+  if (["false", "f", "no", "n", "0"].includes(text)) return false;
   return null;
 }
 
@@ -114,7 +113,7 @@ export function checkAnswer(entry: AnyDict, answer: string): boolean | null {
       if (candidates.includes(folded(value))) { out.add(key); return out; }
     }
     let parts = new Set(
-      String(value).trim().toUpperCase().split(/[,;，；\s]+/).filter(Boolean),
+      String(value).trim().toUpperCase().split(/[,;\s]+/).filter(Boolean),
     );
     if (["multi_choice", "multiple_select"].includes(kind) && parts.size === 1 && ![...parts].every((p) => p in options)) {
       parts = new Set(String(value).trim().toUpperCase().split(""));
@@ -136,23 +135,22 @@ const MAX_CELL = 20000;
 const MAX_COLUMNS = 64;
 
 const ALIASES: Record<string, string[]> = {
-  question: ["question", "题目", "题干"],
-  question_type: ["question_type", "type", "题型"],
-  correct_answer: ["correct_answer", "answer", "答案", "正确答案"],
-  explanation: ["explanation", "解析"],
-  difficulty: ["difficulty", "难度"],
-  tags: ["tags", "标签", "分类"],
-  user_answer: ["user_answer", "我的答案", "作答"],
-  options: ["options", "选项"],
+  question: ["question"],
+  question_type: ["question_type", "type"],
+  correct_answer: ["correct_answer", "answer"],
+  explanation: ["explanation"],
+  difficulty: ["difficulty"],
+  tags: ["tags"],
+  user_answer: ["user_answer"],
+  options: ["options"],
 };
 
 const TYPES: Record<string, string> = {
   single_choice: "single_choice", multiple_choice: "single_choice", mcq: "single_choice",
-  "单选": "single_choice", "单选题": "single_choice",
-  multi_choice: "multi_choice", "多选": "multi_choice", "多选题": "multi_choice",
-  true_false: "true_false", "判断": "true_false", "判断题": "true_false",
-  fill_blank: "fill_blank", "填空": "fill_blank", "填空题": "fill_blank",
-  short_answer: "short_answer", "简答": "short_answer", "简答题": "short_answer",
+  multi_choice: "multi_choice",
+  true_false: "true_false",
+  fill_blank: "fill_blank",
+  short_answer: "short_answer",
   essay: "short_answer", "free_response": "short_answer",
 };
 
@@ -334,15 +332,15 @@ export function normalizeQuestion(raw: AnyDict): AnyDict {
   );
   for (let i = 0; i < 10; i++) {
     const letter = String.fromCharCode(65 + i);
-    const value = cell(row[letter.toLowerCase()] ?? row[`选项${letter.toLowerCase()}`] ?? "");
+    const value = cell(row[letter.toLowerCase()] ?? "");
     if (value) (options as AnyDict)[letter] = value;
   }
   const rawType = cell(fields.question_type).toLowerCase();
   let kind = rawType ? TYPES[rawType] : Object.keys(options).length ? "single_choice" : "short_answer";
   if (kind === undefined) throw new Error("Unknown question type");
   if (kind === "true_false") {
-    const truths = new Set(["true", "正确", "对", "是", "t", "1"]);
-    const falses = new Set(["false", "错误", "错", "否", "f", "0"]);
+    const truths = new Set(["true", "yes", "y", "t", "1"]);
+    const falses = new Set(["false", "no", "n", "f", "0"]);
     const lowered = answer.toLowerCase();
     if (!truths.has(lowered) && !falses.has(lowered)) {
       throw new Error("A true/false answer must be true or false");
@@ -356,7 +354,7 @@ export function normalizeQuestion(raw: AnyDict): AnyDict {
     if (Object.values(optValues).includes(answer)) {
       answer = Object.keys(optValues).find((k) => optValues[k] === answer) ?? answer;
     }
-    let keys = answer.split(/[,;，；\s]+/).map((k) => k.trim().toUpperCase()).filter(Boolean);
+    let keys = answer.split(/[,;\s]+/).map((k) => k.trim().toUpperCase()).filter(Boolean);
     if (kind === "multi_choice" && keys.length === 1 && !(keys[0] in optValues)) {
       keys = keys[0].split("");
     }

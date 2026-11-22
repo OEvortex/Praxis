@@ -1,4 +1,4 @@
-// Port of deeptutor/video_learning/notes.py — timestamped notes for timed
+// timestamped notes for timed
 // media materials.
 //
 // Upstream stores notes as records inside the NotebookManager ("Video

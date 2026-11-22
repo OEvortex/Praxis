@@ -1,5 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import RichCodeBlock from "@/components/common/RichCodeBlock";
 import {
@@ -11,7 +11,6 @@ import {
   CODE_BLOCK_SHOW_LINE_NUMBERS_STORAGE_KEY,
   CODE_BLOCK_THEME_STORAGE_KEY,
   CODE_BLOCK_WRAP_LONG_LINES_STORAGE_KEY,
-  LANGUAGE_STORAGE_KEY,
 } from "@/context/app-shell-storage";
 
 function setCodeBlockPreferences({
@@ -43,10 +42,6 @@ function renderCodeBlock(raw: string, lang: string) {
 }
 
 describe("RichCodeBlock preferences", () => {
-  beforeEach(() => {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, "en");
-  });
-
   it("uses the selected theme background instead of a hardcoded dark style", async () => {
     setCodeBlockPreferences({
       theme: "oneLight",

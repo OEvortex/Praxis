@@ -1,13 +1,12 @@
-// Port of deeptutor/services/mastery_hints.py — the line the study composer
+// the line the study composer
 // shows before the learner types. Never blocks; "" means "keep placeholder".
-import { isChinese } from "./prompts.js";
 import { completeText } from "../llm_text.js";
 import type { Settings } from "../../config.js";
 import type { SessionStore } from "../../store/session_store.js";
 import { LearningStore } from "./store.js";
 import { findKnowledgePoint, nextObjective, pathDisplayName } from "./policy.js";
 
-const MAX_HINT_CHARS: Record<string, number> = { zh: 44, en: 110 };
+const MAX_HINT_CHARS: Record<string, number> = { en: 110 };
 const LLM_TIMEOUT = 12_000;
 const HISTORY_TURNS = 4;
 const MAX_MESSAGE_CHARS = 700;
@@ -31,24 +30,6 @@ Good: "Why does the router need the intent and not just the query?"
 Good: "What breaks if I skip the reflection step?"
 Bad: "Can you explain routing?"            <- asks for a lecture, names no edge
 Bad: "Routing picks the tool by intent — right?"  <- states the answer`;
-
-const SYSTEM_ZH = `你要写出学习者此刻**可以问导师的一个问题**。
-
-给你的是他在精通路径上的位置，以及这段对话的结尾。写出他如果知道该问什么、接下来会问的那个问题。
-
-硬规则：你写的是**问题**，绝不是答案。不要解释、不要暗示答案、不要出现"因为"。如果你这行字把知识点讲出来了，那就是错的——那部分应该由学习者和导师一起做出来。
-
-规则：
-- 只回复那个问题本身。不要引号、不要前缀、不要 markdown、不要任何补充说明。
-- 第一人称，像学习者自己打出来的。不超过 25 个字。
-- 以问号结尾。
-- 必须是关于当前这个知识点的，且不能问导师上一条消息已经回答过的东西。
-- 优先选那种能把问题打开的：一个区别、一个为什么、一个边界情况、一个"如果……会怎样"。避免是非题，也避免去问对话里已经给过的定义。
-
-好："路由为什么需要意图，而不是只看查询本身？"
-好："如果跳过反思那一步，会在哪里出问题？"
-差："能讲讲路由吗？"              <- 要的是一段讲解，没点到任何边界
-差："路由是按意图选工具，对吧？"  <- 把答案说出来了`;
 
 interface HintCacheEntry {
   hint: string;
@@ -145,54 +126,40 @@ function loadTranscript(sessionStore: SessionStore | null, sessionId: string): [
   }
 }
 
-function render(material: Material, zh: boolean): string {
+function render(material: Material): string {
   const lines: string[] = [];
-  if (zh) {
-    lines.push(`# 学习主题\n${material.path_name}`);
-    if (material.goal) lines.push(`# 学习目标\n${material.goal}`);
-    let where = `# 当前知识点\n${material.waypoint}`;
-    if (material.module_name) where += `（所属模块：${material.module_name}）`;
-    if (material.waypoint_type) where += `\n类型：${material.waypoint_type}`;
-    if (material.status) where += `\n掌握状态：${material.status}`;
-    lines.push(where);
-  } else {
-    lines.push(`# Topic\n${material.path_name}`);
-    if (material.goal) lines.push(`# Goal\n${material.goal}`);
-    let where = `# Current waypoint\n${material.waypoint}`;
-    if (material.module_name) where += ` (module: ${material.module_name})`;
-    if (material.waypoint_type) where += `\nType: ${material.waypoint_type}`;
-    if (material.status) where += `\nStatus: ${material.status}`;
-    lines.push(where);
-  }
+  lines.push(`# Topic\n${material.path_name}`);
+  if (material.goal) lines.push(`# Goal\n${material.goal}`);
+  let where = `# Current waypoint\n${material.waypoint}`;
+  if (material.module_name) where += ` (module: ${material.module_name})`;
+  if (material.waypoint_type) where += `\nType: ${material.waypoint_type}`;
+  if (material.status) where += `\nStatus: ${material.status}`;
+  lines.push(where);
   if (material.transcript.length) {
-    const speaker: Record<string, string> = zh
-      ? { user: "学习者", assistant: "导师" }
-      : { user: "Learner", assistant: "Tutor" };
+    const speaker: Record<string, string> = { user: "Learner", assistant: "Tutor" };
     const body = material.transcript
       .map(([role, text]) => `[${speaker[role] ?? role}] ${text}`)
       .join("\n");
-    lines.push((zh ? "# 对话结尾\n" : "# End of the conversation\n") + body);
+    lines.push("# End of the conversation\n" + body);
   } else {
     lines.push(
-      zh
-        ? "# 对话结尾\n（还没开始，这是他要问的第一个问题。）"
-        : "# End of the conversation\n(Nothing yet — this is their opening question.)",
+      "# End of the conversation\n(Nothing yet — this is their opening question.)",
     );
   }
-  lines.push(zh ? "\n请写出那一个问题。" : "\nWrite that one question.");
+  lines.push("\nWrite that one question.");
   return lines.join("\n\n");
 }
 
 function sanitize(raw: string, language: string): string {
   let text = String(raw ?? "").replace(/\s+/g, " ");
-  for (const fence of ["```", "「", "」", '"', "'", "“", "”", "‘", "’"]) {
+  for (const fence of ["```", '"', "'", "“", "”", "‘", "’"]) {
     text = text.split(fence).join("");
   }
   text = text.replace(/^[-•*#\s]+/, "").trim();
   if (!text) return "";
   if (text.includes("\n")) text = text.split("\n").pop()!.trim();
-  if (!text.endsWith("?") && !text.endsWith("？")) return "";
-  const limit = isChinese(language) ? MAX_HINT_CHARS.zh : MAX_HINT_CHARS.en;
+  if (!text.endsWith("?")) return "";
+  const limit = MAX_HINT_CHARS.en;
   return text.length > limit ? "" : text;
 }
 
@@ -210,7 +177,6 @@ export async function getAskHint(
   material.transcript = transcript;
   material.anchor = `${material.anchor}:${anchor}`;
 
-  const language = "en";
   const key = cacheKey(pathId, material.anchor, sessionId);
   const cached = cacheGet(key);
   if (cached) return cached;
@@ -221,14 +187,14 @@ export async function getAskHint(
     try {
       const raw = await Promise.race([
         completeText(settings, {
-          system: isChinese(language) ? SYSTEM_ZH : SYSTEM_EN,
-          prompt: render(material, isChinese(language)),
+          system: SYSTEM_EN,
+          prompt: render(material),
         }),
         new Promise<string>((_, reject) =>
           setTimeout(() => reject(new Error("ask-hint timeout")), LLM_TIMEOUT),
         ),
       ]);
-      const hint = sanitize(raw, language);
+      const hint = sanitize(raw, "en");
       const entry: HintCacheEntry = {
         hint,
         knowledge_point_id: material.anchor.split(":")[0] ?? "",

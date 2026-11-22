@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/review_strategy.py — preset strategy templates.
+// preset strategy templates.
 import {
   KnowledgeType,
   LearningProgress,

@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/snapshot/adapters.py — workspace → Entity
+// workspace → Entity
 // adapters, one read-only function per surface.
 //
 // Backend differences vs upstream (single-user Praxis deployment):

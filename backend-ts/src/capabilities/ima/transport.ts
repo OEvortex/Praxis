@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/pipelines/ima/transport.py + envelope.py —
 // the HTTP transport shared by every Tencent IMA OpenAPI call.
 //
 // All IMA methods are POST https://ima.qq.com/<prefix>/<method> with a JSON
@@ -57,11 +56,6 @@ export function unwrap(payload: unknown, statusCode: number): Record<string, unk
   if (code === 0) {
     const data = payload["data"];
     return isRecord(data) ? data : {};
-  }
-  if (message.includes("订阅知识库") && message.includes("没有权限")) {
-    throw new ImaContentAccessError(
-      "IMA permits searching this subscribed library, but its files can only be read in the IMA client.",
-    );
   }
   if (code !== null && CREDENTIAL_CODES.has(code)) {
     throw new ImaAuthError(message || "IMA rejected the client ID / API key.");

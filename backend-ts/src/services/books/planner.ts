@@ -1,5 +1,3 @@
-// Port of deeptutor/book/agents/page_planner.py (static layer + constants),
-// deeptutor/book/estimate.py, deeptutor/book/overview_copy.py and the
 // deterministic concept-graph mermaid renderer.
 //
 // The upstream LLM planning layer (SectionArchitect.plan_blocks_async) is
@@ -175,72 +173,25 @@ export function chapter_basis(depth?: string | null): Record<string, { blocks: n
 
 // ── overview copy (deterministic, no LLM) ──────────────────────────────────
 
-const OVERVIEW_COPY: Record<string, Record<string, unknown>> = {
-  en: {
-    chapter_title: "How to read this book",
-    chapter_summary: "Auto-generated overview of the book's concept graph and chapter index.",
-    objectives: [
-      "See the full chapter map at a glance",
-      "Understand how concepts depend on each other",
-      "Pick the reading path that fits your goals",
-    ],
-    intro_title: "How to read this book",
-    intro_body:
-      "The diagram below maps the {concepts} core concepts in this book and how they depend on each other. The chapter index that follows lists all {chapters} chapters — read top-to-bottom for the recommended path, or jump straight to whatever you're most curious about.",
-    untitled_book: "This book",
-    concept_map_title: "Concept map",
-    chapter_index_title: "Chapter index",
-    chapter_index_heading: "## Chapter index",
-  },
-  zh: {
-    chapter_title: "本书导览",
-    chapter_summary: "自动生成的概念图与章节索引，作为本书的入口。",
-    objectives: ["了解整本书的章节脉络", "掌握各章之间的概念依赖关系", "选择最合适的阅读顺序"],
-    intro_title: "如何阅读这本书",
-    intro_body:
-      "下方的概念图展示了本书 {concepts} 个核心概念以及它们之间的依赖关系；再下方是 {chapters} 个章节的入口。你可以按从上到下的顺序阅读，也可以根据自己的兴趣或先验知识选择切入点。",
-    untitled_book: "本书",
-    concept_map_title: "概念图",
-    chapter_index_title: "章节索引",
-    chapter_index_heading: "## 章节索引",
-  },
-  pt: {
-    chapter_title: "Como ler este livro",
-    chapter_summary: "Visão geral gerada automaticamente do grafo de conceitos e do índice de capítulos do livro.",
-    objectives: [
-      "Ter uma visão rápida do mapa completo de capítulos",
-      "Entender como os conceitos dependem uns dos outros",
-      "Escolher o caminho de leitura que melhor atende aos seus objetivos",
-    ],
-    intro_title: "Como ler este livro",
-    intro_body:
-      "O diagrama abaixo mapeia os {concepts} conceitos principais deste livro e como eles dependem uns dos outros. O índice a seguir lista todos os {chapters} capítulos — leia de cima para baixo para seguir a ordem recomendada, ou vá direto ao capítulo que mais despertar sua curiosidade.",
-    untitled_book: "Este livro",
-    concept_map_title: "Mapa de conceitos",
-    chapter_index_title: "Índice de capítulos",
-    chapter_index_heading: "## Índice de capítulos",
-  },
-  vi: {
-    chapter_title: "Cách đọc cuốn sách này",
-    chapter_summary: "Tổng quan được tạo tự động về sơ đồ khái niệm và mục lục các chương của sách.",
-    objectives: [
-      "Nắm toàn bộ bản đồ các chương chỉ trong một cái nhìn",
-      "Hiểu các khái niệm phụ thuộc lẫn nhau như thế nào",
-      "Chọn lộ trình đọc phù hợp với mục tiêu của bạn",
-    ],
-    intro_title: "Cách đọc cuốn sách này",
-    intro_body:
-      "Sơ đồ bên dưới thể hiện {concepts} khái niệm cốt lõi của cuốn sách và mối quan hệ phụ thuộc giữa chúng. Mục lục chương ngay sau đó liệt kê cả {chapters} chương — bạn có thể đọc từ trên xuống dưới theo lộ trình được đề xuất, hoặc chuyển thẳng đến phần mình quan tâm nhất.",
-    untitled_book: "Cuốn sách này",
-    concept_map_title: "Sơ đồ khái niệm",
-    chapter_index_title: "Mục lục chương",
-    chapter_index_heading: "## Mục lục chương",
-  },
+const OVERVIEW_COPY = {
+  chapter_title: "How to read this book",
+  chapter_summary: "Auto-generated overview of the book's concept graph and chapter index.",
+  objectives: [
+    "See the full chapter map at a glance",
+    "Understand how concepts depend on each other",
+    "Pick the reading path that fits your goals",
+  ],
+  intro_title: "How to read this book",
+  intro_body:
+    "The diagram below maps the {concepts} core concepts in this book and how they depend on each other. The chapter index that follows lists all {chapters} chapters — read top-to-bottom for the recommended path, or jump straight to whatever you're most curious about.",
+  untitled_book: "This book",
+  concept_map_title: "Concept map",
+  chapter_index_title: "Chapter index",
+  chapter_index_heading: "## Chapter index",
 };
 
-export function overview_copy(language?: string | null): Record<string, any> {
-  const code = (language || "en").trim().toLowerCase();
-  return OVERVIEW_COPY[code] ?? OVERVIEW_COPY[code.split("-", 1)[0] ?? ""] ?? OVERVIEW_COPY["en"];
+export function overview_copy(): Record<string, any> {
+  return OVERVIEW_COPY;
 }
 
 // ── concept graph → mermaid (port of blocks/concept_graph.render_mermaid) ──

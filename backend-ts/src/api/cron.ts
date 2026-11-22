@@ -1,6 +1,5 @@
 /**
  * REST surface for scheduled reminders and review cards.
- * Port of backend/app/api/cron.py.
  *
  * Mounted at ``/api/cron`` (and ``/api/reviews``) and reused by the calendar
  * page, the composer's "Remind me" control, and the reminder runtime.

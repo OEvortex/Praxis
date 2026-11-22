@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/scheduler.py — the retention scheduler.
+// the retention scheduler.
 import {
   KnowledgeType,
   LearningEvidence,

@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/consolidator/references.py — ref pool
+// ref pool
 // validation + raw-trace annotation for update/audit modes.
 import type { Document, Entry } from "../document.js";
 import { is_entry_id, is_valid_ref } from "../ids.js";

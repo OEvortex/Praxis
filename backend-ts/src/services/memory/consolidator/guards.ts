@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/consolidator/guards.py — banned-phrase
+// banned-phrase
 // filter + per-loop tool budgets.
 import type { Op } from "../ops.js";
 
@@ -13,16 +13,6 @@ export const BANNED_PHRASES: readonly string[] = [
   "always",
   "never",
   "fully understands",
-  "深刻",
-  "彻底",
-  "完美掌握",
-  "完美理解",
-  "完全理解",
-  "完全掌握",
-  "专家",
-  "热爱",
-  "总是",
-  "从来不",
 ];
 
 export interface ToolBudgets {
@@ -49,7 +39,7 @@ export const DEFAULT_TOOL_BUDGETS: ToolBudgets = {
   note: 8,
 };
 
-const QUOTED_RE = /「[^」]*」|"[^"]*"/g;
+const QUOTED_RE = /"[^"]*"/g;
 
 export function has_banned(text: string): boolean {
   const stripped = text.replace(QUOTED_RE, "").toLowerCase();

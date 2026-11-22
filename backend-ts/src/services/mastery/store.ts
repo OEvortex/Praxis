@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/storage.py — transactional persistence for
+// transactional persistence for
 // Mastery Path state, backed by node:sqlite in <data_dir>/mastery.sqlite3.
 // Mirrors the upstream schema subset the REST surface needs.
 import { DatabaseSync } from "node:sqlite";

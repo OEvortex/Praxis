@@ -1,4 +1,4 @@
-// Port of deeptutor.services.partner_groups — first-class Partner Groups:
+// first-class Partner Groups:
 // store (ext_items), discussion modes, mentions, invocations, whiteboard,
 // and the orchestrated turn runner on top of PartnerManager.sendGroupMessage.
 import { COL, deleteItem, getItem, listItems, putItem, uuid32, type AnyRecord } from "./store.js";
@@ -620,7 +620,7 @@ export class PartnerGroupManager {
       raw = [...content.matchAll(MENTION_PATTERN)].map((m) => m[1].trim());
     }
     if (!raw.length) return { targets: [...group.member_ids], unknown: [] };
-    const allAliases = new Set(["all", "所有人", "全部"]);
+    const allAliases = new Set(["all"]);
     const unknown = [...new Set(raw.filter((v) => !aliases.has(v.toLowerCase()) && !allAliases.has(v)))].map((v) => `@${v}`);
     let targets: string[];
     if (raw.some((v) => allAliases.has(v))) {

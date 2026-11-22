@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/pipelines/lightrag_server/{config,client,probe}.py
 import type { AnyRecord } from "./types.js";
 import type { Settings } from "../../config.js";
 import * as database from "../../store/database.js";

@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/reading/figure_view.py — the ``view_figure``
+// the ``view_figure``
 // tool: read one stored figure through a vision model, as text.
 //
 // The chat turn only carries the images on the page the user has open, so any

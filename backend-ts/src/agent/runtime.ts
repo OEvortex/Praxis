@@ -2,7 +2,6 @@
  * Turn runtime: builds agents and maps the agent event stream onto the
  * Praxis web turn protocol.
  *
- * Port of ``backend/app/agent/runtime.py``.
  *
  * Event mapping (agent SDK → wire):
  *
@@ -476,6 +475,30 @@ export class AgentRuntime {
       stage: opts.stage ?? "",
       content: opts.content ?? "",
       metadata: opts.metadata ?? {},
+    };
+  }
+
+  /** Provider usage in the shape the chat footer's `combineUsage` expects. */
+  static _usage_summary(usage: UsageStats | null | undefined): AnyDict {
+    if (!usage) return {};
+    const u = usage as AnyDict;
+    const input = Number(u.input_tokens ?? 0) || 0;
+    const output = Number(u.output_tokens ?? 0) || 0;
+    const cacheRead = Number(u.cache_read_tokens ?? 0) || 0;
+    const cacheWrite = Number(u.cache_write_tokens ?? 0) || 0;
+    const calls = Math.max(1, Number(u.calls ?? 1) || 1);
+    const reported = Boolean(u.cache_reported);
+    return {
+      total_tokens: Number(u.total_tokens ?? 0) || input + output,
+      prompt_tokens: input,
+      completion_tokens: output,
+      total_calls: calls,
+      cache_read_input_tokens: cacheRead,
+      cache_creation_input_tokens: cacheWrite,
+      cache_input_tokens: reported ? input : 0,
+      cache_reported_calls: reported ? calls : 0,
+      cache_hit_rate: reported && input > 0 ? cacheRead / input : null,
+      reasoning_tokens: Number(u.reasoning_tokens ?? 0) || 0,
     };
   }
 
@@ -1092,6 +1115,7 @@ export class AgentRuntime {
       metadata: {
         metadata: {
           context_budget: AgentRuntime._context_budget(runtime, session, usage),
+          usage_summary: AgentRuntime._usage_summary(usage),
         },
       },
     }));
@@ -1153,6 +1177,7 @@ export class AgentRuntime {
       status,
       user_message_id: user_message.id ?? null,
       assistant_message_id: assistant_message ? assistant_message.id : null,
+      usage_summary: AgentRuntime._usage_summary(usage),
     };
     await this._emit(handle, AgentRuntime._stream_event(handle, "done", {
       source: capability,
@@ -1671,14 +1696,34 @@ export class LocalAgent {
       }
       if (chunk.usage && typeof chunk.usage === "object") {
         const u = chunk.usage as AnyDict;
+        // OpenAI-compatible gateways nest cache reads under
+        // `prompt_tokens_details.cached_tokens`; Anthropic-style APIs put them
+        // at the top level. Normalize both into one UsageStats shape.
+        const promptDetails = (u.prompt_tokens_details ?? {}) as AnyDict;
+        const completionDetails = (u.completion_tokens_details ?? {}) as AnyDict;
+        const hasCache =
+          u.cache_read_tokens != null ||
+          u.cache_read_input_tokens != null ||
+          u.cache_creation_input_tokens != null ||
+          u.cache_write_tokens != null ||
+          promptDetails.cached_tokens != null;
         usage = {
           // `prompt_tokens` already includes cached reads on OpenAI-compatible
           // APIs, so prefer the provider's grand total when it gives us one.
           total_tokens: Number(u.total_tokens ?? 0) || undefined,
           input_tokens: Number(u.prompt_tokens ?? u.input_tokens ?? 0) || undefined,
           output_tokens: Number(u.completion_tokens ?? u.output_tokens ?? 0) || undefined,
-          cache_read_tokens: u.cache_read_tokens ?? u.cache_read_input_tokens ?? undefined,
-          cache_write_tokens: u.cache_write_tokens ?? u.cache_creation_input_tokens ?? undefined,
+          cache_read_tokens:
+            Number(
+              u.cache_read_tokens ??
+                u.cache_read_input_tokens ??
+                promptDetails.cached_tokens ??
+                0,
+            ) || undefined,
+          cache_write_tokens:
+            Number(u.cache_creation_input_tokens ?? u.cache_write_tokens ?? 0) || undefined,
+          cache_reported: hasCache,
+          reasoning_tokens: Number(completionDetails.reasoning_tokens ?? 0) || undefined,
         };
       }
       const choices = (chunk.choices as AnyDict[] | undefined) ?? [];

@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/book.py — Book Engine REST + channel API.
+// Book Engine REST + channel API.
 //
 // Mount: app.route("/", booksRouter) — paths already carry /api/books.
 //

@@ -1,4 +1,4 @@
-// Port of deeptutor/video_learning/service.py — provider-neutral timed video
+// provider-neutral timed video
 // learning for YouTube and Invidious.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";

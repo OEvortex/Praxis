@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/setup/jobs.py — long-running setup work
+// long-running setup work
 // started from chat.
 //
 // Upstream's jobs install document-parsing engines / download model weights;

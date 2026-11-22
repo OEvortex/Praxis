@@ -1,4 +1,4 @@
-// Port of deeptutor/book/streaming.py + event_hub.py — per-book event buses.
+// per-book event buses.
 //
 // One long-lived event stream per book, owned by the process. Events carry
 // the upstream wire shape: {type, source, stage, content, metadata, seq,

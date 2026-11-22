@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/store.py
 // Account-local calendar persistence. Every mutation is one SQLite transaction.
 // Uses the shared database module (src/store/database.ts), whose SCHEMA already
 // creates the calendars/events/undo/state tables in praxis.sqlite3.

@@ -5,11 +5,9 @@ import { Fragment, memo, useMemo } from "react";
 import MarkdownRenderer from "@/components/common/MarkdownRenderer";
 import ModelThinkingCard from "@/components/common/ModelThinkingCard";
 import { useReading } from "@/context/ReadingContext";
-import { contentLang } from "@/lib/content-lang";
 import type { StreamEvent } from "@/features/chat/model/protocol";
 import {
   hasVisibleMarkdownContent,
-  repairChineseEmphasis,
   repairMalformedStrongEmphasis,
   stripArtifactAnnotations,
 } from "@/lib/markdown-display";
@@ -46,7 +44,6 @@ function AssistantResponseImpl({
   readingMaterialId,
   readingMaterialRevision,
   events,
-  language,
 }: AssistantResponseProps) {
   const displayContent = useSmoothStreamText(content, isStreaming);
   // A locator becomes interactive only when this turn's persisted reading-tool
@@ -113,16 +110,14 @@ function AssistantResponseImpl({
   // structured landmark. aria-live="polite" + aria-atomic="false" announces
   // streamed-in content as the user pauses, without re-reading the whole
   // bubble each token. Together this is the minimal pattern that turns a
-  // silent stream into an audible one. ``lang`` scopes the reply's language
-  // to the message text so the ``:lang()`` CJK font stacks in globals.css
-  // apply to chat prose without touching surrounding chrome.
+  // silent stream into an audible one.
   return (
     <div
       role="article"
       aria-live="polite"
       aria-atomic="false"
       className={className}
-      lang={contentLang(language)}
+      lang="en"
     >
       {segments.map((segment, index) => {
         if (segment.kind === "think") {
@@ -134,12 +129,7 @@ function AssistantResponseImpl({
             />
           );
         }
-        const repairedContent = isStreaming
-          ? repairMalformedStrongEmphasis(segment.content)
-          : repairChineseEmphasis(
-              repairMalformedStrongEmphasis(segment.content),
-              language,
-            );
+        const repairedContent = repairMalformedStrongEmphasis(segment.content);
 
         if (!hasVisibleMarkdownContent(repairedContent)) {
           return <Fragment key={`text-${index}`} />;

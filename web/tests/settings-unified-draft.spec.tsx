@@ -242,16 +242,14 @@ it.each(["/api/settings/draft", "/api/settings/apply"])("shows a denied %s write
   expect(live.services.llm.profiles[0].name).toBe("Retained draft");
 });
 
-it("stages language and appearance without changing browser preferences until Apply", async () => {
+it("stages appearance without changing browser preferences until Apply", async () => {
   render(<App page="appearance" />);
   await ready();
   await act(async () => {
     await settings.updateTheme("dark");
-    await settings.updateLanguage("en");
     await settings.updateCodeBlockShowLineNumbers(true);
   });
   expect(settings.theme).toBe("dark");
-  expect(settings.language).toBe("en");
   expect(settings.codeBlockShowLineNumbers).toBe(true);
   expect(mocks.theme).not.toHaveBeenCalled();
   expect(writes("/api/settings/ui")).toHaveLength(0);

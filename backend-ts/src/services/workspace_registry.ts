@@ -1,4 +1,4 @@
-// Port of backend/app/services/workspace_registry.py — content workspace
+// content workspace
 // registry for the settings UI. The frontend treats
 // `/api/settings/workspace/registrations` as a catalog `{root, workspaces: []}`.
 // This module owns that catalog and the filesystem operations the settings

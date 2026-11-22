@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/session_handoff.py — private-to-public session
+// private-to-public session
 // handoff. Pairing codes and tickets are stored only as SHA-256 fingerprints
 // in a dedicated SQLite DB; a short-lived JWE (dir + A256GCM) carries the
 // credential between the two public POST calls.

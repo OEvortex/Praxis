@@ -1,5 +1,4 @@
 // Port of the RAG-pipeline slice of
-// deeptutor/services/config/runtime_settings.py + knowledge_base_config.py.
 //
 // Upstream keeps one JSON file per engine under ``data/.../settings/``. Praxis
 // persists the same payloads as rows in the shared SQLite database

@@ -1,4 +1,3 @@
-// Port of the RAG-facing halves of deeptutor/services/rag/{factory,preflight}.py
 // and the model-catalog helpers the knowledge router uses
 // (model options payload, active-model switching, GraphRAG compatibility probe,
 // LightRAG role validation).

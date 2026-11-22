@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/notes/ — the notes capability surface.
+// the notes capability surface.
 export * from "./capability.js";
 export * from "./generation.js";
 export * from "./threads.js";

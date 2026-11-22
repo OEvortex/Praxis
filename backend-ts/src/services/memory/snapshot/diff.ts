@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/snapshot/diff.py — pure diff between two
+// pure diff between two
 // snapshot states. A state is {entity_id: fingerprint}.
 import type { ChangeEntry } from "./entity.js";
 

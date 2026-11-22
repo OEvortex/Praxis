@@ -1,4 +1,3 @@
-// Port of deeptutor/services/config/settings_spec.py +
 // capabilities/setup/binding.py (setup_gaps) — the spec rows the setup tools
 // walk, and the "what is this install missing" report.
 //
@@ -212,13 +211,13 @@ export function setupGaps(settings: Settings): SetupGap[] {
 // --- intent detection (binding.py port) --------------------------------------
 
 const ACTION_PATTERN =
-  /(设置|设定|配置|设好|设成|切换|切成|切到|换成|换到|换个|换掉|改成|改为|改用|调整|调成|启用|开启|安装|下载|装上|配一下|连上)|\b(configure|configuration|set ?up|setup|switch|change|enable|install|download|settings?)\b/i;
+  /\b(configure|configuration|set ?up|setup|switch|change|enable|install|download|settings?)\b/i;
 
 const OBJECT_PATTERN =
-  /(语言|界面|主题|皮肤|模型|嵌入|向量|解析引擎|解析器|引擎|搜索引擎|搜索服务|联网搜索|偏好设置|设置项|工作区|目录)|\b(language|theme|model|embedding|parser|parsing|engine|web search|search provider|provider|preferences?|workspace|directory)\b/i;
+  /\b(language|theme|model|embedding|parser|parsing|engine|web search|search provider|provider|preferences?|workspace|directory)\b/i;
 
 const DIRECT_PATTERN =
-  /(帮我配置|帮我设置|自己配置|配置一下|设置一下|初始化配置)|\b(configure praxis|set ?up praxis|setup wizard)\b/i;
+  /\b(configure praxis|set ?up praxis|setup wizard)\b/i;
 
 export function messageSignalsSetup(message: string): boolean {
   const text = String(message ?? "");

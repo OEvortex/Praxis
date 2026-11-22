@@ -10,7 +10,7 @@ const fixture = vi.hoisted(() => ({
 }))
 
 vi.mock('@/context/AppShellContext', () => ({
-  useAppShell: () => ({ language: 'en' }),
+  useAppShell: () => ({}),
 }))
 vi.mock('@/lib/attachment-limits', () => ({
   useAttachmentLimits: () => ({}),

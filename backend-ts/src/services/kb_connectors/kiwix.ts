@@ -1,4 +1,4 @@
-// Port of deeptutor/services/rag/pipelines/kiwix/client.py — bounded client for
+// bounded client for
 // kiwix-serve's OPDS catalog, search XML and raw article APIs.
 export class KiwixError extends Error {}
 

@@ -1,4 +1,4 @@
-// Port of deeptutor/services/task_board.py — one account store of task cards
+// one account store of task cards
 // in SQLite, read as per-workspace boards with conversation links.
 // Backed by its own database file: <data_dir>/task-board/tasks.sqlite.
 import { DatabaseSync } from "node:sqlite";

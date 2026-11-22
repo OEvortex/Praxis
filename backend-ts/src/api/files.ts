@@ -1,4 +1,4 @@
-// Port of backend/app/api/files.py — static file serving for agent outputs
+// static file serving for agent outputs
 // and attachments (``GET /files/<path>``).
 import { Hono } from "hono";
 import { existsSync, statSync, createReadStream } from "node:fs";

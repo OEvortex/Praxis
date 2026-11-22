@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/reading/media_notes.py — the embedded-image
+// the embedded-image
 // note that read_material appends to its result.
 //
 // A row in media.json is {name, locator, mime, bytes} and may carry an

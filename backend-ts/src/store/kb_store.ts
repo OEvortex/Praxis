@@ -1,4 +1,4 @@
-// Port of backend/app/store/kb_store.py — knowledge-base store: uploaded
+// knowledge-base store: uploaded
 // documents + a chunk index in SQLite.
 //
 // Layout in the shared database (`data/praxis.sqlite3`):

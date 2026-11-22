@@ -192,7 +192,7 @@ sessionsExtRouter.post("/api/sessions/submission-replacement", async (c) => {
 // GET /api/sessions/{id}/ask-hint  (upstream is GET; our POST stub stays dead)
 // ==========================================================================
 
-const ASK_HINT_MAX = { zh: 44, en: 110 };
+const ASK_HINT_MAX = { en: 110 };
 const ASK_HINT_TIMEOUT_MS = 12000;
 const ASK_HINT_HISTORY = 4;
 const ASK_HINT_MAX_MESSAGE = 700;
@@ -216,31 +216,9 @@ Bad: "You could ask about the retry limit"  <- describes a line instead of being
 Bad: "That's a great explanation!"          <- not worth typing, continues nothing
 Bad: "Here's a more casual version: ..."    <- the assistant's voice, not the user's`;
 
-const ASK_HINT_SYSTEM_ZH = `你要预测用户接下来最可能在聊天框里打出的**一句话**——这是输入框的占位提示，会在他开始打字之前被读到。
-
-给你的是这段对话的结尾。写出用户接下来最可能说的那一句：一个追问、一个反应、一个进一步的要求、同一件事的下一步——只要贴切就行，**不必是问题**。
-
-规则：
-- 只回复那一句话本身。不要引号、不要前缀、不要 markdown、不要任何补充说明。
-- 第一人称，就像用户自己会打出来的样子。不超过 25 个字。
-- 写的是**用户**会说的话，绝不是助手会回的话，也不能只是描述一个问题（比如"你可以问问重试上限"），而要把那句话本身写出来。
-- 要接得上助手刚说的内容，不要引入一个不相关的话题。
-- 如果助手刚请用户回答、解题、预测、计算或填空（确认问题、小测、练习），**绝不要**写出答案、猜测、数字或公式。用户应该自己想出来。改为写一句请求提示或确认题意的话。
-
-好（助手刚讲完重试策略）："第三次重试失败之后会怎样？"
-好（助手刚起草了一封邮件）："语气改随意一点"
-好（助手刚列出三个选项）："就选第二个吧"
-好（助手刚问"100 张图像的话是几行？"）："能先给我一点提示吗？"
-差："你可以问问重试上限"          <- 描述了一句话，而不是把它写出来
-差："讲得真好！"                  <- 不值得打出来，也没往下接
-差："这是更随意一点的版本：……"    <- 这是助手的口吻，不是用户的`;
-
-function isZh(language: string): boolean {
-  return /[㐀-鿿]/.test(language) || language.toLowerCase().startsWith("zh");
-}
 
 function normalForm(value: string): string {
-  return value.replace(/[^\w㐀-鿿]+/gu, "").toLowerCase();
+  return value.replace(/[^\w]+/gu, "").toLowerCase();
 }
 
 function echoesLastMessage(hint: string, lastUser: string): boolean {
@@ -257,23 +235,18 @@ function sanitizeHint(raw: string, language: string, lastUser: string): string {
   if (text.startsWith("```") || text.endsWith("```")) return "";
   text = text.replace(/^[-•*#\s]+/, "").trim();
   if (text.length >= 2) {
-    const pairs: Array<[string, string]> = [["\"", "\""], ["'", "'"], ["“", "”"], ["‘", "’"], ["「", "」"]];
+    const pairs: Array<[string, string]> = [["\"", "\""], ["'", "'"]];
     for (const [a, b] of pairs) {
       if (text.startsWith(a) && text.endsWith(b)) { text = text.slice(1, -1).trim(); break; }
     }
   }
   text = text.split(/\s+/).join(" ");
   if (!text) return "";
-  const zh = isZh(language);
-  const limit = ASK_HINT_MAX[zh ? "zh" : "en"];
+  const limit = ASK_HINT_MAX.en;
   if ([...text].length > limit) return "";
-  const metaRe = zh
-    ? /你可以|你能试着|你应该|不妨问|建议问|可以这样问/
-    : /(?:\byou (?:can|could|should)\b|\btry (?:asking|saying)\b|\bconsider asking\b|\bthe user (?:can|could|should)\b)/i;
+  const metaRe = /(?:\byou (?:can|could|should)\b|\btry (?:asking|saying)\b|\bconsider asking\b|\bthe user (?:can|could|should)\b)/i;
   if (metaRe.test(text)) return "";
-  const voiceRe = zh
-    ? /^(?:好的|当然|没问题|作为(?:一个)?(?:人工智能|AI))/
-    : /^(?:sure|certainly|of course|here(?:'|’)s|here is|as an ai|i(?:'|’)d be happy)\b/i;
+  const voiceRe = /^(?:sure|certainly|of course|here(?:'|’)s|here is|as an ai|i(?:'|’)d be happy)\b/i;
   if (voiceRe.test(text)) return "";
   if (echoesLastMessage(text, lastUser)) return "";
   return text;
@@ -293,20 +266,19 @@ sessionsExtRouter.get("/api/sessions/:session_id/ask-hint", async (c) => {
   })).filter((m) => m.content);
   if (!tail.length) return c.json(empty);
   const lastUser = [...tail].reverse().find((m) => m.role === "user")?.content ?? "";
-  const speaker = (role: string) => (isZh("zh") ? (role === "user" ? "用户" : "助手") : role === "user" ? "User" : "Assistant");
-  const zh = /[㐀-鿿]/.test(tail.map((m) => m.content).join(""));
+  const speaker = (role: string) => (role === "user" ? "User" : "Assistant");
   const bodyText = tail.map((m) => `[${speaker(m.role)}] ${m.content}`).join("\n");
-  const prompt = `# ${zh ? "对话结尾" : "End of the conversation"}\n${bodyText}\n\n${zh ? "请写出用户接下来最可能说的那一句。" : "Write that single next line."}`;
+  const prompt = `# "End of the conversation"\n${bodyText}\n\nWrite that single next line."`;
   try {
     const raw = await Promise.race([
       completeText(settings(), {
-        system: zh ? ASK_HINT_SYSTEM_ZH : ASK_HINT_SYSTEM_EN,
+        system: ASK_HINT_SYSTEM_EN,
         prompt,
       }),
       new Promise<string>((_, rej) => setTimeout(() => rej(new Error("timeout")), ASK_HINT_TIMEOUT_MS)),
     ]);
     return c.json({
-      hint: sanitizeHint(raw, zh ? "zh" : "en", lastUser),
+      hint: sanitizeHint(raw, "en", lastUser),
       session_id: sessionId,
       generated_at: Date.now() / 1000,
     });
@@ -535,25 +507,6 @@ sessionsExtRouter.post("/api/sessions/:session_id/migrate-watching", async (c) =
     s.save(session);
   }
   return c.json(sessionDetail(s.get(sessionId) as AnyRecord));
-});
-
-// ==========================================================================
-// PATCH /api/sessions/{id}/reply-language
-// ==========================================================================
-
-sessionsExtRouter.patch("/api/sessions/:session_id/reply-language", async (c) => {
-  const sessionId = c.req.param("session_id") ?? "";
-  const s = await store();
-  const session = s.get(sessionId) as AnyRecord | null;
-  if (!session) return httpError(c, 404, "Session not found");
-  const b = await body(c);
-  const language = b["language"] === null || b["language"] === undefined ? null : String(b["language"]);
-  const prefs = prefsOf(session);
-  prefs["reply_language_override"] = language;
-  session["preferences"] = prefs;
-  session["updated_at"] = Date.now() / 1000;
-  s.save(session);
-  return c.json({ session: { id: sessionId, preferences: prefs } });
 });
 
 // ==========================================================================

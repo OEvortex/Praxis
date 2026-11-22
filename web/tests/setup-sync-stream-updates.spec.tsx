@@ -4,6 +4,7 @@ import { useSetupSync } from "@/hooks/useSetupSync";
 import type { StreamEvent } from "@/features/chat/model/protocol";
 
 const api = vi.hoisted(() => ({ fetch: vi.fn() }));
+const theme = vi.hoisted(() => ({ setTheme: vi.fn() }));
 vi.mock("@/shared/api/client", () => ({
   asJsonOrThrow: async (response: Response) => {
     if (!response.ok) {
@@ -16,11 +17,12 @@ vi.mock("@/shared/api/client", () => ({
     }
     return response.json();
   }, apiFetch: api.fetch, apiUrl: (url: string) => url }));
+vi.mock("@/lib/theme", () => ({ setTheme: theme.setTheme }));
 
 function messages(id = "call-1") {
   return [{ events: [{ type: "tool_result", source: "setup", stage: "loop",
     content: "", session_id: "session-1", turn_id: "turn-1", seq: 1, timestamp: 0,
-    metadata: { tool_call_id: id, tool_metadata: { setup_applied: { key: "interface.language" } } },
+    metadata: { tool_call_id: id, tool_metadata: { setup_applied: { key: "interface.theme" } } },
   } as StreamEvent] }];
 }
 
@@ -30,20 +32,22 @@ function deferredResponse() {
   return { promise, resolve };
 }
 
-async function finish(resolve: (response: Response) => void, language: string) {
+async function finish(resolve: (response: Response) => void, themeName: string) {
   await act(async () => {
-    resolve(new Response(JSON.stringify({ language, response_language: language })));
+    resolve(new Response(JSON.stringify({ theme: themeName })));
   });
 }
 
 describe("setup preference synchronization during a streamed turn", () => {
-  it("honors the setting through strict-mode effect replay", async () => {
+  it("honors the theme through strict-mode effect replay", async () => {
     localStorage.clear();
     const pending = deferredResponse();
     api.fetch.mockReset().mockReturnValue(pending.promise);
+    theme.setTheme.mockReset();
     renderHook(() => useSetupSync(messages()), { reactStrictMode: true });
-    await finish(pending.resolve, "zh");
-    expect(localStorage.getItem("praxis-language")).toBe("en");
+    await finish(pending.resolve, "dark");
+    expect(theme.setTheme).toHaveBeenCalledWith("dark");
+    expect(localStorage.getItem("praxis-language")).toBeNull();
     expect(api.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -51,12 +55,13 @@ describe("setup preference synchronization during a streamed turn", () => {
     localStorage.clear();
     const pending = deferredResponse();
     api.fetch.mockReset().mockReturnValue(pending.promise);
+    theme.setTheme.mockReset();
     const { rerender } = renderHook(({ items }) => useSetupSync(items), {
       initialProps: { items: messages() },
     });
     rerender({ items: messages() });
-    await finish(pending.resolve, "zh");
-    expect(localStorage.getItem("praxis-language")).toBe("en");
+    await finish(pending.resolve, "dark");
+    expect(theme.setTheme).toHaveBeenCalledWith("dark");
     expect(api.fetch).toHaveBeenCalledTimes(1);
     rerender({ items: messages() });
     expect(api.fetch).toHaveBeenCalledTimes(1);
@@ -66,10 +71,11 @@ describe("setup preference synchronization during a streamed turn", () => {
     localStorage.clear();
     const pending = deferredResponse();
     api.fetch.mockReset().mockReturnValue(pending.promise);
+    theme.setTheme.mockReset();
     const { unmount } = renderHook(() => useSetupSync(messages()));
     unmount();
-    await finish(pending.resolve, "zh");
-    expect(localStorage.getItem("praxis-language")).toBeNull();
+    await finish(pending.resolve, "dark");
+    expect(theme.setTheme).not.toHaveBeenCalled();
   });
 
   it("keeps the newest applied setting when responses arrive out of order", async () => {
@@ -77,12 +83,14 @@ describe("setup preference synchronization during a streamed turn", () => {
     const first = deferredResponse();
     const second = deferredResponse();
     api.fetch.mockReset().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    theme.setTheme.mockReset();
     const { rerender } = renderHook(({ items }) => useSetupSync(items), {
       initialProps: { items: messages() },
     });
     rerender({ items: messages("call-2") });
-    await finish(second.resolve, "zh");
-    await finish(first.resolve, "en");
-    expect(localStorage.getItem("praxis-language")).toBe("en");
+    await finish(second.resolve, "dark");
+    await finish(first.resolve, "light");
+    expect(theme.setTheme).toHaveBeenCalledTimes(1);
+    expect(theme.setTheme).toHaveBeenCalledWith("dark");
   });
 });

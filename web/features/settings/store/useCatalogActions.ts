@@ -20,13 +20,10 @@ import {
   targetModel,
   targetProfile,
 } from "./catalog-helpers";
-import type { UiSettings } from "./types";
-
 type UseCatalogActionsParams = {
   draft: Catalog;
   providers: Record<ServiceName, ProviderOption[]>;
   connectionTargets: ConnectionTarget[];
-  language: UiSettings["language"];
   llmContextDetection: LlmContextWindowDetection | null;
   mutateCatalog: (mutator: (next: Catalog) => void) => void;
   embeddingDefaultDim: (binding?: string) => string;
@@ -37,7 +34,6 @@ export function useCatalogActions({
   draft,
   providers,
   connectionTargets,
-  language,
   llmContextDetection,
   mutateCatalog,
   embeddingDefaultDim,
@@ -74,7 +70,7 @@ export function useCatalogActions({
         };
         if (service !== "search") {
           const modelId = `${service}-model-${Date.now()}`;
-          const modelName = nextModelName([], language);
+          const modelName = nextModelName([]);
           profile.models.push({
             id: modelId,
             name: modelName,
@@ -100,7 +96,7 @@ export function useCatalogActions({
         if (!target.active_profile_id) target.active_profile_id = profileId;
       });
     },
-    [embeddingDefaultDim, language, mutateCatalog, providers],
+    [embeddingDefaultDim, mutateCatalog, providers],
   );
 
   const removeActiveProfile = useCallback(
@@ -138,7 +134,7 @@ export function useCatalogActions({
           (p) => p.value === profile.binding,
         );
         const modelId = `${service}-model-${Date.now()}`;
-        const modelName = nextModelName(profile.models, language);
+        const modelName = nextModelName(profile.models);
         profile.models.push({
           id: modelId,
           name: modelName,
@@ -166,7 +162,7 @@ export function useCatalogActions({
         }
       });
     },
-    [embeddingDefaultDim, language, mutateCatalog, providers],
+    [embeddingDefaultDim, mutateCatalog, providers],
   );
 
   const connectionTarget = useCallback(

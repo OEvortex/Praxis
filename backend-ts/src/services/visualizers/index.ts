@@ -1,4 +1,4 @@
-// Port of deeptutor/visualizers/{protocol,store,registry,builtin}.py — the
+// the
 // per-user visualizer catalog, lifecycle and sandbox asset serving used by
 // api/routers/visualizers.py.
 //

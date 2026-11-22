@@ -1,4 +1,3 @@
-// Port of deeptutor/api/utils/task_log_stream.py + task_id_manager.py —
 // in-memory SSE task log streams for KB background operations.
 import type { Context } from "hono";
 

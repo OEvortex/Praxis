@@ -5,9 +5,6 @@ import type {
   CatalogProfile,
   ServiceName,
 } from "@/features/settings/store/SettingsStore";
-import type { AppLanguage } from "@/context/languages";
-import { getLocale } from "@/lib/datetime";
-
 // Tailwind 3 silently drops `<color>-[var(--token)]/NN`: our tokens are hex
 // literals, so it cannot split them into channels and emits no rule at all.
 // Every tint, hover and ring here therefore goes through color-mix, which does

@@ -18,7 +18,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { normalizeLanguage } from "@/context/languages";
 import { formatDate } from "@/lib/datetime";
 
 import BrandIcon, { TrademarkNote } from "@/components/common/BrandIcon";
@@ -229,7 +228,7 @@ function Installed({
                 )}
                 <p className="mt-1.5 text-[11px] text-[var(--muted-foreground)]/80">
                   {app.installed_at
-                    ? `Installed ${formatDay(app.installed_at, "en")}`
+                    ? `Installed ${formatDay(app.installed_at)}`
                     : ""}
                   {app.pin ? ` · ${app.pin.slice(0, 12)}` : ""}
                 </p>
@@ -981,8 +980,8 @@ function messageOf(error: unknown): string {
   return "";
 }
 
-function formatDay(iso: string, language: string): string {
+function formatDay(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return formatDate(date, normalizeLanguage(language));
+  return formatDate(date, "en");
 }

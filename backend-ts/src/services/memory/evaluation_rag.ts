@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/evaluation_rag.py — evaluation-only raw-
+// evaluation-only raw-
 // history dense retrieval + optional cross-encoder reranking. Embedder and
 // reranker are injected; importing never loads a model SDK.
 import type { CaseInput } from "./evaluation.js";

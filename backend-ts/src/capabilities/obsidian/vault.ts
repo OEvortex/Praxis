@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/obsidian/vault.py — pure filesystem
+// pure filesystem
 // operations over a connected Obsidian vault.
 //
 // This module is the *only* place that knows Obsidian's on-disk conventions:

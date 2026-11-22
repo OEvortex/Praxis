@@ -1,4 +1,4 @@
-// Port of backend/tests/test_session_store.py — SQLite-backed session
+// SQLite-backed session
 // persistence, legacy transcript repair, JSON import, and FTS search.
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";

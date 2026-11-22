@@ -1,4 +1,4 @@
-// Port of deeptutor/agents/question/pipeline.py + coordinator.py — the
+// the
 // QuestionPipeline that backs WS /questions/generate and /questions/mimic.
 //
 // Phase shape (mirrors upstream):
@@ -839,7 +839,7 @@ export class QuestionPipeline {
   private readonly _turnId: string;
 
   constructor(opts: QuestionPipelineOptions = {}) {
-    this.language = String(opts.language || "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+    this.language = "en";
     this.kbName = (opts.kb_name ?? "").trim() || null;
     this._settings = opts.settings ?? get_settings();
     this._prompts = questionPrompts(this.language);
@@ -1644,9 +1644,9 @@ export class QuestionPipeline {
   }
 
   private _correctnessLabel(isCorrect: boolean | null): string {
-    if (isCorrect === true) return this.language === "zh" ? "做对" : "correct";
-    if (isCorrect === false) return this.language === "zh" ? "做错" : "incorrect";
-    return this.language === "zh" ? "未知" : "unknown";
+    if (isCorrect === true) return "correct";
+    if (isCorrect === false) return "incorrect";
+    return "unknown";
   }
 
   private _renderPlanSummary(plan: QuizPlan): string {
@@ -1676,7 +1676,7 @@ export class QuestionPipeline {
   }
 
   private _renderQuestionMarkdown(qa: QuizPair, ordinal: number): string {
-    const header = this.language === "zh" ? "题目" : "Question";
+    const header = "Question";
     const lines = [`### ${header} ${ordinal}\n`, qa.question];
     if (qa.options && typeof qa.options === "object") {
       for (const key of CHOICE_KEYS) {
@@ -1684,10 +1684,10 @@ export class QuestionPipeline {
       }
     }
     if (qa.correct_answer) {
-      lines.push(`\n**${this.language === "zh" ? "答案" : "Answer"}:** ${qa.correct_answer}`);
+      lines.push(`\n**Answer:** ${qa.correct_answer}`);
     }
     if (qa.explanation) {
-      lines.push(`\n**${this.language === "zh" ? "解析" : "Explanation"}:** ${qa.explanation}`);
+      lines.push(`\n**Explanation:** ${qa.explanation}`);
     }
     return lines.join("\n").trim();
   }
@@ -1698,14 +1698,12 @@ export class QuestionPipeline {
 
   private _kbSystemNote(): string {
     if (!this.kbName) return "";
-    if (this.language === "zh") {
-      return `用户已挂载知识库：${this.kbName}。调用 knowledge_base_search 时，knowledge_bases 必须填这个名称。`;
-    }
+
     return `Attached knowledge bases: ${this.kbName}. When calling knowledge_base_search, knowledge_bases must be ${JSON.stringify(this.kbName)}.`;
   }
 
   private _toolListText(tools: MountedTool[]): string {
-    if (!tools.length) return this.language === "zh" ? "- 无" : "- none";
+    if (!tools.length) return "- none";
     return tools.map((t) => `- ${t.spec.name}: ${t.spec.description}`).join("\n");
   }
 
@@ -1856,9 +1854,9 @@ export class QuestionPipeline {
     } else if (expectedType === "concept") {
       normalized["options"] = null;
       const rawAns = String(normalized["correct_answer"] ?? "").toLowerCase();
-      if (["true", "t", "对", "正确", "yes", "y", "1"].includes(rawAns)) {
+      if (["true", "t", "yes", "y", "1"].includes(rawAns)) {
         normalized["correct_answer"] = "true";
-      } else if (["false", "f", "错", "错误", "no", "n", "0"].includes(rawAns)) {
+      } else if (["false", "f", "no", "n", "0"].includes(rawAns)) {
         normalized["correct_answer"] = "false";
       }
     } else {

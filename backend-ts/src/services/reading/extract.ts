@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/extract.py — cut a source file into addressable
+// cut a source file into addressable
 // units (the locator space). PDF/EPUB/DOCX/PPTX/XLSX are extracted by the
 // ports in ./documents.ts (OOXML via shared/zip + the docx XML parser), the
 // dependency-free PDF stream parser in store/kb_store.ts, and poppler's

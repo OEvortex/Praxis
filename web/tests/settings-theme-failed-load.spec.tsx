@@ -55,8 +55,6 @@ function installFetch(settingsOk: boolean, theme: string) {
       return reply({
         ui: {
           theme,
-          language: "en",
-          response_language: "en",
           code_block_theme: "github",
           code_block_show_line_numbers: false,
           code_block_wrap_long_lines: false,
@@ -127,7 +125,6 @@ it("does not apply the placeholder system theme when a later UI change is saved"
   const puts = uiPuts();
   expect(puts).toHaveLength(1);
   const body = JSON.parse(String((puts[0][1] as RequestInit).body));
-  expect(body.language).toBe("en");
   expect(body).not.toHaveProperty("theme");
 });
 
@@ -162,7 +159,6 @@ it("still sends the server theme after settings load", async () => {
 
   const body = JSON.parse(String((uiPuts()[0][1] as RequestInit).body));
   expect(body.theme).toBe("dark");
-  expect(body.language).toBe("en");
   expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe("dark");
 });
 
@@ -195,6 +191,5 @@ it("includes the confirmed theme in a failed-load draft after retry", async () =
   expect(document.documentElement.classList.contains("dark")).toBe(false);
   expect(document.documentElement.classList.contains("theme-glass")).toBe(false);
   const body = JSON.parse(String((uiPuts()[0][1] as RequestInit).body));
-  expect(body.language).toBe("en");
   expect(body.theme).toBe("snow");
 });

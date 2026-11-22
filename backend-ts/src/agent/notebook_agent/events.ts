@@ -1,4 +1,3 @@
-// Port of backend/app/agent/notebook_agent/events.py
 //
 // Bridge the Co-writer sub-agent's progress into Praxis's live chat.
 //

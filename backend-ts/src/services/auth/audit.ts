@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/audit.py — append-only JSONL audit log.
+// append-only JSONL audit log.
 import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { ensureSystemDirs, getCurrentUser, SYSTEM_ROOT } from "./paths.js";

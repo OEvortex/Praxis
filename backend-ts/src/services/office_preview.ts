@@ -1,4 +1,4 @@
-// Port of deeptutor/services/office_preview.py — bounded, cached Office→PDF
+// bounded, cached Office→PDF
 // rendering via LibreOffice (soffice). Optional dependency: returns an
 // "unavailable" error the route maps to 503.
 import { execFile, spawn } from "node:child_process";

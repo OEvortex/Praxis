@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/policy.py — pure decisions over a progress
+// pure decisions over a progress
 // aggregate. No I/O, no LLM calls.
 import {
   KnowledgePoint,

@@ -1,4 +1,3 @@
-// Port of deeptutor.learning storage/models, adapted to Praxis's shared
 // SQLite database (src/store/database.ts ext_items/kv helpers).
 //
 // Upstream keeps one SQLAlchemy aggregate per path plus separate interaction

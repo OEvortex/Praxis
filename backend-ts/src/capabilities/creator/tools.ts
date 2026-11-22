@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/creator/tools.py — propose_creation: publish
+// propose_creation: publish
 // a reviewable Skill/Persona draft from the chat loop. Never writes the
 // Skill/Persona itself — only the user's Approve does that.
 

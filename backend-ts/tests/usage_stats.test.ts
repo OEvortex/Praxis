@@ -75,6 +75,44 @@ describe("record_call_usage", () => {
     expect(report.totals.total_calls).toBe(1);
   });
 
+  it("computes cache hit rate from provider-reported cache reads", () => {
+    record_call_usage(settings, {
+      session_id: "sess_1",
+      turn_id: "turn_1",
+      model: "reflection/beam-free",
+      provider: "kilo",
+      usage: {
+        total_tokens: 145,
+        input_tokens: 100,
+        output_tokens: 45,
+        cache_read_tokens: 40,
+        cache_write_tokens: 10,
+        cache_reported: true,
+      },
+    });
+    const report = usage_for_year(settings, new Date().getUTCFullYear(), "UTC");
+    const t = report.totals;
+    expect(t.cache_reported_calls).toBe(1);
+    expect(t.cache_read_input_tokens).toBe(40);
+    expect(t.cache_creation_input_tokens).toBe(10);
+    expect(t.cache_input_tokens).toBe(100);
+    expect(t.cache_hit_rate).toBe(0.4);
+    expect(report.models[0].cache_hit_rate).toBe(0.4);
+  });
+
+  it("leaves cache hit rate null when the provider reports no cache counters", () => {
+    record_call_usage(settings, {
+      session_id: "sess_1",
+      turn_id: "turn_1",
+      model: "m",
+      provider: "p",
+      usage: { total_tokens: 20, input_tokens: 15, output_tokens: 5 },
+    });
+    const report = usage_for_year(settings, new Date().getUTCFullYear(), "UTC");
+    expect(report.totals.cache_reported_calls).toBe(0);
+    expect(report.totals.cache_hit_rate).toBeNull();
+  });
+
   it("sums every model call in a tool-using turn", () => {
     let total = add_usage(null, { input_tokens: 100, output_tokens: 10 });
     total = add_usage(total, { input_tokens: 200, output_tokens: 20 });

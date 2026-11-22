@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/paths.py — per-user memory root layout:
+// per-user memory root layout:
 //
 //   <workspace>/memory/trace/<surface>/<YYYY-MM-DD>.jsonl   (L1, append-only)
 //   <workspace>/memory/L2/<surface>.md                      (L2 per-surface)

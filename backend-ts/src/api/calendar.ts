@@ -1,6 +1,6 @@
 /**
  * Authenticated account calendar and workspace-local learning overlays.
- * Port of backend/app/api/calendar.py — mounted at ``/api/calendar``.
+ * mounted at ``/api/calendar``.
  *
  * The wire contract follows RFC 5545: all-day events carry plain dates with an
  * exclusive end, timed events carry UTC instants. Everything lives in the

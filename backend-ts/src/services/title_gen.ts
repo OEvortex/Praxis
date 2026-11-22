@@ -1,4 +1,4 @@
-// Port of backend/app/services/title_gen.py — short chat-title generation via
+// short chat-title generation via
 // a chatjimmy.ai-compatible endpoint. Kept well under the client's post-`done`
 // socket hold: the title is pushed as a late `session_meta` frame, so a slow
 // endpoint must give up while the stream that carries the frame is still open.

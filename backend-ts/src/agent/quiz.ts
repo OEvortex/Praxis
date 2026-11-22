@@ -1,4 +1,4 @@
-// Port of backend/app/agent/quiz.py — quiz judging helpers for embedded quiz
+// quiz judging helpers for embedded quiz
 // blocks (books/reading/notes).
 //
 // The emitter contract matches web/lib/quiz-types.ts: the frontend posts the

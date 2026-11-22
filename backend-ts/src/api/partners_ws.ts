@@ -1,6 +1,4 @@
 // Port of the partner / partner-group WebSocket protocols:
-//   deeptutor/api/routers/partners.py       @ws_router.websocket("/{partner_id}")
-//   deeptutor/api/routers/partner_groups.py @ws_router.websocket("/{group_id}")
 // mounted under /ws by the manifests, i.e. /ws/partners/{id} and
 // /ws/partner-groups/{id}.
 //

@@ -1,110 +1,21 @@
-// Port of deeptutor/book/export.py — render a compiled book as one Markdown doc.
+// render a compiled book as one Markdown doc.
 import type { Block, Book, Page, Spine } from "./models.js";
 
 const SAFE_FILENAME = /[^\w.-]+/g;
 
-const LABELS: Record<string, Record<string, string>> = {
-  pt: {
-    takeaway: "Ideia principal",
-    answer: "Resposta",
-    front: "Frente",
-    back: "Verso",
-    sources: "Fontes",
-    chapters: "Capítulos",
-    note: "Nota",
-    untitled_book: "Livro sem título",
-    untitled_chapter: "Capítulo sem título",
-    not_generated: "(Este capítulo ainda não foi gerado.)",
-    omitted: "({kind} omitido — não possui representação em texto.)",
-  },
-  en: {
-    takeaway: "Key takeaway",
-    answer: "Answer",
-    front: "Front",
-    back: "Back",
-    sources: "Sources",
-    chapters: "Chapters",
-    note: "Note",
-    untitled_book: "Untitled book",
-    untitled_chapter: "Untitled chapter",
-    not_generated: "(This chapter has not been generated yet.)",
-    omitted: "({kind} omitted — it has no text representation.)",
-  },
-  zh: {
-    takeaway: "要点",
-    answer: "答案",
-    front: "正面",
-    back: "背面",
-    sources: "来源",
-    chapters: "章节",
-    note: "提示",
-    untitled_book: "未命名书籍",
-    untitled_chapter: "未命名章节",
-    not_generated: "（本章尚未生成。）",
-    omitted: "（{kind} 无法用文本表示，已省略。）",
-  },
-  fr: {
-    takeaway: "À retenir",
-    answer: "Réponse",
-    front: "Recto",
-    back: "Verso",
-    sources: "Sources",
-    chapters: "Chapitres",
-    note: "Remarque",
-    untitled_book: "Livre sans titre",
-    untitled_chapter: "Chapitre sans titre",
-    not_generated: "(Ce chapitre n’a pas encore été généré.)",
-    omitted: "({kind} omis — aucune représentation textuelle.)",
-  },
-  tr: {
-    takeaway: "Ana çıkarım",
-    answer: "Cevap",
-    front: "Ön yüz",
-    back: "Arka yüz",
-    sources: "Kaynaklar",
-    chapters: "Bölümler",
-    note: "Not",
-    untitled_book: "Adsız kitap",
-    untitled_chapter: "Adsız bölüm",
-    not_generated: "(Bu bölüm henüz oluşturulmadı.)",
-    omitted: "({kind} atlandı: metin karşılığı yok.)",
-  },
-  it: {
-    takeaway: "Concetto chiave",
-    answer: "Risposta",
-    front: "Fronte",
-    back: "Retro",
-    sources: "Fonti",
-    chapters: "Capitoli",
-    note: "Nota",
-    untitled_book: "Libro senza titolo",
-    untitled_chapter: "Capitolo senza titolo",
-    not_generated: "(Questo capitolo non è ancora stato generato.)",
-    omitted: "({kind} omesso — nessuna rappresentazione testuale.)",
-  },
-  hu: {
-    takeaway: "Kulcsgondolat",
-    answer: "Válasz",
-    front: "Előlap",
-    back: "Hátlap",
-    sources: "Források",
-    chapters: "Fejezetek",
-    note: "Megjegyzés",
-    untitled_book: "Névtelen könyv",
-    untitled_chapter: "Névtelen fejezet",
-    not_generated: "(Ez a fejezet még nem készült el.)",
-    omitted: "({kind} kihagyva — nincs szöveges megfelelője.)",
-  },
+const LABELS = {
+  takeaway: "Key takeaway",
+  answer: "Answer",
+  front: "Front",
+  back: "Back",
+  sources: "Sources",
+  chapters: "Chapters",
+  note: "Note",
+  untitled_book: "Untitled book",
+  untitled_chapter: "Untitled chapter",
+  not_generated: "(This chapter has not been generated yet.)",
+  omitted: "({kind} omitted — it has no text representation.)",
 };
-
-function labels(language?: string | null): Record<string, string> {
-  const code = (language || "en").trim().toLowerCase();
-  return (
-    LABELS[code] ??
-    LABELS[code.split("-", 1)[0] ?? ""] ??
-    LABELS["en"]
-  );
-}
 
 export function export_filename(book: Book): string {
   const stem = (book.title || "book").trim().replace(SAFE_FILENAME, "-").replace(/^-+|-+$/g, "");
@@ -256,10 +167,10 @@ function renderDeepDive(payload: Record<string, unknown>): string {
   return lines.join("\n");
 }
 
-export function render_block(block: Block, language = "en"): string {
+export function render_block(block: Block): string {
   if (block.status !== "ready") return "";
   const payload = block.payload ?? {};
-  const labels_ = labels(language);
+  const labels_ = LABELS;
   const bridge = payloadText(payload, "bridge_text");
 
   let body = "";
@@ -302,7 +213,7 @@ export function render_block(block: Block, language = "en"): string {
 }
 
 export function render_book_markdown(book: Book, spine: Spine | null, pages: Page[]): string {
-  const labels_ = labels(book.language);
+  const labels_ = LABELS;
   const out: string[] = [`# ${book.title || labels_["untitled_book"]}`];
 
   if (book.description) out.push(`*${book.description}*`);
@@ -326,7 +237,7 @@ export function render_book_markdown(book: Book, spine: Spine | null, pages: Pag
     if (page.learning_objectives?.length) {
       out.push(page.learning_objectives.map((o) => `- ${o}`).join("\n"));
     }
-    const rendered = (page.blocks ?? []).map((b) => render_block(b, book.language));
+    const rendered = (page.blocks ?? []).map((b) => render_block(b));
     const body = rendered.filter(Boolean);
     if (body.length) out.push(...body);
     else out.push(`_${labels_["not_generated"]}_`);

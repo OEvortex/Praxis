@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/__init__.py
 // Account calendars, recurring events and workspace learning projections.
 
 export * as models from "./models.js";

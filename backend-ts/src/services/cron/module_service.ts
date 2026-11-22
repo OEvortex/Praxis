@@ -1,4 +1,4 @@
-// Port of backend/app/services/cron/module_service.py — start/stop the cron
+// start/stop the cron
 // scheduler with the app lifespan.
 import { getCronService } from "./service.js";
 

@@ -1,4 +1,4 @@
-// Port of backend/app/config.py — env-driven runtime configuration.
+// env-driven runtime configuration.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 

@@ -30,7 +30,6 @@ import {
 import type { UserReplyPayload } from "@/hooks/use-card-submission";
 import { newCommandId } from "@/contracts/parse/turn-command";
 import { pendingAskUserKeyInMessages } from "@/lib/ask-user-state";
-import { useAppShell } from "@/context/AppShellContext";
 import { getSession } from "@/lib/session-api";
 import {
   ATTACHMENT_ACCEPT,
@@ -154,7 +153,6 @@ export default function BookChatPanel({
   onBookChanged,
 }: BookChatPanelProps) {
   
-  const { language: appLanguage } = useAppShell();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -508,7 +506,7 @@ export default function BookChatPanel({
       knowledge_bases: book.knowledge_bases || [],
       attachments: attachments.map(outgoingAttachment),
       // The book, not the UI chrome, decides the language of this conversation.
-      language: book.language || appLanguage,
+      language: book.language || "en",
       book_references: [{ book_id: book.id, page_ids: [page.id] }],
     };
     sendWithRetry(client, payload);
@@ -628,7 +626,7 @@ export default function BookChatPanel({
                   {m.role === "assistant" ? (
                     <BookAssistantMessage
                       message={m}
-                      language={book?.language || appLanguage}
+                      language={book?.language || "en"}
                       onSubmit={(reply) => submitUserReply(m.turnId, reply)}
                     />
                   ) : (

@@ -1,4 +1,4 @@
-// Port of backend/app/agent/video_lesson/lesson_writer.py — parse the
+// parse the
 // video-lesson writer's reply and build its system prompt.
 
 import { readFileSync } from "node:fs";

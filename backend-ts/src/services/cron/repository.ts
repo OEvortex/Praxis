@@ -1,4 +1,4 @@
-// Port of backend/app/services/cron/repository.py — process-safe SQLite
+// process-safe SQLite
 // persistence for scheduled jobs, including the one-time jobs.json import.
 import { DatabaseSync } from "node:sqlite";
 import {

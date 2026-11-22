@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/audio_overview/pipeline.py — grounded
+// grounded
 // two-voice audio overview generation.
 //
 // Differences from upstream:
@@ -227,9 +227,7 @@ export async function generateScript(args: {
   targetMinutes?: number;
 }): Promise<AudioOverviewScript> {
   const language = args.language ?? "en";
-  const languageLabel = language.toLowerCase().startsWith("zh")
-    ? "Simplified Chinese"
-    : "English";
+  const languageLabel = "English";
   const citationBlock =
     args.context.citations
       .map(
@@ -261,13 +259,9 @@ export async function generateScript(args: {
 
 export const DEFAULT_HOST_VOICE = "en-US-AvaNeural";
 export const DEFAULT_EXPERT_VOICE = "en-US-AndrewNeural";
-export const DEFAULT_HOST_VOICE_ZH = "zh-CN-XiaoxiaoNeural";
-export const DEFAULT_EXPERT_VOICE_ZH = "zh-CN-YunxiNeural";
 
 export function defaultVoices(language: string): { host: string; expert: string } {
-  return language.toLowerCase().startsWith("zh")
-    ? { host: DEFAULT_HOST_VOICE_ZH, expert: DEFAULT_EXPERT_VOICE_ZH }
-    : { host: DEFAULT_HOST_VOICE, expert: DEFAULT_EXPERT_VOICE };
+  return { host: DEFAULT_HOST_VOICE, expert: DEFAULT_EXPERT_VOICE };
 }
 
 export interface SpeechPart {
@@ -455,10 +449,7 @@ export function transcript(
   citations: SourceCitation[],
   language: string,
 ): string {
-  const zh = language.toLowerCase().startsWith("zh");
-  const labels = zh
-    ? { host: "主持人", expert: "专家" }
-    : { host: "Host", expert: "Expert" };
+  const labels = { host: "Host", expert: "Expert" };
   const lines: string[] = [`# ${script.title}`, ""];
   if (citations.length) {
     lines.push("## Sources", "");

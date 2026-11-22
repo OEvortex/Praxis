@@ -1,4 +1,4 @@
-// Port of backend/app/agent/prompt.py — Praxis's system prompt, replacing
+// Praxis's system prompt, replacing
 // vtx's coding-agent default.
 //
 // vtx's ConversationRuntime builds its prompt with a coding-agent base plus

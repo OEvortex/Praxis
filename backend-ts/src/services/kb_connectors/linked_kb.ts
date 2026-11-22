@@ -1,4 +1,4 @@
-// Port of deeptutor/services/rag/linked_kb.py — probe a local folder for a
+// probe a local folder for a
 // ready engine index before mounting it as a read-only ``linked`` KB.
 import { existsSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";

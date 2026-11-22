@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/notes/generation.py — a standalone action's
+// a standalone action's
 // result, turned into the learning block it was run for.
 //
 // When a learning block's "Generate" runs a pipeline that cannot call

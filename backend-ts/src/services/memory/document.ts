@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/document.py — markdown documents with
+// markdown documents with
 // footnote-style citations. Pure parse/serialize; no I/O.
 //
 // New format:  "- text [^1], [^3] <!--m_xxx-->"  + "[^1]: notebook:abc"

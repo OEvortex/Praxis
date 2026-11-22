@@ -1,4 +1,4 @@
-// Port of backend/app/services/inline_thinking.py — split inline reasoning out
+// split inline reasoning out
 // of provider text streams. vtx understands the ` thinking … </think>` form;
 // this is the provider-agnostic safety net for other tag spellings
 // (`<thought>`, `<reasoning>`, `<|begin_of_thought|>`, …), including tags split

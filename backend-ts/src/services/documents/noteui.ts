@@ -1,7 +1,6 @@
 /**
  * NoteUI Lang — an openui-style DSL that compiles to BlockNote blocks.
  *
- * Faithful TypeScript port of backend/app/services/documents/noteui.py.
  * Co-writer page bodies are Markdown; anything Markdown cannot express
  * (columns, callouts with tones, embedded cards, computed text) goes in a
  * ```` ```noteui ```` fence as a small program.

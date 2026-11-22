@@ -1,4 +1,4 @@
-// Port of backend/app/store/database.py — the one SQLite database for Praxis.
+// the one SQLite database for Praxis.
 //
 // Everything persistent that is not an uploaded binary lives in
 // `data/praxis.sqlite3` in WAL mode: sessions, settings, workspace state,

@@ -1,4 +1,4 @@
-// Port of backend/tests/test_config_test.py — draft catalog resolution and
+// draft catalog resolution and
 // provider request shaping for the Settings "Test this model" probe.
 //
 // Differences from the Python version:

@@ -1,4 +1,4 @@
-// Port of backend/app/agent/video_lesson/capability.py — video lesson
+// video lesson
 // orchestration: write a Remotion scene, validate it, narrate it, and publish
 // a self-contained player page under /files.
 //

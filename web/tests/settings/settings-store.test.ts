@@ -62,7 +62,6 @@ const VALID_UI: UiSettings = {
   content_font_scale: 100,
   content_line_spacing: 'normal',
   theme: 'dark',
-  language: 'en',
   code_block_theme: 'dracula',
   code_block_show_line_numbers: true,
   code_block_wrap_long_lines: true,
@@ -249,7 +248,6 @@ test('persistUiSettingsPatch sends a full ui patch verbatim — no field rewriti
   const { calls, fetcher } = recordingFetcher()
   const patch: Partial<UiSettings> = {
     theme: 'glass',
-    language: 'en',
     code_block_theme: 'oneDark',
     code_block_show_line_numbers: false,
     code_block_wrap_long_lines: true,
@@ -458,26 +456,6 @@ test('TOUR_STEPS walk the settings navigator in order with complete steps', () =
     '/settings/memory',
   ])
 })
-
-test('RESPONSE_LANGUAGE_OPTIONS covers the supported response languages exactly once each', () => {
-  const options = settingsContext.RESPONSE_LANGUAGE_OPTIONS
-
-  assert.equal(option_label(options, "en"), "English")
-  const values = options.map(option => option.value)
-  assert.deepEqual(values, ["en"])
-  assert.equal(new Set(values).size, values.length, 'no duplicated codes')
-  for (const value of values) {
-    assert.equal(value, "en", `${value} must be the English ResponseLanguage`)
-    assert.ok(option_label(options, value).length > 0, 'every option has a label')
-  }
-})
-
-function option_label(
-  options: ReadonlyArray<{ value: string; label: string }>,
-  value: string
-): string {
-  return options.find(option => option.value === value)!.label
-}
 
 test('defaultCatalog has one bucket per service and is fresh on every call', () => {
   const catalog = settingsContext.defaultCatalog()

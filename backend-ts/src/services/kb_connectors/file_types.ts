@@ -1,4 +1,4 @@
-// Port of deeptutor/utils/file_types.py — extension classification used by
+// extension classification used by
 // upload policy, linked-folder scanning and supported-file-types endpoint.
 import { readFileSync } from "node:fs";
 import { extname } from "node:path";

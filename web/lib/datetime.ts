@@ -1,6 +1,4 @@
-import type { AppLanguage } from "@/context/languages";
-
-export type Language = AppLanguage;
+export type Language = "en";
 
 export function getLocale(_lang: Language): string {
   return "en-US";

@@ -1,4 +1,4 @@
-// Port of backend/app/services/cron/executor.py — run a due cron job for its
+// run a due cron job for its
 // owner (a Praxis chat session). The AgentRuntime is Python-only; it is
 // injected via setRuntime() and accessed through a minimal structural
 // interface mirroring the attributes the Python code touches.

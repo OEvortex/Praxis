@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/review.py — persistent review
+// persistent review
 // scheduling for flashcards embedded in notebook pages.
 
 import { createHash } from "node:crypto";

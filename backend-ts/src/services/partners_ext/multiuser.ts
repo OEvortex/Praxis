@@ -1,4 +1,3 @@
-// Port of the deeptutor.multi_user persistence surface the Partners /
 // multi-user routers need: local user records, per-user grants, guardian
 // relationships, book permissions and the audit log. Stored in ext_items.
 //

@@ -1,4 +1,4 @@
-// Port of backend/app/agent/tools.py — built-in tools exposed to the tutor agent.
+// built-in tools exposed to the tutor agent.
 //
 // Tools are registered by name in ``builtin_tools``; each tool object carries
 // its own params schema and mutation flag for the permission layer.

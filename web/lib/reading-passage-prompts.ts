@@ -31,7 +31,6 @@ export interface PassagePrompt {
 export const CHAT_ROUTED_READING_ACTIONS = new Set([
   "vocabulary:explain",
   "translation:translate_en",
-  "translation:translate_zh",
   "guided_learning:guide",
   "quiz:start",
 ]);
@@ -51,22 +50,10 @@ export const PAGE_QUIZ_CONFIG = {
   per_type_counts: {},
 } as const;
 
-const HAN = /[\u3400-\u9fff\uf900-\ufaff]/;
-const KANA_HANGUL = /[\u3040-\u30ff\uac00-\ud7af]/;
 
-/**
- * Which language a "translate" should land in, as a BCP 47 base tag.
- *
- * The learner's own language, unless the passage is already in it — then the
- * other of Chinese and English, the pair the reader is used with most.
- */
-export function translationTarget(passage: string, uiLanguage: string): string {
-  const ui = (uiLanguage || "en").toLowerCase().split(/[-_]/)[0] || "en";
-  const kanaOrHangul = KANA_HANGUL.test(passage);
-  const chinese = HAN.test(passage) && !kanaOrHangul;
-  if (ui === "zh") return chinese ? "en" : "zh";
-  if (ui === "en") return chinese || kanaOrHangul ? "en" : "zh";
-  return ui;
+/** The reading "translate" action always targets English. */
+export function translationTarget(_passage: string, _uiLanguage: string): string {
+  return "en";
 }
 
 function languageName(target: string, uiLanguage: string): string {

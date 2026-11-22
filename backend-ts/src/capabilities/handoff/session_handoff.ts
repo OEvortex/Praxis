@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/session_handoff.py — security state for
+// security state for
 // private-to-public session handoff.
 //
 // Pairing codes and tickets are represented only by SHA-256 fingerprints in

@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/marginnote4.py — HTTP bridge for MarginNote 4
+// HTTP bridge for MarginNote 4
 // Add-on devices (pairing, incremental sync, heartbeat).
 //
 // Auth note: upstream mounts session auth on /pair, /devices, /status and

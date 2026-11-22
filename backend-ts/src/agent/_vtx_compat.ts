@@ -1,7 +1,6 @@
 /**
  * Compatibility shim for vtx's tool-schema slimming.
  *
- * Port of ``backend/app/agent/_vtx_compat.py``.
  *
  * ``vtx.agent.tools._slim_schema`` strips every dict key named ``"title"``
  * wherever it appears — meant to remove pydantic's ``"title": "<Label>"``

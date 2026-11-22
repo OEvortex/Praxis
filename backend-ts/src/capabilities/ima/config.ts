@@ -1,4 +1,3 @@
-// Port of deeptutor/capabilities/ima/binding.py +
 // services/rag/pipelines/ima/config.py — resolve which connected Tencent IMA
 // libraries a turn can reach, and load credentials per call.
 //

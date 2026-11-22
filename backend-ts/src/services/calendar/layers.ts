@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/layers.py
 // Read-only projections of the selected workspace onto calendar days.
 //
 // *Reviews* are due flashcards from the question bank (spaced repetition),

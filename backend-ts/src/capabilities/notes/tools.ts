@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/notes/tools.py — the notes capability's own
+// the notes capability's own
 // tools: ``note_read``, ``note_suggest``, ``write_note``, ``search_notes``.
 //
 // Upstream injects ``_note_document_id`` / ``_note_read_state`` /

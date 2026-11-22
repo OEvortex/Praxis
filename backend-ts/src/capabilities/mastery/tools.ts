@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/mastery/tools.py — the mastery tools the
+// the mastery tools the
 // tutor loop mounts while a mastery path is active.
 //
 // Adaptations to the Praxis runtime (documented in the port report):

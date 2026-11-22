@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/subagent/tools.py — the ``consult_subagent``
+// the ``consult_subagent``
 // tool: the seam between the chat loop and a live external agent CLI.
 //
 // What upstream's generic subagent capability adds beyond

@@ -48,7 +48,7 @@ function _load_lang(lang: string): Record<string, unknown> {
 }
 
 export function load_prompts(language: string): Record<string, unknown> {
-  const lang = String(language || "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+  const lang = "en";
   return _load_lang(lang);
 }
 

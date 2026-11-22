@@ -1,4 +1,3 @@
-// Port of backend/app/services/calendar/models.py
 // Wire models for the account calendar. The encodings follow RFC 5545 so an
 // ICS file maps onto them one to one: all-day events carry plain dates with an
 // *exclusive* end date, timed events carry UTC instants on the wire and local

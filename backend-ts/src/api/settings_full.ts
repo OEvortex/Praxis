@@ -181,8 +181,8 @@ settingsFullRouter.post("/api/settings/model-capabilities", async (c) => {
 settingsFullRouter.get("/api/settings/presets", (c) => c.json({ schema_version: "deeptutor.settings-presets/v1", presets: presets().map(({ tools: _tools, ...p }) => p) }));
 
 // UI and display settings
-const UI_FIELDS = new Set(["theme", "language", "response_language", "sidebar_description", "sidebar_nav_order", "code_block_theme", "code_block_show_line_numbers", "code_block_wrap_long_lines", "content_font_scale", "content_line_spacing", "enabled_optional_tools", "voice_autoplay", "voice_math_speak", "chat_response_timeout", "page_customization"]);
-settingsFullRouter.get("/api/settings/ui", (c) => { const ui = store.loadUi(S()); return c.json({ theme: ui.theme, language: ui.language, response_language: ui.response_language }); });
+const UI_FIELDS = new Set(["theme", "sidebar_description", "sidebar_nav_order", "code_block_theme", "code_block_show_line_numbers", "code_block_wrap_long_lines", "content_font_scale", "content_line_spacing", "enabled_optional_tools", "voice_autoplay", "voice_math_speak", "chat_response_timeout", "page_customization"]);
+settingsFullRouter.get("/api/settings/ui", (c) => { const ui = store.loadUi(S()); return c.json({ theme: ui.theme }); });
 settingsFullRouter.put("/api/settings/ui", async (c) => {
   const b = await body(c); const patch: Record<string, any> = {};
   for (const [k, v] of Object.entries(b)) if (UI_FIELDS.has(k) && v !== undefined) patch[k] = v;
@@ -192,7 +192,6 @@ settingsFullRouter.put("/api/settings/ui", async (c) => {
   return c.json(store.loadUi(S()));
 });
 settingsFullRouter.put("/api/settings/theme", async (c) => { const theme = str((await body(c)).theme); if (!["system", "light", "dark", "glass", "snow"].includes(theme)) return err(c, 422, "Invalid theme."); store.patchUi(S(), { theme }); return c.json({ theme }); });
-settingsFullRouter.put("/api/settings/language", async (c) => { const language = str((await body(c)).language); if (!["en", "zh", "fr", "de", "uk", "pl", "pt", "vi", "ja", "tr", "it", "hu"].includes(language)) return err(c, 422, "Invalid language."); store.patchUi(S(), { language }); return c.json({ language }); });
 settingsFullRouter.put("/api/settings/voice-autoplay", async (c) => { const v = bool((await body(c)).voice_autoplay); store.patchUi(S(), { voice_autoplay: v }); return c.json({ voice_autoplay: v }); });
 settingsFullRouter.put("/api/settings/voice-math-speak", async (c) => { const v = bool((await body(c)).voice_math_speak); store.patchUi(S(), { voice_math_speak: v }); return c.json({ voice_math_speak: v }); });
 settingsFullRouter.put("/api/settings/chat-response-timeout", async (c) => { const v = int((await body(c)).chat_response_timeout, 0); if (v < 30 || v > 1800) return err(c, 422, "chat_response_timeout must be between 30 and 1800."); store.patchUi(S(), { chat_response_timeout: v }); return c.json({ chat_response_timeout: v }); });

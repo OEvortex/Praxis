@@ -1,4 +1,3 @@
-// Port of deeptutor/learning/navigation.py (the parts the REST surface needs).
 import { LearningStore } from "./store.js";
 import { findKnowledgePoint, mapSummary, nextObjective, pathDisplayName } from "./policy.js";
 import type { SessionStore } from "../../store/session_store.js";
@@ -133,12 +132,6 @@ export function resolveModule(
   const digits = ref.match(/\d+/);
   let position: number | null = digits ? parseInt(digits[0], 10) : null;
   if (position === null) {
-    const CN: Record<string, number> = {
-      一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5,
-      六: 6, 七: 7, 八: 8, 九: 9, 十: 10,
-    };
-    const found = [...ref].filter((ch) => ch in CN).map((ch) => CN[ch]);
-    position = found.length === 1 ? found[0] : null;
   }
   if (position !== null && position >= 1 && position <= modules.length) {
     const ordered = [...modules].sort(

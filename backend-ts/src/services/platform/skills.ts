@@ -1,4 +1,4 @@
-// Port of deeptutor/services/skill/service.py — SKILL.md package CRUD over a
+// SKILL.md package CRUD over a
 // filesystem root (user layer) with an optional read-only builtin layer.
 // Frontmatter parsing is a minimal YAML-subset reader (flat keys, [lists],
 // nested one-level maps) — enough for the schema SKILL.md files use.

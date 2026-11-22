@@ -1,4 +1,3 @@
-// Port of deeptutor/multi_user/learning_access.py.
 import { getCurrentUser } from "./paths.js";
 import { learnerGrant, loadGrant } from "./grants.js";
 import { getUserById } from "./identity.js";

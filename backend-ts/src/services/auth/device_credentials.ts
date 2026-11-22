@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/device_credentials.py — revocable device
+// revocable device
 // credentials for local learner accounts (JSON store, bcrypt PIN hashes).
 import { createHash, randomInt, randomUUID, timingSafeEqual } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";

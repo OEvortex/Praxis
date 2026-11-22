@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/marginnote4/tools.py — the agent-facing
+// the agent-facing
 // MarginNote 4 tools, plus the device-bridge management tool the TS port adds.
 //
 // Upstream auto-mounts seven read tools only when a synced MN4 library is the

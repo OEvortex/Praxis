@@ -1,4 +1,4 @@
-// Port of deeptutor/services/rag/pipelines/ima/models.py — typed views over
+// typed views over
 // IMA's wire payloads and the parsers that produce them. Wire shapes are
 // decoded exactly once, here.
 

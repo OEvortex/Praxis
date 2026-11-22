@@ -1,4 +1,3 @@
-// Port of deeptutor/services/memory/consolidator/prompts/{en,zh}/*.yaml.
 // The upstream files are YAML with `system: |` / `user: |` literal blocks;
 // they are embedded verbatim here and parsed with a tiny literal-block reader
 // (no yaml dependency in this package).
@@ -30,7 +29,7 @@ const RAW: Record<string, Record<string, string>> = {
     markers you see in the chunk below — do NOT invent ids, do NOT cite
     entities outside this chunk.
   - text ≤ 240 chars. Be terse, verb-led ("uses X", "stuck on Y").
-  - Banned absolutist phrasing (unless wrapping in "..." or 「...」):
+  - Banned absolutist phrasing (unless wrapping in quotes):
     deeply, truly, mastered, expert, passionate, loves, hates, always,
     never, fully understands.
   - Surface focus: {focus}.
@@ -73,7 +72,7 @@ user: |
   - text ≤ 240 chars. Forced hedge template: claims must be of the
     form "Across N <surface> interactions, the user X" or
     "<surface> entries show the user X" — bind to a surface or count.
-  - Banned absolutist phrasing (unless quoting with "..." or 「...」):
+  - Banned absolutist phrasing (unless quoting):
     deeply, truly, mastered, expert, passionate, loves, hates, always,
     never, fully understands.
   - Slot focus: {focus}.
@@ -212,192 +211,6 @@ user: |
   Iteration {iteration}/{iterations_total}. Return JSON.
 `,
   },
-  zh: {
-    update_l2: `system: |
-  你是 DeepTutor 用户 {user_label} 的记忆管理员。
-
-  任务：阅读用户最近 {surface} 活动的一段原始内容（未截断），抽取关于用户
-  的稳定事实。
-
-  输出：唯一一个 JSON 对象 — 不要散文，不要代码块。
-
-      {{"facts": [
-        {{"text":   "<≤240 字符；每条一个事实>",
-          "section": "<必须取值于：{sections}>",
-          "refs":   ["<surface>:<entity_id>", ...]}}
-      ]}}
-
-  硬性规则
-  - 每条事实必须有至少 1 个 ref。ref 必须来自下面 chunk 内的
-    "Chunk-local citeable refs" 列表或 "@entity <surface>:<id>" 标记。
-    绝对不要编造 id，绝对不要引用 chunk 范围之外的 entity。
-  - text ≤ 240 字符。简洁，动词为主（「使用 X」「卡在 Y」）。
-  - 禁止绝对化用语（除非用 "..." 或 「...」 引用用户原话）：
-    深刻、彻底、完美掌握、完全理解、专家、热爱、总是、从来不、
-    deeply、truly、mastered、expert、passionate、loves、hates、always、
-    never、fully understands。
-  - Surface 焦点：{focus}。
-  - 如果这个 chunk 里没有值得记录的事实，回 \`{{"facts": []}}\` 是正常的。
-
-  今天是 {today}。
-
-user: |
-  # 已有的 {surface} 记忆（不要重复已经记录过的事实）：
-  {existing}
-
-  # 源 chunk {chunk_index}/{chunk_total}（字符 {chunk_start}..{chunk_end}）：
-  ----------------------------------------------------------------
-  {chunk}
-  ----------------------------------------------------------------
-
-  返回 JSON。只能引用上面列出或出现过的 ref。
-`,
-    update_l3: `system: |
-  你是 DeepTutor 用户 {user_label} 的跨 surface 记忆管理员。
-
-  任务：阅读若干 surface 的 L2 摘要片段（chat / notebook / quiz / kb / book /
-  partner / cowriter），给出关于用户的稳定、对冲过的判断。
-
-  输出：唯一一个 JSON 对象。
-
-      {{"facts": [
-        {{"text":   "<≤240 字符，带 surface/计数对冲>",
-          "section": "<必须取值于：{sections}>",
-          "refs":   ["<surface 名>", ...]}}
-      ]}}
-
-  硬性规则
-  - \`refs\` 只能是 chunk 顶部 "Chunk-local citeable refs" 列表里的**裸 surface 名**
-    （如 \`chat\`、\`notebook\`）。**禁止**写 \`m_xxx\` 或 \`surface:id\`
-    这类 entry id。一条 fact 如果是跨 surface 综合的，可以同时引用多个 surface。
-  - text ≤ 240。强制对冲：判断必须形如
-    「在 N 次 <surface> 互动中，用户 X」或「<surface> 记忆显示用户 X」。
-  - 禁止绝对化用语（除非 "..." 或 「...」 原话）：同 update_l2。
-  - Slot 焦点：{focus}。
-  - 没有合适的事实就回 \`{{"facts": []}}\`。
-
-  今天是 {today}。
-
-user: |
-  # 已有的 {slot} 记忆（不要重复）：
-  {existing}
-
-  # L2 片段 {chunk_index}/{chunk_total}：
-  ----------------------------------------------------------------
-  {chunk}
-  ----------------------------------------------------------------
-
-  返回 JSON。refs 只能从 chunk 顶部 "Chunk-local citeable refs" 里挑 surface 名。
-`,
-    audit_l2: `system: |
-  你是 DeepTutor 用户 {user_label} 的记忆审计员。
-
-  任务：阅读一段 {surface} 的 L2 记忆，每个条目下都附上了它引用的
-  **完整原始内容**（不截断）。找出与原始内容不一致或事实错误的条目，
-  通过编辑修正。
-
-  输出：唯一一个 JSON 对象。
-
-      {{"edits": [
-        {{"op": "replace", "line": <int>, "new_text": "<≤240>",
-          "refs": ["<surface>:<id>", ...], "reason": "<简短>"}},
-        {{"op": "delete",  "line_start": <int>, "line_end": <int>,
-          "reason": "<简短>"}},
-        {{"op": "insert",  "after_line": <int>, "text": "<≤240>",
-          "refs": ["<surface>:<id>", ...], "section": "<可选>",
-          "reason": "<简短>"}}
-      ]}}
-
-  硬性规则
-  - line 必须对应下面带行号的视图。
-  - replace/insert 的 refs 必须来自当前条目（或同一 chunk 邻近条目）
-    展示的 sources。
-  - text/new_text ≤ 240。
-  - 不要编辑非 bullet 行（标题、空行、section 标题）。
-  - 同 update 的禁词清单。
-  - 如果不需要任何修改，返回 \`{{"edits": []}}\`，不要为改而改。
-  - \`reason\` 用一句话说明依据。
-
-  今天是 {today}。
-
-user: |
-  # 带源 trace 注解的 {surface} 记忆 chunk：
-  ----------------------------------------------------------------
-  {chunk}
-  ----------------------------------------------------------------
-
-  返回 JSON。只编辑上面可见的行号。
-`,
-    audit_l3: `system: |
-  你是 DeepTutor 用户 {user_label} 的跨 surface 记忆审计员。
-
-  任务：阅读一段 {slot} 的 L3 记忆，每个条目都附上了它引用的
-  **完整 L2 entry**。找出过度概括、被 L2 反驳、或证据不足的判断，
-  通过编辑修正。
-
-  输出：唯一一个 JSON 对象。
-
-      {{"edits": [
-        {{"op": "replace", "line": <int>, "new_text": "<≤240，已对冲>",
-          "refs": ["m_xxx", ...], "reason": "<简短>"}},
-        {{"op": "delete",  "line_start": <int>, "line_end": <int>,
-          "reason": "<简短>"}},
-        {{"op": "insert",  "after_line": <int>, "text": "<≤240，已对冲>",
-          "refs": ["m_xxx", ...], "section": "<可选>",
-          "reason": "<简短>"}}
-      ]}}
-
-  硬性规则
-  - 同 update_l3 的 ref 规则 + L3 对冲模板。
-  - 不要为改而改，没问题就回 \`{{"edits": []}}\`。
-
-  今天是 {today}。
-
-user: |
-  # 带 L2 source 注解的 {slot} 记忆 chunk：
-  ----------------------------------------------------------------
-  {chunk}
-  ----------------------------------------------------------------
-
-  返回 JSON。
-`,
-    dedup: `system: |
-  你是 DeepTutor 用户 {user_label} 的记忆去重员。
-
-  任务：完整读取下面带行号的记忆文档，合并重复、删除冗余、改写不清晰的条目。
-
-  输出：唯一一个 JSON 对象。
-
-      {{"edits": [
-        {{"op": "replace", "line": <int>, "new_text": "<≤240>",
-          "refs": ["<refs=[...] 中的来源引用>", ...], "reason": "<简短>"}},
-        {{"op": "delete",  "line_start": <int>, "line_end": <int>,
-          "reason": "<合并到 Lx | Ly 的重复 | 低信号>"}}
-      ]}}
-
-  硬性规则
-  - 只允许 replace 和 delete，不允许 insert。
-  - 合并 A 和 B 时：保留质量更高的（replace 它的行，refs 取并集），
-    删掉另一条。
-  - 字面重复时，删掉行号更靠后的（保留靠前的）。
-  - text ≤ 240。合并时 refs 取并集。
-  - 每条末尾的 refs=[...] 包含原始来源引用，必须原样复制其中的值。
-    [^m_...] 是条目定位标记，不是来源引用。
-    new_text 不要包含 refs 元数据后缀。
-  - 同 update 的禁词清单。
-  - 没什么可去重的就回 \`{{"edits": []}}\`。
-
-  今天是 {today}。
-
-user: |
-  # 记忆文档（带行号）：
-  ----------------------------------------------------------------
-  {doc}
-  ----------------------------------------------------------------
-
-  第 {iteration} / {iterations_total} 轮。返回 JSON。
-`,
-  },
 };
 
 // _meta.yaml content (per-surface / per-slot focus + suggested sections).
@@ -467,52 +280,6 @@ const META: Record<string, MetaFile> = {
       },
     },
   },
-  zh: {
-    surfaces: {
-      chat: {
-        focus: "用户呈现出的稳定误解、已经显示出掌握的概念、以及反复回到的持久话题。剔除单轮闲聊。",
-        sections: ["误解", "掌握", "话题"],
-      },
-      notebook: {
-        focus: "笔记中反复出现的主题、用户偏好的格式、以及反复出现的问题。",
-        sections: ["主题", "格式", "悬而未决的问题"],
-      },
-      quiz: {
-        focus: "答题中的错误模式、正确率高/低的话题、用户在哪类题型上挣扎。",
-        sections: ["错误模式", "强项", "弱项"],
-      },
-      kb: {
-        focus: "用户的文档兴趣、对知识库的查询模式、文献库中的空白。",
-        sections: ["兴趣", "高频查询", "文献库空白"],
-      },
-      book: {
-        focus: "阅读节奏、卡点（页面重复打开或停留）、用户重点标注的主题。",
-        sections: ["节奏", "卡点", "标注主题"],
-      },
-      partner: {
-        focus: "伙伴对话中反复出现的主题、不同频道的行为差异。",
-        sections: ["主题", "频道"],
-      },
-      cowriter: {
-        focus: "写作风格偏好、反复修改的模式、用户起草的话题。",
-        sections: ["风格", "反复修改", "话题"],
-      },
-    },
-    slots: {
-      recent: {
-        focus: "最近 1-4 周用户跨 surface 的活动滚动时间线。时间锚定、surface 归属。",
-        sections: ["本周", "更早"],
-      },
-      profile: {
-        focus: "持久的身份、学习风格、知识水平。只接受多个 surface 多个 L2 条目支撑的判断，禁止臆测。",
-        sections: ["身份", "学习风格", "知识水平"],
-      },
-      scope: {
-        focus: "用户有过实际接触的概念，含信心标签（熟悉 / 练习中 / 不确定），均绑定 L2 证据。",
-        sections: ["熟悉", "练习中", "不确定"],
-      },
-    },
-  },
 };
 
 // ── Minimal `key: |` literal-block YAML reader ────────────────────────
@@ -553,7 +320,7 @@ const PROMPT_CACHE = new Map<string, PromptFile>();
 const META_CACHE = new Map<string, MetaFile>();
 
 export function lang_code(language: string): string {
-  return (language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+  return "en";
 }
 
 export function load_prompt(name: string, language: string): PromptFile {

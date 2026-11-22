@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/solve/tools.py — the seam between the
+// the seam between the
 // chat-loop solver and the SolveSession: solve_plan / solve_finish_step /
 // solve_replan. Auto-mounted only when a solve turn is active.
 //

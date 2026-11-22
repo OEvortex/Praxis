@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/settings.py — user-tunable consolidator
+// user-tunable consolidator
 // parameters. Upstream stores them in ``data/user/settings/main.yaml`` under
 // the ``memory:`` subtree via ConfigManager; here they live in the shared
 // SQLite kv store under ``settings/memory`` (kept clear of the ``memory`` key

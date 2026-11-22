@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/subagents.py — subagent detection, backend
+// subagent detection, backend
 // options/sync, pointer-KB connections, and consult settings.
 //
 // Wire-up: mount BEFORE handlersRouter (its /api/subagents/* stubs would

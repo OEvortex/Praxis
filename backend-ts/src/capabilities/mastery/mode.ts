@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/mastery/mode.py — what a mastery
+// what a mastery
 // conversation is doing right now, and which tools each mode may run.
 //
 // Faithful port: three modes (outline / study / review) are mutable state on

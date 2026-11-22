@@ -1,4 +1,4 @@
-// Port of backend/app/services/llm_text.py — one-shot text generation for
+// one-shot text generation for
 // features that are not chat turns (Co-Writer AI edits, etc.). Resolves the
 // same provider/model the chat turn would use and calls the provider wire
 // protocol directly, streaming deltas when the caller wants them.

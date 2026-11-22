@@ -1,5 +1,4 @@
 // Cross-turn session registry for subagent_ext — port of
-// deeptutor/services/subagent/sessions.py.
 //
 // Upstream persists ``session_key → {session_id, kind, cwd}`` so the next
 // chat turn resumes the SAME external agent session the earlier consults

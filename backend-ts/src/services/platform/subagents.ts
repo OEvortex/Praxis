@@ -1,4 +1,3 @@
-// Port of deeptutor/services/subagent/{registry,config,types,process}.py —
 // subagent backend registry, detection (real PATH + --version probes), and
 // the persisted per-backend run settings.
 //

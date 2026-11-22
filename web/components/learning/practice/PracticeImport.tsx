@@ -78,7 +78,7 @@ export function PracticeImport({
         </button>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {"Import XLSX, CSV, TSV or JSON. Up to 500 questions and 5 MB per file. XLSX uses the active sheet. Chinese and English column names are supported."}
+        {"Import XLSX, CSV, TSV or JSON. Up to 500 questions and 5 MB per file. XLSX uses the active sheet. English column names are supported."}
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-sm">

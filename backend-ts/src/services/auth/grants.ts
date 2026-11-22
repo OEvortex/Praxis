@@ -1,4 +1,4 @@
-// Port of deeptutor/multi_user/grants.py — logical resource grants.
+// logical resource grants.
 // Grants are JSON files under <data>/system/grants/<user_id>.json.
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

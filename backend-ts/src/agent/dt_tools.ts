@@ -1,4 +1,4 @@
-// Port of backend/app/agent/dt_tools.py — Praxis's built-in tools as
+// Praxis's built-in tools as
 // vtx ``BaseTool`` classes. Pydantic param models become TS interfaces plus
 // JSON-schema ``params`` objects with the same field descriptions.
 

@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/explore_context/explorer.py — the agentic
+// the agentic
 // context investigator: a read-only pre-pass that runs before the answer
 // loop's first LLM call, uses ``read_source`` to load the attached sources
 // the user's request actually needs, then folds an objective, third-person
@@ -40,13 +40,13 @@ function _budgets(): { loop: { max_tokens: number }; briefing: { max_tokens: num
   return { loop: { max_tokens: 2000 }, briefing: { max_tokens: 1400 } };
 }
 
-const KIND_BY_PREFIX: Record<string, [string, string]> = {
-  "hs-": ["Conversation transcript", "对话记录"],
-  "nb-": ["Notebook record", "笔记本记录"],
-  "bk-": ["Book excerpt", "书籍节选"],
-  "rd-": ["Reading excerpt", "阅读材料节选"],
-  "qb-": ["Question-bank entry", "题库条目"],
-  "at-": ["Document", "文档"],
+const KIND_BY_PREFIX: Record<string, [string]> = {
+  "hs-": ["Conversation transcript"],
+  "nb-": ["Notebook record"],
+  "bk-": ["Book excerpt"],
+  "rd-": ["Reading excerpt"],
+  "qb-": ["Question-bank entry"],
+  "at-": ["Document"],
 };
 
 const STREAM_IDLE_TIMEOUT_MS = 90_000;
@@ -110,13 +110,13 @@ function _supports_tool_calling(provider: string): boolean {
 }
 
 export class ContextExplorer {
-  language: "en" | "zh";
+  language: "en";
   private readonly _prompts: Record<string, unknown>;
   private readonly _settings: Settings;
   private readonly _llm: ResolvedModel;
 
   constructor(opts: { language: string; prompts: Record<string, unknown>; settings?: Settings }) {
-    this.language = String(opts.language || "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+    this.language = "en";
     this._prompts = opts.prompts || {};
     this._settings = opts.settings ?? get_settings();
     this._llm = _resolve(this._settings);
@@ -472,17 +472,17 @@ export class ContextExplorer {
   }
 
   private _kind_label(sid: string): string {
-    for (const [prefix, [en, zh]] of Object.entries(KIND_BY_PREFIX)) {
-      if (sid.startsWith(prefix)) return this.language === "zh" ? zh : en;
+    for (const [prefix, [en]] of Object.entries(KIND_BY_PREFIX)) {
+      if (sid.startsWith(prefix)) return en;
     }
-    return this.language === "zh" ? "来源" : "Source";
+    return "Source";
   }
 
   private _clip(text: string, limit: number): string {
     const trimmed = (text || "").trim();
     if (limit <= 0) return "";
     if (_chars(trimmed).length <= limit) return trimmed;
-    const note = this.language === "zh" ? "\n…（已截断）" : "\n…(truncated)";
+    const note = "\n…(truncated)";
     return _clipChars(trimmed, limit).replace(/\s+$/, "") + note;
   }
 
@@ -582,7 +582,7 @@ export class ContextExplorer {
   private _status_exploring(): string {
     return this._t(
       "status.exploring",
-      this.language === "zh" ? "上下文调查" : "Context exploration",
+      "Context exploration",
     );
   }
 

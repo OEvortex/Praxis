@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/ingestion.py — URL/media ingestion. The web path
+// URL/media ingestion. The web path
 // (safe page → markdown → units) is implemented with plain fetch + tag strip;
 // YouTube/Bilibili caption loaders, ffmpeg media chunking and speech-to-text
 // are NOT ported (no equivalents in this backend) — those materials are

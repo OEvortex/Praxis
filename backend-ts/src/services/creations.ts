@@ -1,4 +1,4 @@
-// Port of deeptutor/services/creations/{drafts,kinds}.py — user-scoped creation
+// user-scoped creation
 // drafts (Skill/Persona) produced by create mode, approved via /api/creations.
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";

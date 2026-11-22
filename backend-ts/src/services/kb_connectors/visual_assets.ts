@@ -1,4 +1,3 @@
-// Minimal port of deeptutor/services/rag/visual_assets.py VisualAssetStore —
 // KB-scoped immutable image files + manifest.json, used by file move/delete.
 import { createHash } from "node:crypto";
 import {

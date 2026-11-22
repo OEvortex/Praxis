@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/creator/capability.py — Create mode: teach
+// Create mode: teach
 // the loop to author a Skill/Persona. Never replaces the ordinary chat tool
 // surface — it only adds propose_creation and a kind-specific system prompt.
 
@@ -11,8 +11,6 @@ import { CREATOR_TOOL_NAMES } from "./tools.js";
 import type { Dict } from "../../shared/types.js";
 
 export { CREATOR_TOOL_NAMES };
-
-const ZH_LABELS: Record<string, string> = { skill: "技能", persona: "人设" };
 
 const _PROMPT_CACHE = new Map<string, string>();
 
@@ -48,7 +46,7 @@ export function system_block(
 ): PromptBlock | null {
   const kind = get_creation_kind(metadata["create_target"]);
   if (kind === null) return null;
-  const lang = (opts.language ?? "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+  const lang = "en";
   let text = _load_prompt(lang, kind.key);
 
   const tail: string[] = [];
@@ -56,9 +54,7 @@ export function system_block(
   if (existing.length) {
     const names = existing.map((n) => `\`${n}\``).join(", ");
     tail.push(
-      lang === "zh"
-        ? `已使用的${ZH_LABELS[kind.key] ?? kind.label}名称（避免冲突）：${names}`
-        : `Names already in use for this kind (avoid colliding): ${names}`,
+      `Names already in use for this kind (avoid colliding): ${names}`,
     );
   }
   const latest = new CreationDraftStore().latest_for_session(
@@ -68,17 +64,12 @@ export function system_block(
   if (latest !== null) {
     if (latest.status === "created") {
       tail.push(
-        lang === "zh"
-          ? `最近一次草稿已确认，保存为 \`${latest.created_name ?? latest.name}\`；` +
-            "如需修改，用同样的名字再次调用 propose_creation，确认会更新它而不是报冲突。"
-          : `The latest draft was approved and saved as \`${latest.created_name ?? latest.name}\`; ` +
-            "to change it, propose again with the same name — approval will update it instead of conflicting.",
+        `The latest draft was approved and saved as \`${latest.created_name ?? latest.name}\`; ` +
+          "to change it, propose again with the same name — approval will update it instead of conflicting.",
       );
     } else {
       tail.push(
-        lang === "zh"
-          ? `最近一次草稿名为 \`${latest.name}\`，尚未被用户确认。`
-          : `The latest draft is named \`${latest.name}\` and has not been approved yet.`,
+        `The latest draft is named \`${latest.name}\` and has not been approved yet.`,
       );
     }
   }

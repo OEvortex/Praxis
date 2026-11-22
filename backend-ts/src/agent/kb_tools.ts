@@ -1,4 +1,4 @@
-// Port of backend/app/agent/kb_tools.py — knowledge-base agent tools backed by
+// knowledge-base agent tools backed by
 // KnowledgeBaseStore (BM25 retrieval).
 //
 // Mirrors Praxis's ``rag`` / ``kb_files`` / ``read_source`` tools closely

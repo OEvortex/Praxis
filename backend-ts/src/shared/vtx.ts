@@ -75,6 +75,11 @@ export interface UsageStats {
   output_tokens?: number;
   cache_read_tokens?: number;
   cache_write_tokens?: number;
+  /** Provider explicitly reported cache counters (even if all were zero). */
+  cache_reported?: boolean;
+  reasoning_tokens?: number;
+  /** Number of model calls folded into this summary. */
+  calls?: number;
   [k: string]: unknown;
 }
 

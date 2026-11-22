@@ -1,4 +1,4 @@
-// Port of deeptutor/video_learning/marks.py — private learning marks on timed
+// private learning marks on timed
 // media materials (stored under material.learning.marks).
 import { createHash } from "node:crypto";
 import {

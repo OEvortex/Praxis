@@ -1,4 +1,3 @@
-// Port of deeptutor.api.routers.{partners,partner_groups,multi_user} +
 // _partners_channel_schema to a Hono router. Mount as `app.route("/api", partnersFullRouter)`
 // or merge into handlers; paths mirror upstream exactly.
 //

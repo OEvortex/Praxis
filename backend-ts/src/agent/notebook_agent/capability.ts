@@ -1,4 +1,3 @@
-// Port of backend/app/agent/notebook_agent/capability.py
 //
 // Dispatch the Co-writer sub-agent.
 //

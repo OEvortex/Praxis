@@ -1,4 +1,4 @@
-// Port of backend/app/agent/co_writer.py — the notebook pairing agent.
+// the notebook pairing agent.
 //
 // The Co-writer chat beside an open page and the sub-agent dispatched by the
 // main assistant's ``notebook`` tool are the *same* agent: they share one system

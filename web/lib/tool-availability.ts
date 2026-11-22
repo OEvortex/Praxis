@@ -1,6 +1,4 @@
-import type { AppLanguage } from "@/context/languages";
-
-export type ToolAvailabilityLanguage = AppLanguage;
+export type ToolAvailabilityLanguage = "en";
 
 export type ToolAvailabilityCopy = {
   badge: string;

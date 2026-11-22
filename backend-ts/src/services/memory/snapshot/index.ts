@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/snapshot/__init__.py — workspace snapshot
+// workspace snapshot
 // subsystem for L1 memory.
 import { diff_snapshots } from "./diff.js";
 import * as adapters from "./adapters.js";

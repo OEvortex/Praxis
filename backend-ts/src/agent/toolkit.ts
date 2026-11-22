@@ -3,7 +3,6 @@
  * no ``vtx.agent.sdk`` involvement. Same call shape the SDK decorator had:
  * ``@tool(mutating=..., tool_icon=...)`` over a plain function.
  *
- * Port of ``backend/app/agent/toolkit.py``.
  *
  * TS port notes:
  *  - Python introspected the function signature + type hints to build a pydantic

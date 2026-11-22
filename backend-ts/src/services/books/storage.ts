@@ -1,4 +1,4 @@
-// Port of deeptutor/book/storage.py — per-book directory + per-page file
+// per-book directory + per-page file
 // persistence with atomic writes.
 //
 // Layout (relative to ``<book_root>/``)::

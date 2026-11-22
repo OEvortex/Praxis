@@ -2,7 +2,6 @@
 // podcast-style overview of a topic or knowledge base and publishes the
 // audio + transcript under files_dir (served at /files/audio_overviews/...).
 //
-// Port of deeptutor/capabilities/audio_overview/{capability,pipeline}.py as
 // a chat tool rather than a turn capability: upstream ran as an exclusive
 // turn; here it is a single tool call that does retrieve → script → TTS →
 // publish.

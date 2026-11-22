@@ -91,7 +91,7 @@ platformRouter.get("/api/tools", async (c) => {
       description: t.description,
       description_i18n: {},
       parameters: t.parameters ?? [],
-      hints: { en: t.hints ?? {}, zh: t.hints ?? {} },
+      hints: { en: t.hints ?? {} },
       aliases: t.aliases ?? [],
       toggleable,
       enabled,

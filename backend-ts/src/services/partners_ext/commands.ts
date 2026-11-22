@@ -1,4 +1,4 @@
-// Port of deeptutor.services.partners.commands — slash-command palette and
+// slash-command palette and
 // dispatch for partner chat surfaces.
 import type { PartnerSessionStore, PartnerConfig } from "./manager.js";
 import type { CurrentUser } from "./multiuser.js";

@@ -1,4 +1,4 @@
-// Port of deeptutor/book/kb_health.py — KB drift detection & log.md health.
+// KB drift detection & log.md health.
 //
 // KB fingerprints are derived from the per-document content hashes of each
 // knowledge base's raw documents. In this deployment the KB store is

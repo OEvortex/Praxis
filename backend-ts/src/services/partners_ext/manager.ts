@@ -1,4 +1,3 @@
-// Port of deeptutor.services.partners.{manager,sessions,drafts,links,
 // web_continuity,runtime_status,interaction,commands,shell} consolidated.
 //
 // Persistence: SQLite ext_items (see store.ts). The upstream JSONL session

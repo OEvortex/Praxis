@@ -1,4 +1,3 @@
-// Port of deeptutor/services/voice (config resolution + OpenAI-compatible and
 // Edge adapters) used by api/routers/voice.py.
 //
 // TTS providers supported here:

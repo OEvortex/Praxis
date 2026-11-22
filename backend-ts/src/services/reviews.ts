@@ -1,4 +1,4 @@
-// Port of backend/app/services/reviews.py — spaced repetition for flashcards
+// spaced repetition for flashcards
 // (the question bank), feeding the calendar's Reviews layer.
 //
 // Every question-bank entry with no schedule yet gets a first review one day

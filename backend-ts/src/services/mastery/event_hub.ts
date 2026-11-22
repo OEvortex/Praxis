@@ -1,4 +1,4 @@
-// Port of deeptutor/learning/event_hub.py — in-process wake-up channel for
+// in-process wake-up channel for
 // durable mastery topic events. SQLite (the store) remains the replay
 // authority; this hub only tells subscribers a topic changed.
 

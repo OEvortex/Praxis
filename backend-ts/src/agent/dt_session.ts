@@ -1,7 +1,6 @@
 /**
  * A vtx Session whose persistence is Praxis's session record.
  *
- * Port of ``backend/app/agent/dt_session.py``.
  *
  * The agent talks to a normal ``vtx.agent.session.Session``, so nothing in the
  * vtx runtime needs to change. But instead of writing ``~/.vtx/sessions/<cwd>/*.jsonl``,

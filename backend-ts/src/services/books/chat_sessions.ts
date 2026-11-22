@@ -1,4 +1,4 @@
-// Port of deeptutor/book/chat_sessions.py — mark chat sessions that belong to
+// mark chat sessions that belong to
 // a book page so the chat UI can route them back to the book reader.
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";

@@ -92,7 +92,7 @@ beforeEach(() => {
     if (url === "/api/settings")
       return reply({
         catalog: live,
-        ui: { theme: "snow", language: "en", response_language: "en" },
+        ui: { theme: "snow" },
       });
     if (url === "/api/system/status") return reply({});
     if (url === "/api/subagents/backends/options")

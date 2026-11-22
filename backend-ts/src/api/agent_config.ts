@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/agent_config.py — agent UI metadata registry.
+// agent UI metadata registry.
 import { Hono } from "hono";
 
 export const agentConfigRouter = new Hono();

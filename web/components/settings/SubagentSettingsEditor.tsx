@@ -5,7 +5,6 @@ import { useStagedSettings } from "@/features/settings/store/useStagedSettings";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Loader2, RefreshCw, XCircle } from "lucide-react";
 
-import { normalizeLanguage } from "@/context/languages";
 import { formatDate } from "@/lib/datetime";
 
 import {
@@ -472,7 +471,7 @@ export function SubagentSettingsEditor({ kind }: { kind: string }) {
                 isGrok
                   ? "No model catalog is assumed. Enter a model supported by your Grok CLI; sync only detects the CLI again."
                   : options.synced_at
-                    ? `Last synced: ${formatTs(options.synced_at, "en")}`
+                    ? `Last synced: ${formatTs(options.synced_at)}`
                     : isRemote
                       ? "The remote gateway does not currently enumerate models here; use its default or enter a model name manually."
                       : "This CLI has no model-list API; below are the common aliases, and any model name is accepted."
@@ -835,10 +834,10 @@ export function SubagentSettingsEditor({ kind }: { kind: string }) {
   );
 }
 
-function formatTs(value: string, language: string): string {
+function formatTs(value: string): string {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return formatDate(parsed, normalizeLanguage(language), {
+  return formatDate(parsed, "en", {
     dateStyle: "medium",
     timeStyle: "short",
   });

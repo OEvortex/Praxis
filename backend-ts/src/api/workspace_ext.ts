@@ -1,4 +1,3 @@
-// Port of the deeptutor/api/routers/workspace.py settings_router endpoints that
 // backend-ts/src/api/handlers.ts does not already cover:
 //   GET  /api/settings/workspace
 //   POST /api/settings/workspace/validate

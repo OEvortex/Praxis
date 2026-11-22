@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/setup/apply.py — commit one setting after
+// commit one setting after
 // validating it against its spec row. Writes go to the runtime-override file
 // (config.ts write_override), so they take effect on the next get_settings()
 // call — effect "instant".

@@ -1,4 +1,3 @@
-// Port of backend/app/agent/notebook_agent/__init__.py
 //
 // Notebook writer sub-agent: builds Co-Writer pages in the background.
 //

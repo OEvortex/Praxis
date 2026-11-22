@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/setup/tools.py — the four tools through
+// the four tools through
 // which the agent configures this Praxis install:
 //
 //   inspect_setup     — read the install: current values, options, gaps, jobs

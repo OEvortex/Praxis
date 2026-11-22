@@ -1,4 +1,4 @@
-// Port of deeptutor/services/auth.py — auth service: settings, JWT (HS256),
+// auth service: settings, JWT (HS256),
 // bcrypt password hashing, PocketBase mode, and the user-store facade.
 import { sign, verify } from "hono/jwt";
 import { hashPassword, verifyPassword } from "./bcrypt.js";

@@ -1,7 +1,6 @@
 /**
  * Cheap caching for vtx's model metadata lookups.
  *
- * Port of ``backend/app/agent/vtx_catalog_cache.py``.
  *
  * Three separate hot spots in vtx's model discovery made the **first** turn of
  * every conversation wait ~6s before the model was even called (profiled with

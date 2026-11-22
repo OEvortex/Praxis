@@ -1,4 +1,4 @@
-// Port of backend/app/agent/video_lesson/narration.py — voice-over for video
+// voice-over for video
 // lessons: time each scene's captions, and speak them when a TTS engine is
 // available.
 //

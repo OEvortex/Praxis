@@ -1,4 +1,4 @@
-// Port of backend/app/services/usage_stats.py — LLM usage accounting behind
+// LLM usage accounting behind
 // `GET /api/settings/usage`. vtx records provider-reported token usage on every
 // assistant message; we reconstruct one `usage_turns` row per model call.
 //
@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS usage_turns (
     output_tokens INTEGER NOT NULL DEFAULT 0,
     cache_read_tokens INTEGER NOT NULL DEFAULT 0,
     cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+    cache_reported INTEGER NOT NULL DEFAULT 0,
     total_tokens INTEGER NOT NULL DEFAULT 0,
     calls INTEGER NOT NULL DEFAULT 1,
     duration_s REAL NOT NULL DEFAULT 0,
@@ -37,6 +38,14 @@ CREATE TABLE IF NOT EXISTS usage_turns (
 `;
 
 const INDEX = "CREATE INDEX IF NOT EXISTS idx_usage_turns_ts ON usage_turns(ts)";
+
+/** Older databases predate `cache_reported`; add it in place without data loss. */
+function ensureCacheColumn(conn: DatabaseSync): void {
+  const info = conn.prepare("PRAGMA table_info(usage_turns)").all() as Array<{ name: string }>;
+  if (!info.some((col) => col.name === "cache_reported")) {
+    conn.exec("ALTER TABLE usage_turns ADD COLUMN cache_reported INTEGER NOT NULL DEFAULT 0");
+  }
+}
 
 const TIMING_TABLE = `
 CREATE TABLE IF NOT EXISTS usage_turn_times (
@@ -124,10 +133,12 @@ export function add_usage(
     "output_tokens",
     "cache_read_tokens",
     "cache_write_tokens",
+    "reasoning_tokens",
   ] as const) {
     const value = Number((next as Record<string, unknown>)[field] ?? 0) || 0;
     if (value) out[field] = (Number(out[field]) || 0) + value;
   }
+  if ((next as Record<string, unknown>).cache_reported) out["cache_reported"] = true;
   out["calls"] = (Number(out["calls"]) || 0) + 1;
   return out;
 }
@@ -222,6 +233,7 @@ type CallRow = [
   number, // output_tokens
   number, // cache_read
   number, // cache_write
+  number, // cache_reported
   number, // total
   number, // calls
   number, // duration
@@ -293,6 +305,7 @@ function callRows(
               outputTokens,
               cacheRead,
               cacheWrite,
+              cacheRead || cacheWrite ? 1 : 0,
               total,
               1,
               duration,
@@ -318,6 +331,7 @@ function callRows(
               outputTokens,
               cacheRead,
               cacheWrite,
+              cacheRead || cacheWrite ? 1 : 0,
               total,
               1,
               duration,
@@ -336,12 +350,13 @@ function insertRows(settings: Settings, rows: CallRow[]): void {
   if (!rows.length) return;
   withConnection(settings, (conn) => {
     conn.exec(TABLE);
+    ensureCacheColumn(conn);
     conn.exec(INDEX);
     const stmt = conn.prepare(
       "INSERT INTO usage_turns (ts, session_id, turn_id, model, provider," +
         " input_tokens, output_tokens, cache_read_tokens," +
-        " cache_write_tokens, total_tokens, calls, duration_s, ttft_s)" +
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        " cache_write_tokens, cache_reported, total_tokens, calls, duration_s, ttft_s)" +
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     );
     for (const row of rows) stmt.run(...(row as unknown as never[]));
   });
@@ -355,6 +370,7 @@ export function record_live_turn(
   try {
     withConnection(settings, (conn) => {
       conn.exec(TABLE);
+      ensureCacheColumn(conn);
       const row = conn
         .prepare("SELECT vtx_entries FROM sessions WHERE id = ?")
         .get(args.session_id) as { vtx_entries: unknown } | undefined;
@@ -393,6 +409,7 @@ export function record_call_usage(
       output_tokens?: number;
       cache_read_tokens?: number;
       cache_write_tokens?: number;
+      cache_reported?: boolean;
       total_tokens?: number;
       calls?: number;
     } | null;
@@ -411,6 +428,7 @@ export function record_call_usage(
   try {
     withConnection(settings, (conn) => {
       conn.exec(TABLE);
+      ensureCacheColumn(conn);
       conn.exec(INDEX);
       // One row per turn: a scraped backfill must not double-count this call.
       conn
@@ -419,8 +437,8 @@ export function record_call_usage(
       const stmt = conn.prepare(
         "INSERT INTO usage_turns (ts, session_id, turn_id, model, provider," +
           " input_tokens, output_tokens, cache_read_tokens," +
-          " cache_write_tokens, total_tokens, calls, duration_s, ttft_s)" +
-          " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          " cache_write_tokens, cache_reported, total_tokens, calls, duration_s, ttft_s)" +
+          " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       );
       stmt.run(
         Date.now() / 1000,
@@ -432,6 +450,7 @@ export function record_call_usage(
         output,
         cacheRead,
         cacheWrite,
+        u.cache_reported || cacheRead || cacheWrite ? 1 : 0,
         total,
         Math.max(1, toInt(u.calls) || 1),
         Math.max(0, Number(args.duration_s) || 0),
@@ -480,8 +499,14 @@ function emptyTotals(): Totals {
 }
 
 function finishTotals(t: Totals): void {
-  const cacheDenom = t.cache_read_input_tokens + t.cache_input_tokens;
-  t.cache_hit_rate = cacheDenom > 0 ? Math.round((t.cache_read_input_tokens / cacheDenom) * 10000) / 10000 : null;
+  // `cache_input_tokens` is the prompt-side token pool; a cache hit is a
+  // prompt token served from cache. Providers that never report cache
+  // counters leave this null rather than pretending the rate was zero.
+  const cacheDenom = t.cache_input_tokens;
+  t.cache_hit_rate =
+    t.cache_reported_calls > 0 && cacheDenom > 0
+      ? Math.round((t.cache_read_input_tokens / cacheDenom) * 10000) / 10000
+      : null;
   t.tokens_per_second =
     t.duration_seconds > 0 && t.completion_tokens > 0
       ? Math.round((t.completion_tokens / t.duration_seconds) * 100) / 100
@@ -499,6 +524,7 @@ interface UsageRow {
   output_tokens: number;
   cache_read_tokens: number;
   cache_write_tokens: number;
+  cache_reported: number;
   total_tokens: number;
   calls: number;
   duration_s: number;
@@ -554,10 +580,11 @@ export function usage_for_year(settings: Settings, year: number, timezone: strin
       timings.set(String(t.turn_id), t);
     }
     db.exec(TABLE);
+    ensureCacheColumn(db);
     return db
       .prepare(
         "SELECT id, ts, session_id, turn_id, model, provider, input_tokens," +
-          " output_tokens, cache_read_tokens, cache_write_tokens," +
+          " output_tokens, cache_read_tokens, cache_write_tokens, cache_reported," +
           " total_tokens, calls, duration_s, ttft_s FROM usage_turns" +
           " WHERE ts >= ? AND ts < ?",
       )
@@ -600,7 +627,14 @@ export function usage_for_year(settings: Settings, year: number, timezone: strin
     modelRow.prompt_tokens += Math.trunc(Number(row.input_tokens ?? 0)) || 0;
     modelRow.completion_tokens += Math.trunc(Number(row.output_tokens ?? 0)) || 0;
     modelRow.cache_read_input_tokens += Math.trunc(Number(row.cache_read_tokens ?? 0)) || 0;
-    modelRow.cache_input_tokens += Math.trunc(Number(row.cache_write_tokens ?? 0)) || 0;
+    modelRow.cache_creation_input_tokens += Math.trunc(Number(row.cache_write_tokens ?? 0)) || 0;
+    // Only cache-reporting calls belong in the hit-rate pool; a provider that
+    // reports no cache counters must not be counted as a zero-hit call.
+    const cacheReported = Math.trunc(Number(row.cache_reported ?? 0)) || 0;
+    if (cacheReported) {
+      modelRow.cache_input_tokens += Math.trunc(Number(row.input_tokens ?? 0)) || 0;
+    }
+    modelRow.cache_reported_calls += cacheReported;
     modelRow.total_calls += rowCalls;
     modelRow.duration_seconds += Number(row.duration_s ?? 0) || 0;
     if (rowTokens === 0) modelRow.estimated_calls += rowCalls;
@@ -609,7 +643,11 @@ export function usage_for_year(settings: Settings, year: number, timezone: strin
     totals.prompt_tokens += Math.trunc(Number(row.input_tokens ?? 0)) || 0;
     totals.completion_tokens += Math.trunc(Number(row.output_tokens ?? 0)) || 0;
     totals.cache_read_input_tokens += Math.trunc(Number(row.cache_read_tokens ?? 0)) || 0;
-    totals.cache_input_tokens += Math.trunc(Number(row.cache_write_tokens ?? 0)) || 0;
+    totals.cache_creation_input_tokens += Math.trunc(Number(row.cache_write_tokens ?? 0)) || 0;
+    if (cacheReported) {
+      totals.cache_input_tokens += Math.trunc(Number(row.input_tokens ?? 0)) || 0;
+    }
+    totals.cache_reported_calls += cacheReported;
     totals.total_calls += rowCalls;
     totals.duration_seconds += Number(row.duration_s ?? 0) || 0;
     if (rowTokens === 0) totals.estimated_calls += rowCalls;

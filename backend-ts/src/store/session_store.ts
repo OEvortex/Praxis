@@ -1,4 +1,4 @@
-// Port of backend/app/store/session_store.py — SQLite-backed session index.
+// SQLite-backed session index.
 //
 // Sessions live in one WAL-mode SQLite database (``data/praxis.sqlite3``):
 //

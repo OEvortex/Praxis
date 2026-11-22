@@ -1,4 +1,4 @@
-// Port of backend/app/services/documents/docx.py — Markdown <-> DOCX
+// Markdown <-> DOCX
 // conversion for Co-Writer interchange.
 //
 // python-docx is replaced by a minimal in-house OOXML implementation:

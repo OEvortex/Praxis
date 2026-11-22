@@ -1,4 +1,4 @@
-// Port of backend/app/agent/video_lesson/layout_check.py — browser layout
+// browser layout
 // check for a built video lesson.
 //
 // The compile/render check proves the lesson runs; it cannot see that a drawing

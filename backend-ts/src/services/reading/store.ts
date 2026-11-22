@@ -1,4 +1,4 @@
-// Port of deeptutor/reading/store.py — on-disk store for reading materials
+// on-disk store for reading materials
 // and their annotations.
 //
 // Layout, one directory per extracted content (identical to upstream so a

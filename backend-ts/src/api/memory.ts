@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/memory.py — Memory v3 API (workbench backend).
+// Memory v3 API (workbench backend).
 // Mount at /api/memory (orchestrator wires it; do not edit main.ts).
 //
 // Routes duplicated by the legacy stub handlers in api/handlers.ts are still

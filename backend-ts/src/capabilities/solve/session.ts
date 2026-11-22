@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/solve/session.py — SolveSession: single-turn,
+// SolveSession: single-turn,
 // in-memory state for the solve loop capability. A solve turn is one-shot, so
 // the session lives only for the turn, keyed by the id the pipeline injects
 // as ``_solve_session_id`` (see capability.ts ``resolve_solve_session_id``).

@@ -1,4 +1,3 @@
-// Port of backend/app/agent/notebook_agent/tools.py
 //
 // Co-writer's tool surface, shared by the notebook chat and the sub-agent.
 //

@@ -1,4 +1,4 @@
-// Port of deeptutor/api/routers/mastery_path.py — the Mastery Path REST
+// the Mastery Path REST
 // surface. Mount with ``app.route("/api/mastery-paths", masteryRouter)``.
 import { Hono } from "hono";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -76,7 +76,6 @@ import {
 import { admissionError, normalizeMode, MODES } from "../services/mastery/mode.js";
 import { masteryTopicEventHub, type TopicSubscription } from "../services/mastery/event_hub.js";
 import { completeText } from "../services/llm_text.js";
-import { loadUi } from "../services/settings_ext/store.js";
 import {
   defaultModuleName,
   isChinese,
@@ -115,16 +114,6 @@ function settings(): Settings {
 
 function sessionStore(): SessionStore | null {
   return (appState?.store as SessionStore) ?? null;
-}
-
-function responseLanguage(): string {
-  try {
-    const ui = loadUi(settings()) as Record<string, unknown>;
-    const lang = String(ui["response_language"] ?? ui["language"] ?? "en");
-    return lang || "en";
-  } catch {
-    return "en";
-  }
 }
 
 function newStore(): LearningStore {
@@ -484,7 +473,7 @@ masteryRouter.post("/topics/draft", async (c) => {
       name,
       goal,
       sources: topicSources(sourceItems),
-      language: responseLanguage(),
+      language: "en",
       must_cover: mustCover,
     });
     return c.json(draft);
@@ -540,7 +529,7 @@ masteryRouter.post("/topics", async (c) => {
     resolvedName =
       (await suggestTopicName(settings(), metadata.goal, {
         source_labels: sources.map((s) => s.label),
-        language: responseLanguage(),
+        language: "en",
       })) || provisionalName(metadata.goal);
   }
   try {
@@ -1124,7 +1113,7 @@ masteryRouter.post("/progress/:book_id/generate-from-notebook", async (c) => {
     output: escapeHtml(String(r["output"] ?? "").slice(0, 500)),
   }));
   const recordsJson = JSON.stringify(recordsData);
-  const language = responseLanguage();
+  const language = "en";
   const [systemPrompt, prompt] = notebookGenerationPrompts(language, recordsJson);
   let response: string;
   try {
@@ -1223,7 +1212,7 @@ masteryRouter.post("/progress/:book_id/generate-from-reading", async (c) => {
     output: escapeHtml(String(r["output"] ?? "").slice(0, 500)),
   }));
   const recordsJson = JSON.stringify(recordsData);
-  const language = responseLanguage();
+  const language = "en";
   const [systemPrompt, prompt] = notebookGenerationPrompts(language, recordsJson);
   let response: string;
   try {

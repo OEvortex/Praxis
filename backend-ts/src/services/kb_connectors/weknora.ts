@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/pipelines/weknora/{config,client,probe}.py
 import type { AnyRecord } from "./types.js";
 
 export class WeKnoraAPIError extends Error {}

@@ -1,4 +1,3 @@
-// Port of deeptutor/utils/document_extractor.py (the OOXML/EPUB parts) for
 // reading-material extraction: EPUB spine units + navigation outline,
 // PPTX slide text, XLSX sheet text, and the EPUB archive normaliser
 // (normalize_epub_archive). All parsing is dependency-free: shared/zip.ts for

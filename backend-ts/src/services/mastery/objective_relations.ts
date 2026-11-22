@@ -1,4 +1,3 @@
-// Port of deeptutor/learning/objective_relations.py.
 import {
   KnowledgePoint,
   LearningModule,

@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/ima/tools.py — five agent tools over the
+// five agent tools over the
 // configured Tencent IMA libraries: browse (ima_list), read full text
 // (ima_read), search/list notes (ima_note_search), and the two additive
 // writes (ima_add_url, ima_write_note).

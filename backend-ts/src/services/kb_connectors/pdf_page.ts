@@ -1,4 +1,4 @@
-// Port of deeptutor/services/rag/source_visuals.py::page_image — rasterize one
+// rasterize one
 // PDF page (optionally a normalized region) for the knowledge-base
 // source-page endpoint. Upstream uses PyMuPDF; this backend shells out to
 // poppler's pdftoppm (region crops supported) with a MuPDF mutool fallback

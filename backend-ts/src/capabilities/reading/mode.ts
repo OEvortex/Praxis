@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/reading/mode.py + capability.py — the
+// the
 // immersive-reading turn mode and its loop integration.
 //
 // Upstream split: ``mode.py`` marks the turn and runs the standard agentic
@@ -286,7 +286,7 @@ function parsePromptYaml(text: string): Record<string, string> {
 }
 
 export function loadPrompts(language: string): ReadingPrompts {
-  const lang = String(language || "en").toLowerCase().startsWith("zh") ? "zh" : "en";
+  const lang = "en";
   const cached = _PROMPT_CACHE.get(lang);
   if (cached) return cached;
   let data: Record<string, string> = {};

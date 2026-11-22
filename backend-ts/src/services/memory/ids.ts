@@ -1,4 +1,4 @@
-// Port of deeptutor/services/memory/ids.py — ULID-style trace/entry ids.
+// ULID-style trace/entry ids.
 import { randomBytes } from "node:crypto";
 
 const BASE32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"; // Crockford

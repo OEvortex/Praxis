@@ -1,4 +1,3 @@
-// Port of deeptutor/services/rag/index_versioning.py + index_probe.py —
 // read-only "is there a ready index in this folder" probing for linked KBs.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";

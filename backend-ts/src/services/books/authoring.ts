@@ -1,4 +1,4 @@
-// Port of deeptutor/book/authoring.py — revision-fenced book edits:
+// revision-fenced book edits:
 // pure previews, explicit apply, and guarded undo.
 
 import { randomBytes } from "node:crypto";

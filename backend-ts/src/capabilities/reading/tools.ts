@@ -1,4 +1,4 @@
-// Port of deeptutor/capabilities/reading/tools.py (+ _tool_base.py) — the
+// the
 // tools the immersive-reading capability mounts on the chat loop.
 //
 // Two families, and the split matters:

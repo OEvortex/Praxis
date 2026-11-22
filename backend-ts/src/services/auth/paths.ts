@@ -1,5 +1,3 @@
-// Port of deeptutor/multi_user/models.py + the path/context plumbing of
-// deeptutor/multi_user/paths.py and context.py needed by the auth surface.
 //
 // Upstream layout (runtime-home = parent of `data/`):
 //   data/user            admin workspace ("user" subtree of the data root)
