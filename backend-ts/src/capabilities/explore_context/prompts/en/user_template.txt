@@ -1,0 +1,12 @@
+The user's current request:
+{question}
+
+Current mode: {mode}
+
+Manifest of the attached sources (names, kinds, ids):
+{manifest}
+
+Full text of the attached sources:
+{sources}
+
+Write the objective investigation now.

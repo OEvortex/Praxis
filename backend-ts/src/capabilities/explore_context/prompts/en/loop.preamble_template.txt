@@ -1,0 +1,11 @@
+Current mode: {mode}
+
+Manifest of readable sources (use read_source to load full text by id):
+{manifest}
+
+Full text of this turn's attached sources (already loaded for you — do not
+call read_source for these again):
+{sources}
+
+Begin investigating: call read_source for any further sources you need,
+then write your objective, thorough investigation.

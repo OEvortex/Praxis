@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "out",
+    "tmp",
+    ".next-*",
+    "coverage",
+    "playwright-report",
+    "test-results",
+    "tests/**/*.spec.tsx"
+  ]
+}

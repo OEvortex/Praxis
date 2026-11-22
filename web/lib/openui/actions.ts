@@ -1,0 +1,71 @@
+import {
+  BuiltinActionType,
+  defineAction,
+  type ActionEvent,
+} from "@openuidev/react-lang";
+import { z } from "zod/v4";
+import { webUrl } from "./components/style";
+
+export const CopyToClipboard = defineAction({
+  name: "CopyToClipboard",
+  description: "Copy text to the clipboard, e.g. a shopping list built with @Join",
+  params: z.object({ text: z.string() }),
+});
+
+export const actions = [CopyToClipboard];
+
+async function copy(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Clipboard API refused (no focus, insecure origin): the textarea route still works
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+    document.body.append(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    area.remove();
+    return ok;
+  }
+}
+
+/**
+ * Runs this library's custom actions. Returns a promise of whether it worked,
+ * or null when the event is not one of them (a built-in step the host handles).
+ */
+function runLibraryAction(event: ActionEvent): Promise<boolean> | null {
+  if (event.type === CopyToClipboard.name) {
+    const text = (event.params as { text?: unknown }).text;
+    return typeof text === "string" ? copy(text) : Promise.resolve(false);
+  }
+  return null;
+}
+
+/**
+ * Handle every action a generated OpenUI program can emit. Library-defined
+ * steps stay local; the two built-ins belong to the host chat:
+ * `continue_conversation` becomes a normal user turn (with form values) and
+ * `open_url` opens an http(s) link in a new tab.
+ */
+export function handleOpenUIAction(
+  event: ActionEvent,
+  onSendFollowUp?: (text: string) => void | Promise<void>,
+): void {
+  if (runLibraryAction(event)) return;
+
+  if (event.type === BuiltinActionType.ContinueConversation) {
+    const lines = [event.humanFriendlyMessage || "Continue"];
+    if (event.formState && Object.keys(event.formState).length > 0)
+      lines.push(`Form values: ${JSON.stringify(event.formState)}`);
+    void onSendFollowUp?.(lines.join("\n"));
+    return;
+  }
+
+  if (event.type === BuiltinActionType.OpenUrl) {
+    const safe = webUrl(event.params?.url);
+    if (safe) window.open(safe, "_blank", "noopener,noreferrer");
+  }
+}

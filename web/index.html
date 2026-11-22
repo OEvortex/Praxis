@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-scroll-behavior="smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    />
+    <title>Praxis</title>
+    <meta
+      name="description"
+      content="Agent-native intelligent learning companion"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/brand/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/brand/favicon-32x32.png"
+    />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+        --font-serif: "Lora", ui-serif, Georgia, Cambria, serif;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("praxis-theme");
+          document.documentElement.classList.remove(
+            "dark",
+            "theme-glass",
+            "theme-snow",
+          );
+          if (stored === "dark") {
+            document.documentElement.classList.add("dark");
+          } else if (stored === "glass") {
+            document.documentElement.classList.add("dark", "theme-glass");
+          } else if (stored === "snow") {
+            document.documentElement.classList.add("theme-snow");
+          } else if (stored === "light") {
+            // already clean
+          } else if (
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.add("theme-snow");
+          }
+        } catch (e) {
+          /* localStorage may be disabled */
+        }
+        try {
+          var layout = localStorage.getItem("praxis.ui-layout");
+          document.documentElement.setAttribute(
+            "data-ui-layout",
+            layout === "classic" || layout === "modern" ? layout : "modern",
+          );
+        } catch (e) {
+          document.documentElement.setAttribute("data-ui-layout", "modern");
+        }
+      })();
+    </script>
+  </head>
+  <body class="font-sans bg-[var(--background)] text-[var(--foreground)]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

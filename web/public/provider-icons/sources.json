@@ -1,0 +1,551 @@
+{
+  "checked_at": "2026-11-20",
+  "note": "Brand marks identify their respective services. Existing SVGs were vendored from LobeHub; additions below were checked against provider websites.",
+  "assets": {
+    "alibabacloud-color.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/alibabacloud-color.svg",
+      "sha256": "73ea97baf919edb3d888a77cd45b21574e190a80124a59e199ea6953a28a959c",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "atlascloud.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/atlascloud.svg",
+      "sha256": "f4b4170259c722a970176763fd9f3b18fe34a661e063afb88ae340f4c7ff1474",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "bailian-color.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/bailian-color.svg",
+      "sha256": "5cc26dc961b2ecd0912f4e023c8ce745bcc52ac45b1c4baeadd7201f6b60de25",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "bocha-color.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/bocha-color.svg",
+      "sha256": "bf96c5c287da443c310570db48a270121af57d559f849227aea27cc61b86f244",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "firecrawl-color.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/firecrawl-color.svg",
+      "sha256": "98993b111d1cb75edd0b1ce3a1e8bd3f85dcf5548072ffb959ac97ffe69ade59",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "novita-official.svg": {
+      "url": "https://novita.ai/logo/logo_small.svg",
+      "sha256": "21f50cd74ca927d57102f255f234791d8f8008837362a9b32c5f32688f01df06",
+      "source": "Official website asset"
+    },
+    "codebuddy-official.svg": {
+      "url": "https://download.codebuddy.cn/web/website/a156fee78f35e874d407848198e5f96a4cf383ef/assets/logo.svg",
+      "sha256": "149baa45b9f9370c15f20d599afe381aa138e4fc13acf503f435c571ac93ecf5",
+      "source": "Official website asset"
+    },
+    "byteplus.png": {
+      "url": "https://sf-bpcms.bytepluscdn.com/obj/byteplus-public-aiso/portal/assets/favicon.png",
+      "sha256": "64fc512a00a7e955b1fc678cc72485aaba3af7a7fa5d915aaccd79daa8474b76",
+      "source": "Official website asset"
+    },
+    "edenai.png": {
+      "url": "https://cdn.prod.website-files.com/61e7d259b7746e2d1df0b68d/6a63231f2ab1f7b73d0013f5_eden%20ai%20logo%20light.png",
+      "sha256": "f251b436e413d6826192c84dcf230eb52bc58733ddba8f3e6e1463bfdd0fc96c",
+      "source": "Official website asset"
+    },
+    "edenai-dark.png": {
+      "url": "https://cdn.prod.website-files.com/61e7d259b7746e2d1df0b68d/6a6323282ab1f7b73d00154d_eden%20ai%20logo%20dark.png",
+      "sha256": "eb5d1dc22c62d60cc630aecc6dddb36dbb3a85d73d689f5bd7516fb49e5e1447",
+      "source": "Official website asset"
+    },
+    "orcarouter.png": {
+      "url": "https://www.orcarouter.ai/orca-icon-192.png",
+      "sha256": "98337616ec54835112a68e9b151afe342521d38b7d2cf9748b73265b40a03830",
+      "source": "Official website asset"
+    },
+    "unifically.webp": {
+      "url": "https://unifically.com/_next/image?url=%2Fstatic%2Fbrand%2Flogo.png&w=128&q=75",
+      "sha256": "9c2c3136a449208fef31780b0c3b6cab9c887a5bc28c4aac2a84bfa683e47ae6",
+      "source": "Official website asset"
+    },
+    "requesty.png": {
+      "url": "https://www.requesty.ai/icon.png?icon.18acj9ydjf3a1.png",
+      "sha256": "797c91229b6c937ed9c8e831bf978fc9c2df5275defc9ed9d7530de196801306",
+      "source": "Official website asset"
+    },
+    "futureinfra.svg": {
+      "url": "https://futureinfra.ai/assets/favicon.svg",
+      "sha256": "a94504cf888fd0f54ce8690a039a93009f1e48e300e9fe4712e3006f65205582",
+      "source": "Official website asset",
+      "note": "Line endings normalized to LF; brand artwork unchanged."
+    },
+    "lemonade.ico": {
+      "url": "https://lemonade-server.ai/favicon.ico",
+      "sha256": "84c98ff6a18935e6749854bce8922a3db66cb573199f467bebf1df1d0a511005",
+      "source": "Official website asset"
+    },
+    "serper.png": {
+      "url": "https://serper.dev/apple-touch-icon.png",
+      "sha256": "d7ad3d558791116fe3017a422500d9abe7e20ecd7f2c71c8898b2604b70cbf65",
+      "source": "Official website asset"
+    },
+    "serply.png": {
+      "url": "https://serply.io/favicon/apple-touch-icon.png",
+      "sha256": "0a787846df588d136932f3bb373d5d796b28f0a545ff603cb013136148525922",
+      "source": "Official website asset"
+    },
+    "youcom.ico": {
+      "url": "https://you.com/favicon.ico",
+      "sha256": "bc108afac8491e981082ecbb84c1edc8a743c9da5d011bf50ccac677007b892e",
+      "source": "Official website asset"
+    },
+    "cheaperinference.svg": {
+      "url": "https://www.cheaperinference.com/icon.svg?7b25e69112bc955e",
+      "sha256": "4c0bf6572d9077fd66fe338b80c18e4d227adb6a44bc176bf5eb5ea1271bf9d0",
+      "source": "Official website asset"
+    },
+    "onomeo.svg": {
+      "url": "https://onomeo.com/icon.svg",
+      "sha256": "656d46b8e33103edfc859afc19ca6dbed78683eb506e5714a00eaa4a3a251f65",
+      "source": "Official website asset"
+    },
+    "runcrate.png": {
+      "url": "https://www.runcrate.ai/apple-touch-icon.png",
+      "sha256": "a5ab289455324590b5e0cb2836e92f7b16fee59ee0d4fe417cbbabdeb534d7fb",
+      "source": "Official website asset"
+    },
+    "llmtr.png": {
+      "url": "https://llmtr.com/apple-touch-icon.png",
+      "sha256": "f8968e617daf1589565237906f3d3e22373fb68bcad5309ed4850e18db21cd74",
+      "source": "Official website asset"
+    },
+    "cloudgpu.png": {
+      "url": "https://cloudgpu.app/apple-icon.png?c033c6c14af57cef",
+      "sha256": "8051137fee486b2a36a7f6744cf86fb48ac17520d5ee8dd712c659feb8adb912",
+      "source": "Official website asset"
+    },
+    "standardcompute.svg": {
+      "url": "https://standardcompute.com/logo.svg",
+      "sha256": "b8ba9a992247f59bd2af8206354e76e8cebcb5a39a885150366f3cf1aeaad1c9",
+      "source": "Official website asset"
+    },
+    "api-route.png": {
+      "url": "https://www.api-route.com/apple-touch-icon.png?v=2",
+      "sha256": "28866bf8b7c0913c634a34d2839a3201b0eab2019b926e556411a72f4c969e42",
+      "source": "Official website asset"
+    },
+    "openvino.ico": {
+      "url": "https://docs.openvino.ai/2026/_static/favicon.ico",
+      "sha256": "54a174ab11c78b2e380c3805956df6f7ea2dccf9ba5d5ebbf312b322b124f328",
+      "source": "Official website asset"
+    },
+    "doubao.png": {
+      "url": "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/favicon/new-doubao/128x128.png",
+      "sha256": "bf8e41bcc864c00099a98080825ea42aba7cf481303dad3312f44a5da68c3f3b",
+      "source": "Official website asset"
+    },
+    "llama-cpp.svg": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.brand/master/icon/icon-light.svg",
+      "sha256": "ce48c0f8e98aa4099b6f04a65b76bc32bc00c8fa39d58f15da9b73905f1918f1",
+      "source": "Official website asset",
+      "attribution": "ggml-org/llama.brand — official brand assets, CC BY-NC 4.0 with redistribution permission in BRAND-USAGE.md",
+      "usage": "https://github.com/ggml-org/llama.brand/blob/master/BRAND-USAGE.md"
+    },
+    "llama-cpp-dark.svg": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.brand/master/icon/icon-dark.svg",
+      "sha256": "78bbb16ce08f25baf0bc2c8f0c765e85d933f537ba92625b844528cb02aa249b",
+      "source": "Official website asset",
+      "attribution": "ggml-org/llama.brand — official brand assets, CC BY-NC 4.0 with redistribution permission in BRAND-USAGE.md",
+      "usage": "https://github.com/ggml-org/llama.brand/blob/master/BRAND-USAGE.md"
+    },
+    "opper.png": {
+      "url": "https://opper.ai/images/icon-dark.png",
+      "sha256": "86e4cec6dd1912124e72c2aff8d7d3623a44fd940429a7a520732f0ab7e34149",
+      "source": "Official website asset"
+    },
+    "opper-dark.png": {
+      "url": "https://opper.ai/images/icon-light.png",
+      "sha256": "c2b8011772dd1ca9299200a30dc915c5a2d636a1b4ba4a3c4c54234be438f70b",
+      "source": "Official website asset"
+    },
+    "microsoft-color.svg": {
+      "url": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/microsoft-color.svg",
+      "sha256": "5cfb0ffa3231313c2968b5e3fedfcce8e2e96c61bde4572384c3889a77a80350",
+      "source": "@lobehub/icons-static-svg 1.95.1 (MIT)"
+    },
+    "specstream.ico": {
+      "url": "https://specstream.ai/favicon.ico",
+      "sha256": "c2b68886b5e696508b40203a6779bb01d0709d225b4bfbe933714f2d6bd00578",
+      "source": "Official website asset"
+    },
+    "searchapi.svg": {
+      "url": "https://www.searchapi.io/favicon.svg",
+      "sha256": "5ef13fedc55abb407621cb0219a563ab400735b8ba6228b52d0629990d922ca0",
+      "source": "Official website favicon; verified 2026-11-14"
+    },
+    "opengateway.png": {
+      "url": "https://www.google.com/s2/favicons?domain=opengateway.gitlawb.com&sz=64",
+      "sha256": "53392b2bb41263f755dd3d4659421e866938b1548ecf181e50b3a4f4c02eb49c",
+      "source": "Google favicon service (public)",
+      "domain": "opengateway.gitlawb.com"
+    },
+    "huggingface.png": {
+      "url": "https://www.google.com/s2/favicons?domain=router.huggingface.co&sz=64",
+      "sha256": "0883f028e63c352bf5ad9984067e91363fb257e3a87c2fb00d367adaccc0b5d4",
+      "source": "Google favicon service (public)",
+      "domain": "router.huggingface.co"
+    },
+    "opencode.png": {
+      "url": "https://www.google.com/s2/favicons?domain=opencode.ai&sz=64",
+      "sha256": "c76c2913b058e2fde9a694d305356bc3bb48e68f46f73169d20e7ce2d3aafc41",
+      "source": "Google favicon service (public)",
+      "domain": "opencode.ai"
+    },
+    "dialagram.png": {
+      "url": "https://www.google.com/s2/favicons?domain=dialagram.me&sz=64",
+      "sha256": "d010257b208a58886fc28b286e7f6e559993f409f343d2d6089a492a655e53d2",
+      "source": "Google favicon service (public)",
+      "domain": "dialagram.me"
+    },
+    "lightningai.png": {
+      "url": "https://www.google.com/s2/favicons?domain=lightning.ai&sz=64",
+      "sha256": "304f4b2bb07de5cd1e72e63d1b9ebffe3a4fbfa7d2b88546043c8d9728b5180e",
+      "source": "Google favicon service (public)",
+      "domain": "lightning.ai"
+    },
+    "nanogpt.png": {
+      "url": "https://www.google.com/s2/favicons?domain=nano-gpt.com&sz=64",
+      "sha256": "07bd2da546035da02a1016ff9e27fab2fef43a19cae9e92c22bb1694769d8e36",
+      "source": "Google favicon service (public)",
+      "domain": "nano-gpt.com"
+    },
+    "vercelai.png": {
+      "url": "https://www.google.com/s2/favicons?domain=ai-gateway.vercel.sh&sz=64",
+      "sha256": "4cd705943ebdcdc21567ce5907133924eddf6bab172732b3f9c15e735f0d828c",
+      "source": "Google favicon service (public)",
+      "domain": "ai-gateway.vercel.sh"
+    },
+    "zenmux.png": {
+      "url": "https://www.google.com/s2/favicons?domain=zenmux.ai&sz=64",
+      "sha256": "aa5b950824ed579065d8b60ca0efc6960d859724f081158f7fb0d09c3b4b723c",
+      "source": "Google favicon service (public)",
+      "domain": "zenmux.ai"
+    },
+    "conduit.png": {
+      "url": "https://www.google.com/s2/favicons?domain=conduit.ozdoev.net&sz=64",
+      "sha256": "911abec63fe9a12fcb5190d5059b206eb3f823c2c9848093ccc8d9220137a1e9",
+      "source": "Google favicon service (public)",
+      "domain": "conduit.ozdoev.net"
+    },
+    "tokenharbor.png": {
+      "url": "https://www.google.com/s2/favicons?domain=tokenharbor.ai&sz=64",
+      "sha256": "db689cfde50336e6f9e1e8a29e6b74dbc49f9f6796d46aaf21d495558dfff8cb",
+      "source": "Google favicon service (public)",
+      "domain": "tokenharbor.ai"
+    },
+    "zyloo.svg": {
+      "url": null,
+      "sha256": "413830909adad63058f47e03a72f709ebf04229d9f2a64320025fcf9825bf04c",
+      "source": "Praxis generated initials mark"
+    },
+    "kimchi.png": {
+      "url": "https://icons.duckduckgo.com/ip3/kimchi.dev.ico",
+      "sha256": "1313a0cbfa2fcceae6de2a578186beeb5cf721844d7afeb61b93cb2f1a850865",
+      "source": "DuckDuckGo icons service (public)"
+    },
+    "badtheorylabs.ico": {
+      "url": "https://icons.duckduckgo.com/ip3/badtheorylabs.com.ico",
+      "sha256": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+      "source": "DuckDuckGo icons service (public)"
+    },
+    "meta.ico": {
+      "url": "https://icons.duckduckgo.com/ip3/api.meta.ai.ico",
+      "sha256": "5678ee6a1f605d6ada6230003a8d9c182869e1f40d02d414b368cc820c9a97b8",
+      "source": "DuckDuckGo icons service (public)"
+    },
+    "sarvam.svg": {
+      "url": null,
+      "sha256": "d879c50b5593fe44e953516216bd51672696c0da5e513af35d81a58bfaf02ffe",
+      "source": "Praxis generated initials mark"
+    },
+    "bai.png": {
+      "url": "https://icons.duckduckgo.com/ip3/b.ai.ico",
+      "sha256": "b33f0013ddc8483deaf5c45001c9fd68a61af27ee4bfe56401e55487332cfd19",
+      "source": "DuckDuckGo icons service (public)"
+    },
+    "gemini.svg": {
+      "url": null,
+      "sha256": "e0ecb321fa733a4e6c3b933ed5f452a4444f63edc3f83528645b9b69993f6c16",
+      "source": "Praxis generated initials mark"
+    },
+    "xai.ico": {
+      "url": "https://icons.duckduckgo.com/ip3/x.ai.ico",
+      "sha256": "05156a916d1b695e952b63a6196d8d481562bcb0180454311a861ba214e753d9",
+      "source": "DuckDuckGo icons service (public)"
+    },
+    "openai.ico": {
+      "url": null,
+      "sha256": "9747c13cd87b36ebf2ab567b9d0bc2ff49b5a4f46f4f51e4d053024f579fb9a0",
+      "source": "Existing vendored brand mark"
+    },
+    "openai.svg": {
+      "url": null,
+      "sha256": "802335af1ddb4e135468f689aabe7ac7798a3177c1b71bbd4549fc602e9264ed",
+      "source": "Existing vendored brand mark"
+    },
+    "anthropic.png": {
+      "url": null,
+      "sha256": "47718065aeeb968b381b070c66c90d9c3ae95b09a0ee24e78b9e12ae5c4f11c7",
+      "source": "Existing vendored brand mark"
+    },
+    "anthropic.svg": {
+      "url": null,
+      "sha256": "ba6f380244a0bfcfc5ba82b0c95daa0da0c2b10c675ba5ab6cda2b3aad236ba8",
+      "source": "Existing vendored brand mark"
+    },
+    "deepseek.ico": {
+      "url": null,
+      "sha256": "30a4420e6e4dcb17fd7de560c5004346c2bc8cd971d2d5f5ee15326603e51321",
+      "source": "Existing vendored brand mark"
+    },
+    "zhipu.png": {
+      "url": null,
+      "sha256": "365c3576400ff5b48fe205aa8ee22cc3494d6895d6bd63df13e11e0a4318af37",
+      "source": "Existing vendored brand mark"
+    },
+    "openrouter.png": {
+      "url": null,
+      "sha256": "e6ce76bf956ac68569a7b1456fe0310fb9cc22bc1bc0fd8defd5daae099480b8",
+      "source": "Existing vendored brand mark"
+    },
+    "openrouter.svg": {
+      "url": null,
+      "sha256": "f2c210fd020405c5e97c6dd7e4869b7f3a09d8a78dd2b39c47e7715e91228e2c",
+      "source": "Existing vendored brand mark"
+    },
+    "experientiallabs.png": {
+      "url": null,
+      "sha256": "d29d2fb800a0cd0d8ba42009cb913e4b84da1066d455fbc1eed10285f4788d30",
+      "source": "Existing vendored brand mark"
+    },
+    "groq.svg": {
+      "url": null,
+      "sha256": "7f4650654b1ca5cd6f0c4c9249e026fdd0e0b42031a814c396512739d21c2c88",
+      "source": "Existing vendored brand mark"
+    },
+    "groq.ico": {
+      "url": null,
+      "sha256": "945268e4ed2640dcad9667a598323e572f50a9065928399f465d43cdd0c6aa57",
+      "source": "Existing vendored brand mark"
+    },
+    "together.png": {
+      "url": null,
+      "sha256": "f81b2378ae32ee8d794f4651831fbbd8299dea9f27a95c92455af83fa5e1f7ad",
+      "source": "Existing vendored brand mark"
+    },
+    "fireworks.ico": {
+      "url": null,
+      "sha256": "b25375fec91385f666cdb53df04edd0961b7ddae456a49a4c48b6105b76ae8be",
+      "source": "Existing vendored brand mark"
+    },
+    "mistral.ico": {
+      "url": null,
+      "sha256": "320ccbbf53158067d4c84637dbfe52de7616d3c181c91198fae75eb1bc5f0c71",
+      "source": "Existing vendored brand mark"
+    },
+    "nvidia.svg": {
+      "url": null,
+      "sha256": "f27cc5b95469f75cd8e2a5505a1017d81a228a2856cbab6b6c136ea6dc76a104",
+      "source": "Existing vendored brand mark"
+    },
+    "deepinfra.png": {
+      "url": null,
+      "sha256": "5ab5eb8f8661e464127033a8378988b44113c04090ecd3c61794dded23ca6ea1",
+      "source": "Existing vendored brand mark"
+    },
+    "ollama.svg": {
+      "url": null,
+      "sha256": "972f3c10749fda19cc0462c18e1b04b688295138e5a42fb3e08b86269ae533e5",
+      "source": "Existing vendored brand mark"
+    },
+    "aerolink.png": {
+      "url": null,
+      "sha256": "9b7590928cd313fa76c5ab98ed9d700c524a25e074b936a8a43a0cef73bca5e2",
+      "source": "Existing vendored brand mark"
+    },
+    "airouter.png": {
+      "url": null,
+      "sha256": "20368834e3dc2043441c3ffae081d357693ee5281a117cccdc02efca682ed230",
+      "source": "Existing vendored brand mark"
+    },
+    "kilo.ico": {
+      "url": null,
+      "sha256": "3db44110ded0e3df87f9757f48da47b92d84e2efa6826944680eb2f8b3386015",
+      "source": "Existing vendored brand mark"
+    },
+    "tokenrouter.png": {
+      "url": null,
+      "sha256": "7e23e04069fca153f9f04ee1db75673071047801f37c56f75cb328cba4bd0282",
+      "source": "Existing vendored brand mark"
+    },
+    "aihubmix.ico": {
+      "url": null,
+      "sha256": "c7a6c4a5b46af38a829115e6645d475a7aa19985598b1b311d118e52c8ea5dad",
+      "source": "Existing vendored brand mark"
+    },
+    "apertis.ico": {
+      "url": null,
+      "sha256": "54f6c5e0c1313ef4f2b81c064e59b26e5a3972cf7ef9d701dbdc5b407bccb6c9",
+      "source": "Existing vendored brand mark"
+    },
+    "baseten.ico": {
+      "url": null,
+      "sha256": "61bb6d52a62fa6bde17e9c9a09da003932eeb271f411e138785b0deafb7a5576",
+      "source": "Existing vendored brand mark"
+    },
+    "berget.png": {
+      "url": null,
+      "sha256": "ee4f9703195ff241a8a340fc292eae621fdc191ade7b4f82b612676f8b5f04da",
+      "source": "Existing vendored brand mark"
+    },
+    "blackbox.ico": {
+      "url": null,
+      "sha256": "3ae69331666ed73966353e0a6d8dcbc9cffdfbe34413f7ac32d44736a38983d0",
+      "source": "Existing vendored brand mark"
+    },
+    "chutes.ico": {
+      "url": null,
+      "sha256": "7c8e0d2a0870a6905885abe6cbea48a59e630a025681a978c4c977e30a9f4ac3",
+      "source": "Existing vendored brand mark"
+    },
+    "cortecs.ico": {
+      "url": null,
+      "sha256": "abd23a56debbc1113c09d4383f9551c840a3bef8fb5885300a6aadb62f543e9c",
+      "source": "Existing vendored brand mark"
+    },
+    "crof.png": {
+      "url": null,
+      "sha256": "a12e02a07e48ae2fd4fa851b49287ea7411d0064ca530d3d07c1e75a9b58c002",
+      "source": "Existing vendored brand mark"
+    },
+    "dinference.png": {
+      "url": null,
+      "sha256": "26e3e882e76c2dc171b1bda49455641e812b3524f1692729b1fde849b7d52a6f",
+      "source": "Existing vendored brand mark"
+    },
+    "fastrouter.ico": {
+      "url": null,
+      "sha256": "52e57332f374377524ba324bb1447adc35dc4ac173a9097b8942fa10666eae36",
+      "source": "Existing vendored brand mark"
+    },
+    "freemodel.png": {
+      "url": null,
+      "sha256": "b1ee231f8eea195b52931e0a14b2e03f4c7be480dde177ef4c1c2fddd3748e1f",
+      "source": "Existing vendored brand mark"
+    },
+    "friendli.ico": {
+      "url": null,
+      "sha256": "05ea41f794d131dc5b742ee5d10b8b18db76ebbff00763eeb2af6c8033ca5980",
+      "source": "Existing vendored brand mark"
+    },
+    "hicapai.png": {
+      "url": null,
+      "sha256": "15f2ad682b52da42cc5fc8f4ea54c67877065122f832ec2b012b7dd51e5f38c0",
+      "source": "Existing vendored brand mark"
+    },
+    "jiekou.png": {
+      "url": null,
+      "sha256": "2f9ee616887a347edf6634e21e6bb6c41b84cc1d083266f0b0473c394fd3aebe",
+      "source": "Existing vendored brand mark"
+    },
+    "knox.png": {
+      "url": null,
+      "sha256": "97bc376735c2fb5a0a39bd77f3a49fd28596e794abbc12a27f529a5bfd1e7e70",
+      "source": "Existing vendored brand mark"
+    },
+    "llmgateway.png": {
+      "url": null,
+      "sha256": "7a3c87da74d2209f88cdc9b48f416e0b3e4f3e24de90216577abf0f16ec641b0",
+      "source": "Existing vendored brand mark"
+    },
+    "meganova.ico": {
+      "url": null,
+      "sha256": "c3b6bfbb7332b693e73123ac15c707b2eaced7ef1024b381c5a6ba3480f26db1",
+      "source": "Existing vendored brand mark"
+    },
+    "minimax.ico": {
+      "url": null,
+      "sha256": "43ce4c9b9e627b391a116cd5da09e4c062d9c4e3d585509c65a4a3d16f386256",
+      "source": "Existing vendored brand mark"
+    },
+    "moark.png": {
+      "url": null,
+      "sha256": "2b31df1e3e42fffd494438493542881f0a7cf0d7f23496f416d8cc2bf90a58da",
+      "source": "Existing vendored brand mark"
+    },
+    "modelscope.ico": {
+      "url": null,
+      "sha256": "3b6b142e048523118878bec4eba9489e8de54ae8308d1c61f6b2a9ee7852e74f",
+      "source": "Existing vendored brand mark"
+    },
+    "moonshot.ico": {
+      "url": null,
+      "sha256": "b963e8d74a9a4f6986fee2662e333ae4b4379f0553c8bf9eee50d40a3077014f",
+      "source": "Existing vendored brand mark"
+    },
+    "moonshot.svg": {
+      "url": null,
+      "sha256": "4b1288c76220e999fa7033a72e4a8f6d477b17b0cb863ada53a40a41220ede61",
+      "source": "Existing vendored brand mark"
+    },
+    "pollinations.png": {
+      "url": null,
+      "sha256": "e81814a9150629e626cdc99334563a3d2d4983a3f2ca6f19c844e7b79c46078e",
+      "source": "Existing vendored brand mark"
+    },
+    "routingrun.ico": {
+      "url": null,
+      "sha256": "7457b4c6efcc01b01df3523ff5851c3a0adaf0ce1539b44877554dd5430ce82d",
+      "source": "Existing vendored brand mark"
+    },
+    "seraphyn.svg": {
+      "url": null,
+      "sha256": "92bfb8794cb958538392e9d3993392b9c45af59200c967619501c90e2f2b4008",
+      "source": "Existing vendored brand mark"
+    },
+    "sherlock.ico": {
+      "url": null,
+      "sha256": "559577e853d02b68f6a66e2d78828296c0745db7f2e183375b7d03f026e68164",
+      "source": "Existing vendored brand mark"
+    },
+    "clarifai.png": {
+      "url": null,
+      "sha256": "0cd2f9d07ba1776667503335704f96a075bd112afecc45aea44ca1bcb5e1fcb3",
+      "source": "Existing vendored brand mark"
+    },
+    "wusrouter.png": {
+      "url": "https://www.google.com/s2/favicons?domain=wusrouter.com&sz=64",
+      "sha256": "904e904bdd251887de33da71c9d497230ce48396744fab3b7cd93102e0f9cc92",
+      "source": "Google favicon service (public)",
+      "domain": "wusrouter.com"
+    }
+  },
+  "chinese_names": {
+    "deepseek": "https://www.deepseek.com/",
+    "moonshot": "https://www.moonshot.cn/",
+    "aihubmix": "https://aihubmix.com/blog/zh-CN",
+    "siliconflow": "https://siliconflow.cn/",
+    "dashscope": "https://bailian.console.aliyun.com/",
+    "aliyun_iqs": "https://iqs.console.aliyun.com/",
+    "volcengine": "https://www.volcengine.com/",
+    "volcengine_speech": "https://www.volcengine.com/product/voice-tech",
+    "zhipu": "https://www.bigmodel.cn/",
+    "stepfun": "https://platform.stepfun.com/",
+    "xiaomi_mimo": "https://platform.xiaomimimo.com/",
+    "codebuddy": "https://www.codebuddy.cn/",
+    "qianfan": "https://cloud.baidu.com/product-s/qianfan_home",
+    "bocha": "https://bocha.cn/",
+    "doubao": "https://www.doubao.com/",
+    "minimax": "https://www1.hkexnews.hk/app/sehk/2025/107986/a128500/sehk25122100301_c.pdf"
+  },
+  "providers_without_verified_icons": {
+    "y_api": {
+      "checked_url": "https://api.y-api.bestvirtualgoods.com",
+      "reason": "Configured service root returns HTTP 404; no verified official brand asset found. Uses the generic provider icon."
+    }
+  }
+}

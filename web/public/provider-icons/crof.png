@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahcrof LLC</title>
+	<style>
+		body {
+			background: #0a0a0a;
+			color: white;
+			margin-left: 30px;
+		}
+	</style>
+</head>
+<body>
+    Hi. Nahcrof is in the process of shutting down. Currently we are working with Polar to process refunds to existing customers. We appreciate your patience during this time
+<!-- yes this page was written in HTML and CSS. No it was not written by AI (though with the help of my uncle I do suspect some of our pages when I was convinced we should try again were written by AI but that's not the point). This page was written by me, it's simple, it's even shitty. But it's human, and it's real -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"78fe6123b2fa44eb8a0eb0dcc5315127","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

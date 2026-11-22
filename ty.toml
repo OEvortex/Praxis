@@ -1,0 +1,10 @@
+# Configuration for `uvx ty check` (Astral's type checker).
+# The backend venv holds the app's real dependencies; the ambient VIRTUAL_ENV
+# on this machine points at an unrelated checkout, so pin it explicitly.
+[environment]
+python = "backend/.venv"
+
+# Only type-check Praxis's own backend. `reff/` and `web-reff/` are external
+# reference checkouts, and `web/` is a TypeScript project.
+[src]
+exclude = ["reff", "web-reff", "web", "**/.venv", "**/__pycache__", ".git"]

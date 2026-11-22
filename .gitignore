@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+*.log
+.env*.local
+.DS_Store
+reff/
+web-reff/
+web/dist
+video-ref2/
+.tmp-shots/
+.ruff_cache/noop/
+
+# local reference clone
+noop/
+block-reff/

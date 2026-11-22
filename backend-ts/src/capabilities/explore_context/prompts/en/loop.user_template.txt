@@ -1,0 +1,10 @@
+The user's current request:
+{question}
+
+Current mode: {mode}
+
+Manifest of readable sources (use read_source to load full text by id):
+{manifest}
+
+Begin investigating: call read_source as needed, then write your objective,
+thorough investigation.

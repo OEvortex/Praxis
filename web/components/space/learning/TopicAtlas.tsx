@@ -1,0 +1,136 @@
+'use client'
+
+import { pageGridClass } from '@/components/layout/FeaturePage'
+import {
+  LearningShell,
+  LearningEmptyState,
+  LearningErrorState,
+  LearningSkeleton,
+} from '@/components/learning/LearningShell'
+
+import Link from '@/shared/router/link'
+
+import { ArrowRight, Compass, Plus, Sparkles } from 'lucide-react'
+
+import type { MasteryTopic } from '@/lib/learning-api'
+import {
+  MASTERY_OPENING_SCOPE,
+  masteryOpeningMessage,
+  masterySessionRoute,
+} from '@/lib/mastery-mode'
+import { setPendingPrompt } from '@/lib/pending-prompt'
+
+import { libraryItemKey } from '@/lib/learning-library'
+import { topicDisplayName } from './format'
+import { TopicMapCard } from './TopicMapCard'
+
+export function TopicAtlas({
+  topics,
+  loading,
+  error,
+  onCreate,
+  onRetry,
+}: {
+  topics: MasteryTopic[]
+  loading: boolean
+  error: string | null
+  onCreate: (trigger: HTMLButtonElement) => void
+  onRetry: () => void
+}) {
+  
+  const activeTopics = topics.filter(topic => topic.metadata.status === 'active')
+  const dueCount = activeTopics.reduce(
+    (count, topic) => count + topic.reviews.filter(review => review.due).length,
+    0
+  )
+  const dueTopics = activeTopics.filter(topic => topic.reviews.some(review => review.due))
+  const firstDueTopic = dueTopics[0]
+
+  return (
+    <LearningShell
+      className="mastery-shell"
+      title={"Mastery Path"}
+      subtitle={"Work through each topic's knowledge points, then pick up any session where you left off."}
+      action={
+        <button
+          type="button"
+          onClick={event => onCreate(event.currentTarget)}
+          className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 text-sm font-medium text-[var(--primary-foreground)]  transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+        >
+          <Plus className="h-4 w-4" />
+          {"New topic"}
+        </button>
+      }
+    >
+      {dueCount > 0 && (
+        <section className="mt-8 flex flex-col gap-3 rounded-lg border border-[var(--border)] bg-[var(--muted-foreground)]/[0.07] px-4 py-3.5 text-sm text-[var(--foreground)] sm:flex-row sm:items-center">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--muted-foreground)]/15 text-[var(--muted-foreground)]">
+            <Sparkles className="h-4 w-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="font-medium">
+              {`${dueCount} reviews are due across ${dueTopics.length} topics`}
+            </div>
+            <div className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+              {"Open their maps for a short review without losing your main route."}
+            </div>
+          </div>
+          {firstDueTopic && (
+            <Link
+              // Straight into a review session: "start review" that lands on
+              // a dashboard makes the learner find the door twice, and a
+              // review sitting is a different kind of conversation from the
+              // study one the dashboard's own button opens.
+              onClick={() =>
+                setPendingPrompt(
+                  masteryOpeningMessage('review',{
+                    dueTitles: firstDueTopic.reviews
+                      .filter(review => review.due)
+                      .slice(0, 5)
+                      .map(review => review.knowledge_point_name),
+                  }),
+                  MASTERY_OPENING_SCOPE
+                )
+              }
+              href={masterySessionRoute(firstDueTopic.path_id, 'review', firstDueTopic.content_workspace_id ?? '')}
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 text-xs font-semibold text-white transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 "
+            >
+              {"Start review"}: {topicDisplayName(firstDueTopic)}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
+        </section>
+      )}
+
+      {error && <LearningErrorState message={error} onRetry={onRetry} />}
+      {loading ? (
+        <LearningSkeleton count={6} />
+      ) : activeTopics.length > 0 ? (
+        <section
+          aria-label={"Active learning topics"}
+          className={`mt-9 ${pageGridClass(3)}`}
+        >
+          {activeTopics.map(topic => (
+            <TopicMapCard key={libraryItemKey(topic, topic.path_id)} topic={topic} />
+          ))}
+        </section>
+      ) : !error ? (
+        <LearningEmptyState
+          icon={<Compass size={28} />}
+          title={"Your atlas is still uncharted"}
+          description={"Tell Praxis what you want to learn, mix in your books, notes, and knowledge bases, and it will draft the first outline."}
+          action={
+            <button
+              type="button"
+              onClick={event => onCreate(event.currentTarget)}
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-[var(--primary)] px-4 text-sm text-[var(--primary-foreground)]"
+            >
+              <Plus size={14} />
+              {"Chart the first map"}
+            </button>
+          }
+        />
+      ) : null}
+    </LearningShell>
+  )
+}
