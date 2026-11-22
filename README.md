@@ -60,9 +60,9 @@ Environment overrides: `BACKEND_PORT` (default `8001`), `DT_DATA_DIR` / data dir
 
 ## Features at a glance
 
-- **Chat** — streaming turns over WebSocket, slash-free composer actions (Explain, Solve, Practice, Plan, Research), attachments, quotes, voice input, per-workspace conversations.
+- **Chat** — streaming turns over WebSocket, attachments, quotes, voice input and per-workspace conversations. The slash-free composer actions (Explain, Solve, Practice, Plan, Research) both prefill a starter prompt and select a real tutor mode with its own server-side playbook; the same modes are available from the Mode selector.
 - **Learning** — AI-authored books with editable chapter spines, mastery paths with agreed outlines and per-point mastery, a question bank with spaced-repetition reviews, and immersive reading with a side tutor.
-- **Knowledge** — personal knowledge bases with multiple RAG engines (LlamaIndex, PageIndex, GraphRAG, LightRAG, LightRAG-server, IMA, WeKnora), plus connectors for Obsidian, folders, GitHub, web sources, and Kiwix archives.
+- **Knowledge** — personal knowledge bases with local LlamaIndex retrieval and Tencent IMA libraries, plus connectors for Obsidian, folders, GitHub, and web sources.
 - **Notes** — revision-checked Markdown pages (Co-Writer) with AI edits, suggestions, threads, backlinks, and flashcard export.
 - **Agent tools** — the tutor can search the web and papers, query your KBs, remember durable facts, keep a journal, schedule reminders, and run spaced repetition — no coding-agent tools are exposed.
 - **Workspaces** — named workspaces with their own folders, instructions, and assigned skills/MCP/knowledge resources.

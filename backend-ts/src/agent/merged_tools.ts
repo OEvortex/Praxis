@@ -25,20 +25,24 @@ import { MASTERY_TOOLS } from "../capabilities/mastery/tools.js";
 import { notes_tools } from "../capabilities/notes/tools.js";
 import { writer_tools } from "./notebook_agent/tools.js";
 
+/** One short sentence per action — the enum already names the operation. */
+function gloss(description: string): string {
+  const text = String(description ?? "").trim();
+  const first = text.split(/(?<=[.!?])\s/)[0] ?? "";
+  return first.slice(0, 80);
+}
+
 function byName(tools: readonly BaseTool[], prefix = ""): Record<string, MergedAction> {
   const out: Record<string, MergedAction> = {};
   for (const tool of tools) {
     const key = prefix && tool.name.startsWith(prefix) ? tool.name.slice(prefix.length) : tool.name;
-    out[key] = {
-      tool,
-      description: String(tool.description ?? "").split("\n")[0].trim(),
-    };
+    out[key] = { tool, description: gloss(String(tool.description ?? "")) };
   }
   return out;
 }
 
 function one(name: string, tool: BaseTool, description?: string): MergedAction {
-  return { tool, description: description ?? String(tool.description ?? "").split("\n")[0].trim() };
+  return { tool, description: description ?? gloss(String(tool.description ?? "")) };
 }
 
 /** 22 external-store tools become three. */

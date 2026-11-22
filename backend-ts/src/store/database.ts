@@ -816,6 +816,34 @@ export function migrate_legacy(settings: Settings): void {
   _import_kbs(settings, join(data, "kbs"));
 }
 
+const KB_TIMESTAMP_KEYS = [
+  "created_at",
+  "updated_at",
+  "last_updated",
+  "last_indexed_at",
+] as const;
+
+/**
+ * kb_meta payload timestamps are ISO strings everywhere except legacy
+ * subagent-connection rows, which stored epoch seconds. Normalize numbers to
+ * ISO on read so API consumers always see strings.
+ */
+export function normalizeKbMetaTimestamps(
+  payload: Record<string, unknown>,
+): Record<string, unknown> {
+  let out = payload;
+  for (const key of KB_TIMESTAMP_KEYS) {
+    const value = payload[key];
+    if (typeof value !== "number" || !Number.isFinite(value)) continue;
+    const ms = value < 1e12 ? value * 1000 : value;
+    const date = new Date(ms);
+    if (Number.isNaN(date.getTime())) continue;
+    if (out === payload) out = { ...payload };
+    out[key] = date.toISOString();
+  }
+  return out;
+}
+
 export const ensureTables = ensure_tables;
 export const ensureSchema = ensure_schema;
 export const databasePath = database_path;

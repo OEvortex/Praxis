@@ -1,5 +1,4 @@
-// engine/provider config, model options, preflight and the GraphRAG
-// compatibility probe. Mounted alongside handlersRouter at ``/api/*``.
+// engine/provider config, model options, preflight.
 //
 // Connectors, upload tasks, indexing runs and basic KB CRUD are owned by other
 // ports and intentionally absent here.
@@ -98,37 +97,6 @@ knowledgeRagRouter.put("/api/knowledge-bases/rag-providers/:provider/mode", asyn
 // Pipeline config endpoints — one pair per engine, upstream shapes.
 // ---------------------------------------------------------------------------
 
-// PageIndex Cloud credential (key redacted to a boolean).
-function _pageindexConfigPayload(): AnyRecord {
-  const settings = kbSettings.loadPageindex(_settings());
-  const apiKeySet = Boolean(String(settings["api_key"] ?? ""));
-  return { api_key_set: apiKeySet, configured: apiKeySet };
-}
-
-knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/pageindex/config", async (c) => {
-  try {
-    return c.json(_pageindexConfigPayload());
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-knowledgeRagRouter.put("/api/knowledge-bases/rag-pipelines/pageindex/config", async (c) => {
-  try {
-    const payload = await body(c);
-    const current = kbSettings.loadPageindex(_settings(), false);
-    // Tri-state api_key: absent keeps, "" clears, anything else replaces.
-    let apiKey = _str(current["api_key"]);
-    if (_has(payload, "api_key") && payload["api_key"] !== null) {
-      apiKey = _str(payload["api_key"]);
-    }
-    kbSettings.savePageindex(_settings(), { api_key: apiKey });
-    return c.json(_pageindexConfigPayload());
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
 // Tencent IMA account credentials.
 function _imaConfigPayload(): AnyRecord {
   const settings = kbSettings.loadIma(_settings());
@@ -216,193 +184,6 @@ knowledgeRagRouter.put("/api/knowledge-bases/rag-pipelines/llamaindex/config", a
   }
 });
 
-// GraphRAG query knobs.
-knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/graphrag/config", async (c) => {
-  try {
-    return c.json(kbSettings.loadGraphrag(_settings()));
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-knowledgeRagRouter.put("/api/knowledge-bases/rag-pipelines/graphrag/config", async (c) => {
-  try {
-    const payload = await body(c);
-    const current = kbSettings.loadGraphrag(_settings());
-    const updates: AnyRecord = {};
-    for (const key of ["response_type", "community_level", "dynamic_community_selection"]) {
-      if (_has(payload, key) && payload[key] !== null && payload[key] !== undefined) {
-        updates[key] = payload[key];
-      }
-    }
-    return c.json(kbSettings.saveGraphrag(_settings(), { ...current, ...updates }));
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-// LightRAG query + indexing knobs (incl. role_models / legacy llm pair).
-const LIGHTRAG_UPDATE_KEYS = [
-  "role_models",
-  "top_k",
-  "response_type",
-  "max_concurrent_files",
-  "llm_model_max_async",
-  "entity_extract_max_gleaning",
-  "llm_timeout",
-  "llm_profile_id",
-  "llm_model_id",
-];
-
-knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/lightrag/config", async (c) => {
-  try {
-    return c.json(kbSettings.loadLightrag(_settings()));
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-function _validateLightRagLlmSelection(profileId: string, modelId: string): void {
-  if (Boolean(profileId) !== Boolean(modelId)) {
-    const e = new Error("LightRAG model selection requires both profile_id and model_id.");
-    e.name = "ValueError";
-    throw e;
-  }
-  if (!profileId) return;
-  const catalog = providerConfig.load_catalog(_settings());
-  rag.applyLlmSelectionToCatalog(catalog, profileId, modelId);
-}
-
-knowledgeRagRouter.put("/api/knowledge-bases/rag-pipelines/lightrag/config", async (c) => {
-  try {
-    const settings = _settings();
-    const payload = await body(c);
-    const current = kbSettings.loadLightrag(settings);
-    const candidate: AnyRecord = { ...current };
-    const fieldsSet = new Set(Object.keys(payload));
-    for (const key of LIGHTRAG_UPDATE_KEYS) {
-      if (_has(payload, key)) {
-        // exclude_none semantics except role_models, which is tri-state:
-        // explicit null is rejected below, never "cleared".
-        if (key === "role_models" || (payload[key] !== null && payload[key] !== undefined)) {
-          candidate[key] = payload[key];
-        }
-      }
-    }
-
-    if (_has(payload, "role_models") && payload["role_models"] === null) {
-      return httpError(c, 422, "Role models cannot be cleared.");
-    }
-    if (
-      current["version"] === 2 &&
-      (fieldsSet.has("llm_profile_id") || fieldsSet.has("llm_model_id"))
-    ) {
-      return httpError(c, 422, "Use role_models for this configuration.");
-    }
-    if (candidate["role_models"] !== null && candidate["role_models"] !== undefined) {
-      if (fieldsSet.has("llm_profile_id") || fieldsSet.has("llm_model_id")) {
-        return httpError(c, 422, "Use role_models for this configuration.");
-      }
-      // Contract parse happens inside save; catalog capability check here.
-      rag.validateLightRagRoleModels(settings, candidate["role_models"]);
-    } else {
-      try {
-        _validateLightRagLlmSelection(
-          _str(candidate["llm_profile_id"]),
-          _str(candidate["llm_model_id"]),
-        );
-      } catch (e) {
-        const err = e as Error;
-        return httpError(c, 422, err.message);
-      }
-    }
-    return c.json(kbSettings.saveLightrag(settings, candidate));
-  } catch (e) {
-    const err = e as Error;
-    if (err?.name === "ValueError" || err?.name === "LightRagRoleError") {
-      return httpError(c, 422, err.message);
-    }
-    return httpError(c, 500, String(e));
-  }
-});
-
-// LightRAG role-model options for the editor.
-knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/lightrag/model-options", async (c) => {
-  try {
-    // Port of pipelines/lightrag/roles.py model_options(): the catalog's LLM
-    // options plus per-model reasoning/vision capability annotations.
-    const settings = _settings();
-    const options = (providerConfig.model_options(settings) as AnyRecord[]).map((row) => {
-      const out = { ...row };
-      const efforts =
-        row["supported_reasoning_efforts"] ?? row["vtx_supported_reasoning_efforts"];
-      out["supported_reasoning_efforts"] = Array.isArray(efforts)
-        ? efforts.map((x) => String(x))
-        : [];
-      out["supports_vision"] = Boolean(
-        row["supports_vision"] ?? row["vtx_capabilities"]?.["vision"],
-      );
-      return out;
-    });
-    const catalog = providerConfig.load_catalog(settings);
-    const svc = isRecord(catalog["services"]) && isRecord(catalog["services"]["llm"])
-      ? catalog["services"]["llm"]
-      : {};
-    const activeSel = providerConfig.get_selection(settings) as AnyRecord | null;
-    const active = activeSel
-      ? { profile_id: activeSel["profile_id"], model_id: activeSel["model_id"] }
-      : svc["active_profile_id"] && svc["active_model_id"]
-        ? {
-            profile_id: svc["active_profile_id"],
-            model_id: svc["active_model_id"],
-          }
-        : null;
-    return c.json({ active, options });
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-// LightRAG Server reusable defaults (key redacted).
-function _lightragServerConfigPayload(): AnyRecord {
-  const settings = kbSettings.loadLightragServer(_settings());
-  const serverUrl = _str(settings["server_url"]);
-  const apiKeySet = Boolean(String(settings["api_key"] ?? ""));
-  return { server_url: serverUrl, api_key_set: apiKeySet, configured: Boolean(serverUrl) };
-}
-
-function normalizeLightRagServerBaseUrl(url: string): string {
-  // pipelines/lightrag_server/config.py normalize_base_url
-  return url.trim().replace(/\/+$/, "");
-}
-
-knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/lightrag-server/config", async (c) => {
-  try {
-    return c.json(_lightragServerConfigPayload());
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
-knowledgeRagRouter.put("/api/knowledge-bases/rag-pipelines/lightrag-server/config", async (c) => {
-  try {
-    const payload = await body(c);
-    const current = kbSettings.loadLightragServer(_settings());
-    let serverUrl = _str(current["server_url"]);
-    let apiKey = _str(current["api_key"]);
-    if (_has(payload, "server_url") && payload["server_url"] !== null) {
-      serverUrl = normalizeLightRagServerBaseUrl(_str(payload["server_url"]));
-    }
-    if (_has(payload, "api_key") && payload["api_key"] !== null) {
-      apiKey = _str(payload["api_key"]);
-    }
-    kbSettings.saveLightragServer(_settings(), { server_url: serverUrl, api_key: apiKey });
-    return c.json(_lightragServerConfigPayload());
-  } catch (e) {
-    return httpError(c, 500, String(e));
-  }
-});
-
 // ---------------------------------------------------------------------------
 // GET /api/knowledge-bases/rag-pipelines/{provider}/preflight
 // ---------------------------------------------------------------------------
@@ -437,7 +218,7 @@ knowledgeRagRouter.get("/api/knowledge-bases/rag-pipelines/model-options", async
 // GET /api/knowledge-bases/embedding-usage
 // ---------------------------------------------------------------------------
 
-const EMBEDDING_PROVIDERS = new Set(["llamaindex", "graphrag", "lightrag"]);
+const EMBEDDING_PROVIDERS = new Set(["llamaindex"]);
 
 knowledgeRagRouter.get("/api/knowledge-bases/embedding-usage", async (c) => {
   try {
@@ -467,30 +248,6 @@ knowledgeRagRouter.get("/api/knowledge-bases/embedding-usage", async (c) => {
     return c.json({ knowledge_bases: usage });
   } catch (e) {
     return httpError(c, 500, String(e));
-  }
-});
-
-// ---------------------------------------------------------------------------
-// POST /api/knowledge-bases/rag-pipelines/graphrag/model-compatibility
-// ---------------------------------------------------------------------------
-
-knowledgeRagRouter.post("/api/knowledge-bases/rag-pipelines/graphrag/model-compatibility", async (c) => {
-  try {
-    const payload = await body(c);
-    const profileId = _str(payload["profile_id"]);
-    const modelId = _str(payload["model_id"]);
-    if (!profileId || !modelId) {
-      const e = new Error("profile_id and model_id are required.");
-      e.name = "ValueError";
-      throw e;
-    }
-    return c.json(await rag.probeGraphRagModelCompatibility(_settings(), profileId, modelId));
-  } catch (e) {
-    const err = e as Error;
-    if (err?.name === "ValueError") {
-      return httpError(c, 400, err.message);
-    }
-    return httpError(c, 500, "GraphRAG compatibility could not be tested because of an internal error.");
   }
 });
 

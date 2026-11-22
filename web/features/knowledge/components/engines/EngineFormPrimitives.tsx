@@ -3,10 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Check, Copy, Loader2, type LucideIcon } from "lucide-react";
-import type { RagProviderSummary } from "@/features/knowledge/api/engines";
 import { copyText } from "@/lib/clipboard";
 import type { ProviderConnectionStatus } from "@/lib/knowledge-helpers";
-import { MODE_DESCRIPTIONS, RESPONSE_TYPE_PRESETS } from "./engine-constants";
 
 export function StatusBadge({ status }: { status: ProviderConnectionStatus }) {
   
@@ -169,103 +167,6 @@ export function TextField({
           {hint}
         </span>
       )}
-    </label>
-  );
-}
-
-export function ModeSelector({
-  provider,
-  onSelectMode,
-}: {
-  provider: RagProviderSummary;
-  onSelectMode: (providerId: string, mode: string) => Promise<void> | void;
-}) {
-  
-  const modes = useMemo(() => provider.modes ?? [], [provider.modes]);
-  const [selected, setSelected] = useState(
-    provider.default_mode || modes[0] || "",
-  );
-  const [pending, setPending] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSelected(provider.default_mode || modes[0] || "");
-  }, [provider.default_mode, modes]);
-
-  const pick = async (mode: string) => {
-    if (mode === selected) return;
-    setSelected(mode);
-    setPending(mode);
-    try {
-      await onSelectMode(provider.id, mode);
-    } finally {
-      setPending(null);
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-      {modes.map((mode) => {
-        const active = mode === selected;
-        const desc = MODE_DESCRIPTIONS[`${provider.id}:${mode}`];
-        return (
-          <button
-            key={mode}
-            type="button"
-            onClick={() => void pick(mode)}
-            className={`flex flex-col gap-1 rounded-xl border p-3 text-left transition-colors ${
-              active
-                ? "border-[var(--primary)] bg-[var(--primary)]/5"
-                : "border-[var(--border)] hover:border-[var(--ring)]"
-            }`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[12.5px] font-medium text-[var(--foreground)]">
-                {mode}
-              </span>
-              {pending === mode ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--muted-foreground)]" />
-              ) : active ? (
-                <Check className="h-3.5 w-3.5 text-[var(--primary)]" />
-              ) : null}
-            </div>
-            {desc && (
-              <span className="text-[11.5px] leading-snug text-[var(--muted-foreground)]">
-                {(desc)}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-export function ResponseTypeSelect({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (next: string) => void;
-}) {
-  
-  const known = RESPONSE_TYPE_PRESETS.includes(value);
-  return (
-    <label className="flex flex-col gap-1">
-      <span className="text-[12px] font-medium text-[var(--foreground)]">
-        {"Response style"}
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-1.5 text-[13px] text-[var(--foreground)] outline-none transition-colors focus:border-[var(--foreground)]/25"
-      >
-        {RESPONSE_TYPE_PRESETS.map((p) => (
-          <option key={p} value={p}>
-            {p}
-          </option>
-        ))}
-        {!known && <option value={value}>{value}</option>}
-      </select>
     </label>
   );
 }

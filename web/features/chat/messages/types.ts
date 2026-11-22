@@ -28,6 +28,11 @@ export interface NotebookReferenceGroup {
 
 const MODE_BADGE_LABELS: Record<string, string> = {
   chat: "Chat",
+  explain: "Explain",
+  solve: "Solve",
+  practice: "Practice",
+  plan: "Plan",
+  research: "Research",
   ask_questions: "Ask Questions",
   deep_solve: "Deep Solve",
   deep_research: "Deep Research",

@@ -1394,6 +1394,8 @@ export class LocalAgent {
   _system_prompt = "";
   private _messages: ChatMessage[] = [];
   private _prompt_built = false;
+  /** Turn-scoped capability surface (tool gate + owned tools). */
+  private _turn: TurnCapabilityHooks | null = null;
 
   constructor(runtime: LocalAgentRuntime) {
     this._runtime = runtime;
@@ -1437,7 +1439,12 @@ export class LocalAgent {
   }
 
   private _openai_tools(): AnyDict[] {
-    return this._runtime.tools.map((t) => ({
+    const gate = this._turn?.toolFilter;
+    const available = [
+      ...this._runtime.tools,
+      ...(this._turn?.ownedTools ?? []),
+    ].filter((t) => (gate ? gate(t.name) : true));
+    return available.map((t) => ({
       type: "function",
       function: {
         name: t.name,
@@ -1482,6 +1489,7 @@ export class LocalAgent {
     cancelSignal?: AbortSignal,
     turn?: TurnCapabilityHooks | null,
   ): AsyncGenerator<VtxEvent> {
+    this._turn = turn ?? null;
     this._apply_turn_system_prompt(turn ?? null);
     // Upstream folds capability pre_loop_seed + async pre_loop briefings into
     // the user-message seed (kb_seed slot); appended here verbatim.
@@ -1586,9 +1594,13 @@ export class LocalAgent {
         yield new ToolApprovalEvent(approval, name, call.id);
         await approval.promise;
 
-        const tool = this._runtime.tools.find((t) => t.name === name);
+        const gated = this._turn?.toolFilter;
+        const tool = [
+          ...(this._turn?.ownedTools ?? []),
+          ...this._runtime.tools,
+        ].find((t) => t.name === name);
         let result: ToolResultLike;
-        if (tool === undefined) {
+        if (tool === undefined || (gated && !gated(name))) {
           result = new ToolResult(false, `unknown tool: ${name}`);
         } else {
           try {

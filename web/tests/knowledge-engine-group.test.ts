@@ -1,18 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { knowledgeEngineGroup } from "../lib/knowledge-engine-group";
+import {
+  isSupportedKnowledgeEngine,
+  knowledgeEngineGroup,
+} from "../lib/knowledge-engine-group";
 
 test("knowledge engines: built-in providers stay in their expected deployment group", () => {
-  for (const id of ["llamaindex", "pageindex-oss", "graphrag", "lightrag"]) {
-    assert.equal(knowledgeEngineGroup({ id }), "local", id);
-  }
+  assert.equal(knowledgeEngineGroup({ id: "llamaindex" }), "local");
+  assert.equal(knowledgeEngineGroup({ id: "ima" }), "cloud");
+});
 
-  assert.equal(knowledgeEngineGroup({ id: "lightrag-server" }), "server");
-
-  for (const id of ["pageindex", "ima"]) {
-    assert.equal(knowledgeEngineGroup({ id }), "cloud", id);
+test("retired engine ids are not offered as supported engines", () => {
+  for (const id of [
+    "graphrag",
+    "lightrag",
+    "lightrag-server",
+    "pageindex",
+    "pageindex-oss",
+    "weknora",
+    "kiwix",
+  ]) {
+    assert.equal(isSupportedKnowledgeEngine(id), false, id);
   }
+  assert.equal(isSupportedKnowledgeEngine("llamaindex"), true);
+  assert.equal(isSupportedKnowledgeEngine("ima"), true);
 });
 
 test("knowledge engines: unknown providers fall back to their credential requirement", () => {

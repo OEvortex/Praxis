@@ -1,13 +1,12 @@
 "use client";
 
 import { knowledgeBaseRef } from "@/lib/knowledge-helpers";
+import { isSupportedKnowledgeEngine } from "@/lib/knowledge-engine-group";
 import type { EmbeddingModelSelection } from "@/features/knowledge/model/types";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   connectImaKnowledgeBase as connectImaApi,
-  connectKiwix as connectKiwixApi,
-  connectWeKnora as connectWeKnoraApi,
   connectLinkedFolder as connectLinkedFolderApi,
   connectMarginNote4Library as connectMarginNote4Api,
   connectObsidianVault as connectObsidianApi,
@@ -24,7 +23,6 @@ import {
   type KnowledgeUploadPolicy,
   type RagProviderSummary,
 } from "@/features/knowledge/api/catalog";
-import { connectLightRagServer as connectLightRagServerApi } from "@/features/knowledge/api/engines";
 import { uploadKnowledgeBaseFiles as uploadKbApi } from "@/features/knowledge/api/files";
 import {
   linkFolder as linkFolderApi,
@@ -112,9 +110,12 @@ export function useKnowledgeBases() {
         // Keep the array reference stable across the 4s indexing poll when
         // nothing changed, so consumers keyed on `providers` don't re-fire.
         setProviders((prev) => {
-          const next = providerList.length
-            ? providerList
-            : DEFAULT_PROVIDER_FALLBACK;
+          // Stored KBs may still reference retired engines, but they must
+          // never reappear as selectable engines (e.g. from a cached list).
+          const supported = providerList.filter((provider) =>
+            isSupportedKnowledgeEngine(provider.id),
+          );
+          const next = supported.length ? supported : DEFAULT_PROVIDER_FALLBACK;
           return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
         });
 
@@ -197,7 +198,6 @@ export function useKnowledgeBases() {
       provider: string;
       files: File[];
       storageWorkspaceId?: string;
-      pageindexMode?: "flash" | "standard";
       searchMode?: string;
       embeddingModel?: EmbeddingModelSelection;
     }): Promise<KnowledgeTaskResponse> => {
@@ -277,14 +277,9 @@ export function useKnowledgeBases() {
   const reindex = useCallback(
     async (
       kbName: string,
-      configFingerprint?: string,
       embeddingModel?: EmbeddingModelSelection,
     ): Promise<KnowledgeTaskResponse> => {
-      const result = await reindexKbApi(
-        kbName,
-        configFingerprint,
-        embeddingModel,
-      );
+      const result = await reindexKbApi(kbName, embeddingModel);
       if (result.noop) {
         await load({ force: true, showSpinner: false });
         return result;
@@ -406,37 +401,9 @@ export function useKnowledgeBases() {
     [load, progress],
   );
 
-  const connectLightRagServer = useCallback(
-    async (params: {
-      name: string;
-      serverUrl: string;
-      apiKey?: string;
-      mode?: string;
-    }) => {
-      await connectLightRagServerApi(params);
-      invalidateKnowledgeCaches();
-      await load({ force: true, showSpinner: false });
-    },
-    [load],
-  );
-
   const connectMarginNote4 = useCallback(
     async (params: { name: string }) => {
       await connectMarginNote4Api(params);
-      invalidateKnowledgeCaches();
-      await load({ force: true, showSpinner: false });
-    },
-    [load],
-  );
-
-  const connectWeKnora = useCallback(
-    async (params: {
-      name: string;
-      serverUrl: string;
-      apiKey: string;
-      knowledgeBaseId: string;
-    }) => {
-      await connectWeKnoraApi(params);
       invalidateKnowledgeCaches();
       await load({ force: true, showSpinner: false });
     },
@@ -451,15 +418,6 @@ export function useKnowledgeBases() {
       knowledgeBaseId: string;
     }) => {
       await connectImaApi(params);
-      invalidateKnowledgeCaches();
-      await load({ force: true, showSpinner: false });
-    },
-    [load],
-  );
-
-  const connectKiwix = useCallback(
-    async (params: { name: string; serverUrl: string; zimName: string }) => {
-      await connectKiwixApi(params);
       invalidateKnowledgeCaches();
       await load({ force: true, showSpinner: false });
     },
@@ -491,11 +449,8 @@ export function useKnowledgeBases() {
     linkFolder,
     unlinkFolder,
     syncLinkedFolder,
-    connectLightRagServer,
-    connectWeKnora,
     connectMarginNote4,
     connectIma,
-    connectKiwix,
   };
 }
 

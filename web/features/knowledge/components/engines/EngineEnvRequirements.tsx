@@ -16,7 +16,6 @@ import {
   type EnginePreflight,
 } from "@/features/knowledge/api/engines";
 import { ENGINE_PREREQUISITES } from "./engine-constants";
-import { CopyableCommand } from "./EngineFormPrimitives";
 
 function CheckRow({
   ok,
@@ -58,12 +57,10 @@ function CheckRow({
 
 export function EnvRequirements({
   providerId,
-  installHint,
   defaultOpen,
   onError,
 }: {
   providerId: string;
-  installHint?: string;
   defaultOpen: boolean;
   onError: (message: string) => void;
 }) {
@@ -109,7 +106,6 @@ export function EnvRequirements({
               {(prereq)}
             </p>
           )}
-          {installHint && <CopyableCommand command={installHint} />}
           <div className="flex items-center gap-2.5">
             <button
               type="button"

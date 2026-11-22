@@ -88,25 +88,20 @@ What is the Calvin cycle? It is the set of light-independent reactions in photos
 
 /** The library's rules, condensed for token budget; same guidance, fewer words. */
 const rules = [
-  "Compose the answer like a page, not a form letter: a Title, a short Text, then blocks. Row, Grid and Carousel for things side by side; Badge rows for quick facts; Card only to group a block; Popover for an aside.",
-  'Use SearchImage for every place, dish, product or thing that has a look, with an exact 2–4 word subject ("Belém Tower Lisbon"); the app finds the photo. Image only with a URL the user or a tool gave; never invent one. If no photo would show the subject, use none.',
-  'A photo beside text is a media row: Row([Box([SearchImage(query, 1.33)]), Col([Title(..., "md"), Row([Badge(...)], 1, null, null, true), Text(..., "sm")], 2)], 4, "start"). Facts are Badges, never Buttons or boxed pills.',
-  "Spacing nests in three tiers: inner gap 1–2 (title with its subtitle or tags), group gap 3–4 (blocks inside a Card or grid cell), section 24px between page blocks. Leave gap unset on the root Col and on a Card's own contents; set it on a Row, Grid or inner Col.",
-  'Keep cards compact: Title "md" for a heading (xl or 2xl only for a single big number), Text "sm" for one short paragraph, then facts as Badges or Caption/Spacer/Text rows. No bold-lead paragraphs and no long prose in a card.',
-  "When the request genuinely needs interaction with numbers, choices, lists, steps, a game or something to explore, build a working tool: keep inputs and lists in $variables, compute everything shown from them with expressions and @functions, and change them with @Set. The page must work on its own. A question that only asks for information does not need a tool.",
-  "When a detail the answer depends on is missing, assume the most common case, say so in one short line, and build the whole answer with a SegmentedControl or Select for the other cases; do not stop to ask.",
-  'Use @ToAssistant only for what the page cannot compute: a Form submit or a new request. Its message is short and first person ("Help me choose a bike"); form values travel with it, so never repeat them.',
-  "$variable defaults are literals, never expressions or @calls. Edit lists with @Append, @Remove, @RemoveAt and @Update; track selections with @Toggle and @Includes.",
-  "Use only the listed @functions; there is no @If (use cond ? a : b). @Random, @Pick and @Shuffle draw anew each evaluation: call them inside @Set.",
-  'Derive rows once with @Each(list, "x", {...}), then reuse them in @Each, Table, Chart, @Sum(rows.field) and @Join; @Each(@Range(0, n), "i", ...) builds a series.',
-  "Pick the medium: plain Markdown prose (no program) for short, factual, definitional, LaTeX or safety answers; Chart for numbers over time or categories; Table to compare; Svg to show shapes, parts and how things work; Flashcard and Celebration for learning and games; HtmlView only for a loop-driven game; Markdown for plain knowledge or safety answers, with a SearchImage or Quote where it helps.",
-  "Prose inside a program is a Markdown node, not a long Text node. root = Markdown(\"...\") with the text escaped as a JSON string is valid when a page needs no components; keep Text for one short line or a label.",
-  "When a reply would be one or two sentences, or a single number, formula or definition, send only Markdown prose. Do not add a Title, Badges, a Card, a table or an image to pad it out.",
-  'Chart arguments are positional: Chart(type, rows, xKey, [series], "number"|"percent", stacked, height). stacked is a BOOLEAN — pass false when you only want a height: Chart("bar", rows, "sector", ["value"], "number", false, 240). Never put a number in the stacked slot; height is the last argument.',
-  "Draw with Svg when the user would otherwise have to picture it: a viewBox about 240 wide, a dozen simple shapes, SvgText labels, and $variables such as the current step driving it.",
-  'Format with @Format (money, percent, compact), @Plural (counts) and @FormatDate (dates); show percentages as @Format(@Percent(part, total), "percent"), never @Percent(...) + "%". Relative dates start from @Today(); compare dates with @DaysBetween(a, b) > 0.',
-  "To change a page from an earlier answer, keep its $variable names and start them from that answer's context and form values, so what the user typed, added or ticked carries over.",
-  "Read a count or amount through @Default and @Clamp with a sensible minimum, e.g. @Clamp(@Default($people, 1), 1, 50), so 0 or an empty field cannot divide by zero.",
+  "Compose a page: Title, short Text, then blocks. Row/Grid for side-by-side, Badge rows for facts, Card only to group.",
+  'SearchImage for anything with a look, with an exact 2–4 word subject; never invent a URL. Media row: Row([Box([SearchImage(q, 1.33)]), Col([Title(..., "md"), Badges, Text(..., "sm")], 2)], 4, "start").',
+  "Spacing: gap 1–2 within a group, 3–4 between blocks, 24px between sections. Leave root Col and Card contents gap unset.",
+  "Build a working tool only for real interaction (numbers, choices, steps, games): keep inputs in $vars, compute with @functions, change with @Set. Information-only questions need no tool.",
+  "Missing detail: assume the common case, say so in one line, offer other cases with SegmentedControl/Select rather than stopping to ask.",
+  "Use @ToAssistant only for form submits or new requests; form values travel with it, so do not repeat them.",
+  "$var defaults are literals; edit lists with @Append/@Remove/@RemoveAt/@Update and track picks with @Toggle/@Includes. Derive rows once with @Each and reuse them.",
+  "Use only listed @functions; no @If (use cond ? a : b). Call @Random/@Pick/@Shuffle inside @Set.",
+  'Chart is positional: Chart(type, rows, xKey, [series], "number"|"percent", stacked, height) — stacked is a BOOLEAN; pass false before a height: Chart("bar", rows, "x", ["v"], "number", false, 240).',
+  "Pick the medium: plain Markdown prose (no program) for short, factual, LaTeX or safety answers; Chart for numbers over time/categories; Table to compare; Svg for parts and mechanisms; Flashcard/Celebration for learning and games.",
+  'Prose in a page is a Markdown("...") node, not a long Text node; Text is for one short line or label. One-or-two-sentence answers go out as plain Markdown with no components.',
+  "Draw with Svg when the learner would have to picture it: viewBox ~240 wide, a dozen shapes, SvgText labels, $vars driving steps.",
+  "Format numbers with @Format/@Plural/@FormatDate; percentages as @Format(@Percent(a,b), \"percent\"). Guard counts with @Clamp(@Default(x, 1), 1, 50).",
+  "For follow-ups that change an earlier page, keep its $var names and seed them from that answer's context and form values.",
 ];
 
 /**
@@ -119,9 +114,7 @@ export const promptOptions: PromptOptions = {
   builtinFunctions: false,
   additionalRules: rules,
   examples: [
-    `Example 1: A guest stepper that rescales a shopping list, with a checklist and a copy button:\n\n${exampleShoppingList}`,
-    `Example 2: An explanation page: media row, facts, table and a form:\n\n${exampleLesson}`,
-    `Example 3: Step-by-step instructions, with a drawing per step driven by $step:\n\n${exampleSteps}`,
+    `Example 1: An interactive list with a stepper and checklist:\n\n${exampleShoppingList}`,
     exampleMarkdown,
   ],
 };

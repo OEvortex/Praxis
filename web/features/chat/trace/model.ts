@@ -34,7 +34,7 @@ export interface TraceMetadata {
   tool_provider?: string;
   /**
    * The engine a retrieval / search call actually ran on ("perplexity",
-   * "lightrag", …). The retrieval pipeline puts it here on its progress
+   * "llamaindex", …). The retrieval pipeline puts it here on its progress
    * events; a tool's own `ToolResult.metadata` arrives under
    * `tool_metadata` instead (see below).
    */

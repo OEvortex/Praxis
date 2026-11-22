@@ -4,16 +4,11 @@ import { Database } from "lucide-react";
  * Brand marks for knowledge engines and live knowledge sources.
  *
  * Assets are vendored under /public so the Knowledge Center keeps working in
- * offline/self-hosted deployments. LightRAG deliberately uses the HKUDS
- * organization avatar for both its embedded and server variants.
+ * offline/self-hosted deployments. Unknown or retired engine ids fall back to
+ * a generic database icon so stored knowledge bases still render safely.
  */
 const KNOWLEDGE_ICONS: Record<string, string> = {
   llamaindex: "/knowledge-engine-icons/llamaindex.png",
-  pageindex: "/knowledge-engine-icons/pageindex.png",
-  "pageindex-oss": "/knowledge-engine-icons/pageindex.png",
-  graphrag: "/knowledge-engine-icons/graphrag.png",
-  lightrag: "/knowledge-engine-icons/lightrag.jpg",
-  "lightrag-server": "/knowledge-engine-icons/lightrag.jpg",
   ima: "/knowledge-engine-icons/tencent-ima.svg",
   obsidian: "/knowledge-engine-icons/obsidian.svg",
   marginnote4: "/knowledge-engine-icons/marginnote.png",

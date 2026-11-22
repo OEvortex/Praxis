@@ -10,10 +10,7 @@ import {
 import {
   kbCanUploadDocuments,
   kbNeedsReindex,
-  kbRequiresLightRagRebuildBeforeAppend,
-  providerUsesEmbeddingMetadata,
   resolveKbStatus,
-  uploadPolicyForProvider,
   validateFiles,
   type KnowledgeBase,
 } from "@/lib/knowledge-helpers";
@@ -22,7 +19,6 @@ import type { HistoryEntry } from "@/hooks/useKnowledgeHistory";
 import FileDropZone from "./FileDropZone";
 import KbIndexFailureBanner from "./KbIndexFailureBanner";
 import KbUpdateHistory from "./KbUpdateHistory";
-import LightRagIndexingProvenance from "./LightRagIndexingProvenance";
 
 interface KbDocumentsSectionProps {
   kb: KnowledgeBase;
@@ -80,22 +76,8 @@ export default function KbDocumentsSection({
   }, [kb.name]);
 
   const needsReindex = kbNeedsReindex(kb);
-  const requiresLightRagRebuild = kbRequiresLightRagRebuildBeforeAppend(kb);
   const status = resolveKbStatus(kb);
   const isError = status === "error";
-  const provider =
-    kb.statistics?.rag_provider || kb.metadata?.rag_provider || "llamaindex";
-  const policyForProvider = uploadPolicyForProvider(uploadPolicy, provider);
-  const publishedLightRagVersion =
-    provider === "lightrag"
-      ? kb.statistics?.index_versions?.find(
-          (version) =>
-            version.provider === "lightrag" &&
-            version.ready &&
-            (!kb.metadata?.embedding_selection ||
-              version.version === kb.metadata.indexed_version),
-        )
-      : undefined;
 
   const isUploadingHere =
     (task?.kind === "upload" || task?.kind === "sync") && task.executing;
@@ -111,19 +93,13 @@ export default function KbDocumentsSection({
 
   const blockedReason = canUpload
     ? null
-    : kb.metadata?.indexing_model_unavailable
-      ? "Restore access to the pinned indexing models in Settings before adding documents."
-      : requiresLightRagRebuild
-        ? kb.metadata?.embedding_mismatch
-          ? "The current embedding configuration does not match this index. Restore the original configuration or rebuild with the current embedding before querying or adding documents."
-          : "This legacy LightRAG index remains queryable, but it must be fully rebuilt before incremental uploads."
-        : needsReindex
-          ? "This knowledge base is in legacy index format and needs reindex before upload."
-          : status !== "ready"
-            ? `This knowledge base is currently ${status.replaceAll("_", " ")} and cannot accept uploads yet.`
-            : null;
+    : needsReindex
+      ? "This knowledge base is in legacy index format and needs reindex before upload."
+      : status !== "ready"
+        ? `This knowledge base is currently ${status.replaceAll("_", " ")} and cannot accept uploads yet.`
+        : null;
 
-  const selection = validateFiles(files, policyForProvider);
+  const selection = validateFiles(files, uploadPolicy);
   const canRetry = Boolean(onRetry) && isError && !isIndexingHere;
   // Unsupported files are skipped (shown in the drop zone), not blocking, so a
   // picked folder with mixed content still uploads its supported members.
@@ -161,20 +137,12 @@ export default function KbDocumentsSection({
           {"Add documents"}
         </div>
         <p className="mt-0.5 text-[11.5px] text-[var(--muted-foreground)]">
-          {(providerUsesEmbeddingMetadata(provider) ? "Drop files here to add them to this knowledge base. New files use its bound embedding model." : "Drop files here")}
+          {"Drop files here to add them to this knowledge base. New files use its bound embedding model."}
         </p>
         <p className="mt-1 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
           {"Choosing a folder here is a one-time import. For a folder that stays in sync, use Linked folders."}
         </p>
       </div>
-
-      {provider === "lightrag" && publishedLightRagVersion && (
-        <LightRagIndexingProvenance
-          policy={kb.metadata?.indexing_policy}
-          version={publishedLightRagVersion}
-          compact
-        />
-      )}
 
       {blockedReason && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-700 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300">
@@ -200,7 +168,7 @@ export default function KbDocumentsSection({
                 )}
                 {retrySubmitting || isRetryingHere
                   ? "Retrying…"
-                  : (provider === "lightrag" ? "Review rebuild" : "Retry indexing")}
+                  : "Retry indexing"}
               </button>
             ) : undefined
           }
@@ -210,7 +178,7 @@ export default function KbDocumentsSection({
       <FileDropZone
         files={files}
         onChange={setFiles}
-        uploadPolicy={policyForProvider}
+        uploadPolicy={uploadPolicy}
         disabled={!canUpload || isUploadingHere}
       />
 

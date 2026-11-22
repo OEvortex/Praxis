@@ -18,7 +18,7 @@
 //  - Tool surface is the TS tool set that covers upstream's chat tools:
 //    knowledge_base_search (≈ rag/read_source over the attached KB),
 //    question_bank, memory, web (≈ web_search/web_fetch), paper_search.
-//    Workspace baseline tools, ask_user, cron, exec, pageindex and skill tools
+//    Workspace baseline tools, ask_user, cron, exec and skill tools
 //    are not mounted (no TS counterpart wired here).
 //  - Quiz history comes from the question-notebook entries store filtered by
 //    session_id (upstream reads notebook_entries; the WS /generate request

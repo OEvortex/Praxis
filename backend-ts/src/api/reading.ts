@@ -9,7 +9,7 @@
 // TODOs vs upstream:
 //  - PDF/EPUB/Office extraction, YouTube/Bilibili captions, ffmpeg media
 //    probing + STT, EPUB pairing metadata, PDF-annotated export, snapshot
-//    asset localization, Kiwix import, notebook capture, TTS read-aloud,
+//    asset localization, notebook capture, TTS read-aloud,
 //    and per-user learning-policy gates are not ported (see services/reading).
 
 import { Hono, type Context } from "hono";
@@ -322,12 +322,6 @@ readingRouter.post("/library/import-urls", async (c) => {
   } catch (exc) {
     return httpError(c, exc);
   }
-});
-
-readingRouter.post("/library/import-zim-article", async (c) => {
-  // Kiwix/ZIM article import is not ported (needs the kiwix client + KB
-  // access layer). Keep the route so clients get a clear 400, not a 404.
-  return c.json({ detail: "ZIM article import is not supported in this build." }, 400);
 });
 
 // -- materials: retry ----------------------------------------------------------

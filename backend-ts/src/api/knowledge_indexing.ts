@@ -23,7 +23,7 @@ import {
   resolveRawDir,
   resolveRawFile,
 } from "../services/kb_connectors/files.js";
-import { isConnectedKb, normalizeProviderName, LIGHTRAG_PROVIDER, type AnyRecord } from "../services/kb_connectors/types.js";
+import { isConnectedKb, normalizeProviderName, type AnyRecord } from "../services/kb_connectors/types.js";
 import {
   addGithubSource,
   getGithubSources,
@@ -48,7 +48,6 @@ import {
   requestCancel,
   runReindexTask,
   visibleRun,
-  publicRebuildConfig,
   indexingReadiness,
   sha256File,
 } from "../services/kb_connectors/indexing.js";
@@ -347,23 +346,6 @@ knowledgeIndexingRouter.get("/api/knowledge-bases/:kb_name/indexing-readiness", 
   }
 });
 
-// GET /knowledge-bases/{kb_name}/reindex-config
-knowledgeIndexingRouter.get("/api/knowledge-bases/:kb_name/reindex-config", async (c) => {
-  try {
-    const settings = getSettings();
-    const name = c.req.param("kb_name") ?? "";
-    const entry = writableKbEntry(settings, name);
-    const provider = normalizeProviderName(entry["rag_provider"]);
-    if (provider !== LIGHTRAG_PROVIDER) {
-      return httpError(c, 400, "Rebuild configuration is only for LightRAG.");
-    }
-    const embeddingModel = c.req.query("embedding_model") ?? "";
-    return c.json(publicRebuildConfig(settings, name, embeddingModel));
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
 function writableKbEntry(settings: Settings, kbName: string): AnyRecord {
   const { entry } = writableKb(settings, kbName);
   return entry;
@@ -376,14 +358,13 @@ knowledgeIndexingRouter.post("/api/knowledge-bases/:kb_name/reindex", async (c) 
     const name = c.req.param("kb_name") ?? "";
     const form = await formBody(c);
     const indexingLlm = str(form["indexing_llm"] ?? "");
-    const configFingerprint = str(form["config_fingerprint"] ?? "");
     const embeddingModel = str(form["embedding_model"] ?? "");
 
     const { entry } = writableKb(settings, name);
     const provider = normalizeProviderName(entry["rag_provider"]);
 
     if (indexingLlm) {
-      return httpError(c, 400, "Configure LightRAG models in Settings; per-knowledge-base overrides are no longer supported.");
+      return httpError(c, 400, "Per-knowledge-base indexing model overrides are no longer supported. Configure models in Settings.");
     }
 
     // Durable run journal: a live run blocks a second reindex (409).
@@ -399,16 +380,6 @@ knowledgeIndexingRouter.post("/api/knowledge-bases/:kb_name/reindex", async (c) 
     const forceReindex =
       String(entry["status"] ?? "").toLowerCase() === "error" ||
       ["partial", "failed", "cancelled", "interrupted"].includes(String(previousRun?.["state"] ?? ""));
-
-    if (provider === LIGHTRAG_PROVIDER) {
-      if (!configFingerprint) {
-        return httpError(c, 409, "Review the current rebuild configuration and confirm before rebuilding.");
-      }
-      const expected = publicRebuildConfig(settings, name, embeddingModel)["fingerprint"];
-      if (expected !== configFingerprint) {
-        return httpError(c, 409, "Rebuild configuration changed. Review the updated configuration and confirm again.");
-      }
-    }
 
     // Empty-KB embedding update: upstream short-circuits with a noop when the
     // KB has no supported files and no ready index.
@@ -458,19 +429,6 @@ function updateKbStatusViaEntry(settings: Settings, name: string, status: string
   });
 }
 
-// PUT /knowledge-bases/{kb_name}/indexing-policy — upstream rejects obsolete
-// per-KB model edits unconditionally (409).
-knowledgeIndexingRouter.put("/api/knowledge-bases/:kb_name/indexing-policy", async (c) => {
-  try {
-    const settings = getSettings();
-    const name = c.req.param("kb_name") ?? "";
-    writableKbEntry(settings, name);
-    return httpError(c, 409, "Empty LightRAG knowledge bases follow defaults. Configure models in Settings.");
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
 // POST /knowledge-bases/{kb_name}/retry
 knowledgeIndexingRouter.post("/api/knowledge-bases/:kb_name/retry", async (c) => {
   try {
@@ -488,9 +446,6 @@ knowledgeIndexingRouter.post("/api/knowledge-bases/:kb_name/retry", async (c) =>
       );
     }
     const provider = normalizeProviderName(entry["rag_provider"]);
-    if (provider === LIGHTRAG_PROVIDER) {
-      return httpError(c, 409, "Review current defaults in Index versions and confirm the LightRAG rebuild.");
-    }
     // Delegate to the reindex path (upstream calls reindex_knowledge_base):
     // queue a reindex task directly.
     const taskId = buildUniqueTaskId("kb_reindex", `${name}_retry`);

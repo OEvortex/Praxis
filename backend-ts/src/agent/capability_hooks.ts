@@ -60,6 +60,15 @@ import {
   pre_loop as explorePreLoop,
 } from "../capabilities/explore_context/capability.js";
 import type { ExploreContext } from "../capabilities/explore_context/explorer.js";
+import {
+  augment_kwargs as tutorModeAugment,
+  is_tutor_mode,
+  ownedTools as tutorModeOwnedTools,
+  system_block as tutorModeSystemBlock,
+  toolFilterForMode,
+} from "../capabilities/tutor_modes/capability.js";
+import { create_state as createTutorState } from "../capabilities/tutor_modes/state.js";
+import type { BaseTool } from "../shared/vtx.js";
 
 const log = {
   warning: (msg: string, err?: unknown) =>
@@ -84,6 +93,10 @@ export interface TurnCapabilityHooks {
   seedText: string;
   /** Merge capability-owned private kwargs into a tool call. Never throws. */
   augment(toolName: string, kwargs: Dict): Dict;
+  /** Server-enforced tool gate for this turn (undefined = no restriction). */
+  toolFilter?: (name: string) => boolean;
+  /** Tools mounted only while this turn's capability is active. */
+  ownedTools?: BaseTool[];
 }
 
 function _str(value: unknown): string {
@@ -145,6 +158,13 @@ export async function prepare_turn_capabilities(
   metadata["turn_id"] = turn_id;
   metadata["capability"] = capability;
   metadata["language"] = language;
+  // The composer's five tutor actions are also real turn modes. Record the
+  // selected one, create its turn-scoped state handle, and let the loop mount
+  // that mode's owned tools and enforce its tool allowlist.
+  if (is_tutor_mode(capability)) {
+    metadata["tutor_mode"] = capability;
+    metadata["tutor_state_id"] = createTutorState(turn_id);
+  }
 
   const workspaceMode = _str(metadata["workspace_mode"]).toLowerCase();
   const sessionKind = _str(metadata["session_kind"]).toLowerCase();
@@ -192,11 +212,10 @@ export async function prepare_turn_capabilities(
   }
 
   // -- solve -------------------------------------------------------------------
-  if (
-    capability === "deep_solve" ||
-    capability === "solve" ||
-    metadata["solve_mode"] === true
-  ) {
+  // ``solve`` is now the light-touch tutor mode from the composer, not an
+  // alias for Deep Solve. Only the explicit deep_solve capability (or a caller
+  // that set solve_mode itself) enters the committed-step tool protocol.
+  if (capability === "deep_solve" || metadata["solve_mode"] === true) {
     try {
       prepare_solve_turn(
         { session_id: sessionId, metadata },
@@ -318,6 +337,22 @@ export async function prepare_turn_capabilities(
     }
   }
 
+  // -- composer tutor modes -------------------------------------------------------------
+  // Explain / Solve / Practice / Plan / Research keep the normal chat loop;
+  // their playbook is a system block framed above the base prompt, never a
+  // tool protocol or a pre-loop seed.
+  if (!coWriter && is_tutor_mode(capability)) {
+    try {
+      _pushBlock(
+        systemBlocks,
+        `tutor_${capability}`,
+        tutorModeSystemBlock(metadata, { language }),
+      );
+    } catch (exc) {
+      log.warning("tutor mode system_block failed", exc);
+    }
+  }
+
   // -- creator ------------------------------------------------------------------------------
   if (!coWriter && creatorIsActive(metadata)) {
     try {
@@ -360,6 +395,8 @@ export async function prepare_turn_capabilities(
 
   const seedText = seedParts.filter((s) => s.trim()).join("\n\n");
 
+  const tutorMode = is_tutor_mode(capability) ? capability : null;
+
   // -- augment_kwargs -------------------------------------------------------------------------
   // Same capability order as upstream's LOOP_CAPABILITIES iteration; each hook
   // is wrapped so a failure degrades to the un-augmented kwargs.
@@ -392,8 +429,22 @@ export async function prepare_turn_capabilities(
     tryAugment(() =>
       creatorAugmentKwargs(toolName, out, metadata, sessionId),
     );
+    if (tutorMode) {
+      tryAugment(() => tutorModeAugment(toolName, out, metadata));
+    }
     return out;
   };
 
-  return { metadata, systemBlocks, seedText, augment };
+  return {
+    metadata,
+    systemBlocks,
+    seedText,
+    augment,
+    ...(tutorMode
+      ? {
+          toolFilter: toolFilterForMode(tutorMode),
+          ownedTools: tutorModeOwnedTools(tutorMode),
+        }
+      : {}),
+  };
 }

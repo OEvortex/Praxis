@@ -345,23 +345,6 @@ export function indexingReadiness(settings: Settings, kbName: string): AnyRecord
   };
 }
 
-/** Upstream ``public_rebuild_config`` analogue: a stable fingerprint the client
- * must echo back to confirm a LightRAG rebuild. */
-export function publicRebuildConfig(settings: Settings, kbName: string, embeddingModel = ""): AnyRecord {
-  const entry = getKbEntry(settings, kbName);
-  const provider = String(entry?.["rag_provider"] ?? "llamaindex");
-  const fingerprint = createHash("sha256")
-    .update(JSON.stringify({ provider, embedding_model: embeddingModel, kb: kbName }))
-    .digest("hex")
-    .slice(0, 32);
-  return {
-    provider,
-    embedding_model: embeddingModel || String(entry?.["embedding_model"] ?? ""),
-    fingerprint,
-    defaults: { provider, indexing_llm: "" },
-  };
-}
-
 export function sha256File(path: string): string {
   try {
     return createHash("sha256").update(readFileSync(path)).digest("hex");

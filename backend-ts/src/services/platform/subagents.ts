@@ -331,7 +331,7 @@ function kbConnection(name: string): Record<string, unknown> | null {
     if (row === undefined) return null;
     const meta: unknown = JSON.parse(row.payload);
     return meta !== null && typeof meta === "object" && !Array.isArray(meta)
-      ? (meta as Record<string, unknown>)
+      ? database.normalizeKbMetaTimestamps(meta as Record<string, unknown>)
       : null;
   } finally {
     conn.close();
@@ -343,7 +343,11 @@ function saveKbConnection(name: string, meta: Record<string, unknown>): void {
   const conn = database.connect(s);
   try {
     const stamp = Date.now() / 1000;
-    const payload = { ...meta, name, last_updated: stamp };
+    const payload = {
+      ...meta,
+      name,
+      last_updated: new Date().toISOString(),
+    };
     conn
       .prepare(
         `INSERT INTO kb_meta (name, payload, updated_at) VALUES (?, ?, ?)
@@ -379,7 +383,12 @@ function listKbConnections(): Array<{ name: string; meta: Record<string, unknown
       try {
         const meta: unknown = JSON.parse(row.payload);
         if (meta !== null && typeof meta === "object" && !Array.isArray(meta)) {
-          out.push({ name: row.name, meta: meta as Record<string, unknown> });
+          out.push({
+            name: row.name,
+            meta: database.normalizeKbMetaTimestamps(
+              meta as Record<string, unknown>,
+            ),
+          });
         }
       } catch { /* skip malformed */ }
     }
@@ -430,7 +439,7 @@ export function create_connection(
   if (kbConnection(safe) !== null) {
     throw new Error(`A knowledge base named ${safe} already exists`);
   }
-  const now = Date.now() / 1000;
+  const now = new Date().toISOString();
   const meta: Record<string, unknown> = {
     type: SUBAGENT_KB_TYPE,
     name: safe,

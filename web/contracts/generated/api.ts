@@ -2440,26 +2440,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/{kb_name}/indexing-policy": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    /**
-     * Update Pending Indexing Policy
-     * @description Reject obsolete model edits instead of saving a policy that will not apply.
-     */
-    readonly put: operations["update_pending_indexing_policy_api_knowledge_bases__kb_name__indexing_policy_put"];
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/{kb_name}/indexing-readiness": {
     readonly parameters: {
       readonly query?: never;
@@ -2640,26 +2620,6 @@ export interface paths {
      *     without requiring an embedding-signature precheck.
      */
     readonly post: operations["reindex_knowledge_base_api_knowledge_bases__kb_name__reindex_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/{kb_name}/reindex-config": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Reindex Config
-     * @description Read selected embedding and current role defaults for rebuild confirmation.
-     */
-    readonly get: operations["get_reindex_config_api_knowledge_bases__kb_name__reindex_config_get"];
-    readonly put?: never;
-    readonly post?: never;
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
@@ -3054,50 +3014,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/connect-kiwix": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Connect Kiwix Route
-     * @description Bind a KB to a kiwix-serve archive; no ingest or index is created.
-     */
-    readonly post: operations["connect_kiwix_route_api_knowledge_bases_connect_kiwix_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/connect-lightrag-server": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Connect Lightrag Server Route
-     * @description Connect an external LightRAG server as a retrieval-only knowledge base.
-     *
-     *     Re-probes server-side (never trusts the client's verdict), then registers a
-     *     pointer (``type: lightrag_server``). Retrieval is offloaded to the server's
-     *     ``/query`` endpoint — no copy, no local index.
-     */
-    readonly post: operations["connect_lightrag_server_route_api_knowledge_bases_connect_lightrag_server_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/connect-marginnote4": {
     readonly parameters: {
       readonly query?: never;
@@ -3140,26 +3056,6 @@ export interface paths {
      *     local/self-hosted deployment); the Obsidian capability reads it live.
      */
     readonly post: operations["connect_obsidian_vault_api_knowledge_bases_connect_obsidian_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/connect-weknora": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Connect Weknora Route
-     * @description Connect a self-hosted WeKnora knowledge base for retrieval only.
-     */
-    readonly post: operations["connect_weknora_route_api_knowledge_bases_connect_weknora_post"];
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
@@ -3278,46 +3174,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/kiwix-articles": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Search Kiwix Articles
-     * @description List bounded article matches for Knowledge Center and Reading import.
-     */
-    readonly get: operations["search_kiwix_articles_api_knowledge_bases_kiwix_articles_get"];
-    readonly put?: never;
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/kiwix-catalog": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * List Kiwix Catalog
-     * @description List exact ZIM names from legacy OPDS; v2 can omit loaded archives.
-     */
-    readonly get: operations["list_kiwix_catalog_api_knowledge_bases_kiwix_catalog_get"];
-    readonly put?: never;
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/list-ima": {
     readonly parameters: {
       readonly query?: never;
@@ -3386,69 +3242,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/probe-kiwix": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Probe Kiwix Route
-     * @description Verify that one archive is readable without copying its ZIM file.
-     */
-    readonly post: operations["probe_kiwix_route_api_knowledge_bases_probe_kiwix_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/probe-lightrag-server": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Probe Lightrag Server Route
-     * @description Test-connect to an external LightRAG server before binding a KB to it.
-     *
-     *     Returns the verdict (reachable? is it a LightRAG server? API key accepted?)
-     *     so the UI can confirm before any registration happens. Creates nothing.
-     */
-    readonly post: operations["probe_lightrag_server_route_api_knowledge_bases_probe_lightrag_server_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/probe-weknora": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Probe Weknora Route
-     * @description Validate a WeKnora server and knowledge-base binding without registering.
-     */
-    readonly post: operations["probe_weknora_route_api_knowledge_bases_probe_weknora_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/rag-pipelines/{provider}/preflight": {
     readonly parameters: {
       readonly query?: never;
@@ -3495,50 +3288,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/rag-pipelines/graphrag/config": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Graphrag Pipeline Config
-     * @description Read GraphRAG's query knobs (response style, community granularity).
-     */
-    readonly get: operations["get_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_get"];
-    /**
-     * Update Graphrag Pipeline Config
-     * @description Persist GraphRAG's query knobs. Takes effect on the next query.
-     */
-    readonly put: operations["update_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_put"];
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/rag-pipelines/graphrag/model-compatibility": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Test Graphrag Model Compatibility
-     * @description Test GraphRAG structured output without changing the active chat model.
-     */
-    readonly post: operations["test_graphrag_model_compatibility_api_knowledge_bases_rag_pipelines_graphrag_model_compatibility_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/rag-pipelines/ima/config": {
     readonly parameters: {
       readonly query?: never;
@@ -3563,78 +3312,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/knowledge-bases/rag-pipelines/lightrag-server/config": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Lightrag Server Pipeline Config
-     * @description Read reusable server defaults with the API key redacted.
-     */
-    readonly get: operations["get_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_get"];
-    /**
-     * Update Lightrag Server Pipeline Config
-     * @description Persist reusable defaults without changing existing KB bindings.
-     */
-    readonly put: operations["update_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_put"];
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/rag-pipelines/lightrag/config": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Lightrag Pipeline Config
-     * @description Read LightRAG's query knobs plus its indexing concurrency/extraction knobs.
-     */
-    readonly get: operations["get_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_get"];
-    /**
-     * Update Lightrag Pipeline Config
-     * @description Persist LightRAG's knobs.
-     *
-     *     Query knobs (``top_k``, ``response_type``) take effect on the next query;
-     *     the indexing knobs shape how a KB is built, so they apply to the next
-     *     build or rebuild.
-     */
-    readonly put: operations["update_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_put"];
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/rag-pipelines/lightrag/model-options": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Lightrag Model Options
-     * @description Return accessible catalog models with supported role capabilities.
-     */
-    readonly get: operations["get_lightrag_model_options_api_knowledge_bases_rag_pipelines_lightrag_model_options_get"];
-    readonly put?: never;
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/knowledge-bases/rag-pipelines/llamaindex/config": {
     readonly parameters: {
       readonly query?: never;
@@ -3648,6 +3325,7 @@ export interface paths {
      *
      *     ``retrieval_profile`` is what is *configured*; ``effective_retrieval_profile``
      *     is what would actually run — a hybrid configuration degrades to vector-only
+     *     when the BM25 package is missing (e.g. Python 3.14 installs, #1792).
      */
     readonly get: operations["get_llamaindex_pipeline_config_api_knowledge_bases_rag_pipelines_llamaindex_config_get"];
     /**
@@ -3678,30 +3356,6 @@ export interface paths {
      */
     readonly get: operations["get_rag_model_options_api_knowledge_bases_rag_pipelines_model_options_get"];
     readonly put?: never;
-    readonly post?: never;
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly "/api/knowledge-bases/rag-pipelines/pageindex/config": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    /**
-     * Get Pageindex Pipeline Config
-     * @description Read the PageIndex credential state (key redacted to a boolean).
-     */
-    readonly get: operations["get_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_get"];
-    /**
-     * Update Pageindex Pipeline Config
-     * @description Persist the deployment-level PageIndex Cloud credential.
-     */
-    readonly put: operations["update_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_put"];
     readonly post?: never;
     readonly delete?: never;
     readonly options?: never;
@@ -7276,29 +6930,6 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly "/api/reading/library/import-zim-article": {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly get?: never;
-    readonly put?: never;
-    /**
-     * Import Zim Article
-     * @description Open one selected Kiwix article in Immersive Reading.
-     *
-     *     Only its bounded text snapshot enters the reading store.  The ZIM archive
-     *     stays on the existing kiwix-serve instance, without bulk extraction.
-     */
-    readonly post: operations["import_zim_article_api_reading_library_import_zim_article_post"];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
   readonly "/api/reading/library/materials": {
     readonly parameters: {
       readonly query?: never;
@@ -8713,6 +8344,7 @@ export interface paths {
      *     Runs the engine's downloader console script (``docling-tools models
      *     download``) as a background subprocess; progress is polled via the shared job
      *     status endpoint. The engine must be in ``ENGINE_MODEL_DOWNLOADERS`` and its
+     *     script reachable next to the server's python or on PATH.
      */
     readonly post: operations["start_document_parsing_model_download_api_settings_document_parsing_models_download_post"];
     readonly delete?: never;
@@ -13379,32 +13011,6 @@ export interface components {
       /** Name */
       readonly name: string;
     };
-    /** ConnectKiwixRequest */
-    readonly ConnectKiwixRequest: {
-      /** Name */
-      readonly name: string;
-      /** Server Url */
-      readonly server_url: string;
-      /** Zim Name */
-      readonly zim_name: string;
-    };
-    /** ConnectLightRagServerRequest */
-    readonly ConnectLightRagServerRequest: {
-      /**
-       * Api Key
-       * @default
-       */
-      readonly api_key: string;
-      /** Name */
-      readonly name: string;
-      /**
-       * Search Mode
-       * @default
-       */
-      readonly search_mode: string;
-      /** Server Url */
-      readonly server_url: string;
-    };
     /** ConnectMarginNote4Request */
     readonly ConnectMarginNote4Request: {
       /**
@@ -13438,17 +13044,6 @@ export interface components {
       readonly cwd: string;
       /** Name */
       readonly name: string;
-    };
-    /** ConnectWeKnoraRequest */
-    readonly ConnectWeKnoraRequest: {
-      /** Api Key */
-      readonly api_key: string;
-      /** Knowledge Base Id */
-      readonly knowledge_base_id: string;
-      /** Name */
-      readonly name: string;
-      /** Server Url */
-      readonly server_url: string;
     };
     /** CreateBookRequest */
     readonly CreateBookRequest: {
@@ -13823,39 +13418,6 @@ export interface components {
       readonly parent_page_id: string;
       /** Topic */
       readonly topic: string;
-    };
-    /** ProgressRequest */
-    readonly praxis__api__routers__book__ProgressRequest: {
-      /** Book Id */
-      readonly book_id: string;
-      /** Page Id */
-      readonly page_id: string;
-    };
-    /** LLMSelectionPayload */
-    readonly praxis__api__routers__co_writer__LLMSelectionPayload: {
-      /** Model Id */
-      readonly model_id: string;
-      /** Profile Id */
-      readonly profile_id: string;
-      /** Reasoning Effort */
-      readonly reasoning_effort?: string | null;
-    };
-    /** LLMSelectionPayload */
-    readonly praxis__api__routers__memory__LLMSelectionPayload: {
-      /** Model Id */
-      readonly model_id: string;
-      /** Profile Id */
-      readonly profile_id: string;
-    };
-    /** ProgressRequest */
-    readonly praxis__api__routers__video_learning__ProgressRequest: {
-      /**
-       * Duration Seconds
-       * @default 0
-       */
-      readonly duration_seconds: number;
-      /** Time Seconds */
-      readonly time_seconds: number;
     };
     /** DeleteBlockRequest */
     readonly DeleteBlockRequest: {
@@ -14441,28 +14003,6 @@ export interface components {
         readonly [key: string]: unknown;
       };
     };
-    /**
-     * GraphRagConfigUpdate
-     * @description Partial update for GraphRAG query knobs (omitted fields kept).
-     */
-    readonly GraphRagConfigUpdate: {
-      /** Community Level */
-      readonly community_level?: number | null;
-      /** Dynamic Community Selection */
-      readonly dynamic_community_selection?: boolean | null;
-      /** Response Type */
-      readonly response_type?: string | null;
-    };
-    /**
-     * GraphRagModelCompatibilityRequest
-     * @description Configured chat-model candidate to test without activating it.
-     */
-    readonly GraphRagModelCompatibilityRequest: {
-      /** Model Id */
-      readonly model_id: string;
-      /** Profile Id */
-      readonly profile_id: string;
-    };
     /** GuardianAuthorizationPayload */
     readonly GuardianAuthorizationPayload: {
       /** Guardian User Id */
@@ -14671,13 +14211,6 @@ export interface components {
        */
       readonly public_base_url: string;
     };
-    /** KiwixConnectionRequest */
-    readonly KiwixConnectionRequest: {
-      /** Server Url */
-      readonly server_url: string;
-      /** Zim Name */
-      readonly zim_name: string;
-    };
     /** KnowledgeBaseInfo */
     readonly KnowledgeBaseInfo: {
       /**
@@ -14868,169 +14401,6 @@ export interface components {
       readonly hidden_features?: readonly (
         "books" | "mastery" | "practice" | "reading"
       )[];
-    };
-    /**
-     * LightRagConfigUpdate
-     * @description Partial update for LightRAG query + indexing knobs (omitted fields kept).
-     */
-    readonly LightRagConfigUpdate: {
-      /** Entity Extract Max Gleaning */
-      readonly entity_extract_max_gleaning?: number | null;
-      /** Llm Model Id */
-      readonly llm_model_id?: string | null;
-      /** Llm Model Max Async */
-      readonly llm_model_max_async?: number | null;
-      /** Llm Profile Id */
-      readonly llm_profile_id?: string | null;
-      /** Llm Timeout */
-      readonly llm_timeout?: number | null;
-      /** Max Concurrent Files */
-      readonly max_concurrent_files?: number | null;
-      /** Response Type */
-      readonly response_type?: string | null;
-      readonly role_models?: components["schemas"]["LightRagRoleModels"] | null;
-      /** Top K */
-      readonly top_k?: number | null;
-    };
-    /**
-     * LightRagIndexingSelection
-     * @description Resolved create/rebuild overrides, without mutable engine inheritance.
-     */
-    readonly LightRagIndexingSelection: {
-      readonly extract: components["schemas"]["LightRagModelSelection"];
-      readonly vlm?: components["schemas"]["LightRagIndexingVision"];
-    };
-    /**
-     * LightRagIndexingVision
-     * @description Represent an explicitly enabled or disabled indexing vision model.
-     */
-    readonly LightRagIndexingVision: {
-      /**
-       * Mode
-       * @default disabled
-       * @enum {string}
-       */
-      readonly mode: "disabled" | "enabled";
-      readonly selection?:
-        components["schemas"]["LightRagModelSelection"] | null;
-    };
-    /**
-     * LightRagModelSelection
-     * @description Identify a catalog model and its optional reasoning selection.
-     */
-    readonly LightRagModelSelection: {
-      /** Model Id */
-      readonly model_id: string;
-      /** Profile Id */
-      readonly profile_id: string;
-      /** Reasoning Effort */
-      readonly reasoning_effort?:
-        | (
-            | "none"
-            | "minimal"
-            | "low"
-            | "medium"
-            | "high"
-            | "xhigh"
-            | "max"
-            | "adaptive"
-          )
-        | null;
-    };
-    /**
-     * LightRagRoleModel
-     * @description Configure a text role through base inheritance or an explicit model.
-     */
-    readonly LightRagRoleModel: {
-      /**
-       * Max Async
-       * @default 4
-       */
-      readonly max_async: number;
-      /**
-       * Mode
-       * @default inherit
-       * @enum {string}
-       */
-      readonly mode: "inherit" | "model";
-      /** Reasoning Effort */
-      readonly reasoning_effort?:
-        | (
-            | "none"
-            | "minimal"
-            | "low"
-            | "medium"
-            | "high"
-            | "xhigh"
-            | "max"
-            | "adaptive"
-          )
-        | null;
-      readonly selection?:
-        components["schemas"]["LightRagModelSelection"] | null;
-      /**
-       * Timeout
-       * @default 240
-       */
-      readonly timeout: number;
-    };
-    /**
-     * LightRagRoleModels
-     * @description Group the independent base model and its four role overrides.
-     */
-    readonly LightRagRoleModels: {
-      readonly base: components["schemas"]["LightRagModelSelection"];
-      readonly extract?: components["schemas"]["LightRagRoleModel"];
-      readonly keyword?: components["schemas"]["LightRagRoleModel"];
-      readonly query?: components["schemas"]["LightRagRoleModel"];
-      readonly vlm?: components["schemas"]["LightRagVisionModel"];
-    };
-    /**
-     * LightRagServerConfigUpdate
-     * @description Reusable LightRAG Server defaults (individual KBs may override them).
-     */
-    readonly LightRagServerConfigUpdate: {
-      /** Api Key */
-      readonly api_key?: string | null;
-      /** Server Url */
-      readonly server_url?: string | null;
-    };
-    /**
-     * LightRagVisionModel
-     * @description Configure disabled, inherited, or explicit vision model execution.
-     */
-    readonly LightRagVisionModel: {
-      /**
-       * Max Async
-       * @default 4
-       */
-      readonly max_async: number;
-      /**
-       * Mode
-       * @default disabled
-       * @enum {string}
-       */
-      readonly mode: "disabled" | "inherit" | "model";
-      /** Reasoning Effort */
-      readonly reasoning_effort?:
-        | (
-            | "none"
-            | "minimal"
-            | "low"
-            | "medium"
-            | "high"
-            | "xhigh"
-            | "max"
-            | "adaptive"
-          )
-        | null;
-      readonly selection?:
-        components["schemas"]["LightRagModelSelection"] | null;
-      /**
-       * Timeout
-       * @default 240
-       */
-      readonly timeout: number;
     };
     /**
      * LinkedFolderInfo
@@ -16144,11 +15514,6 @@ export interface components {
       /** Session Id */
       readonly session_id: string;
     };
-    /** PageIndexConfigUpdate */
-    readonly PageIndexConfigUpdate: {
-      /** Api Key */
-      readonly api_key?: string | null;
-    };
     /** PairRequest */
     readonly PairRequest: {
       /**
@@ -16349,6 +15714,39 @@ export interface components {
       /** Total */
       readonly total: number;
     };
+    /** ProgressRequest */
+    readonly praxis__api__routers__book__ProgressRequest: {
+      /** Book Id */
+      readonly book_id: string;
+      /** Page Id */
+      readonly page_id: string;
+    };
+    /** LLMSelectionPayload */
+    readonly praxis__api__routers__co_writer__LLMSelectionPayload: {
+      /** Model Id */
+      readonly model_id: string;
+      /** Profile Id */
+      readonly profile_id: string;
+      /** Reasoning Effort */
+      readonly reasoning_effort?: string | null;
+    };
+    /** LLMSelectionPayload */
+    readonly praxis__api__routers__memory__LLMSelectionPayload: {
+      /** Model Id */
+      readonly model_id: string;
+      /** Profile Id */
+      readonly profile_id: string;
+    };
+    /** ProgressRequest */
+    readonly praxis__api__routers__video_learning__ProgressRequest: {
+      /**
+       * Duration Seconds
+       * @default 0
+       */
+      readonly duration_seconds: number;
+      /** Time Seconds */
+      readonly time_seconds: number;
+    };
     /** ProbeFolderRequest */
     readonly ProbeFolderRequest: {
       /** Folder Path */
@@ -16373,30 +15771,6 @@ export interface components {
       readonly client_id: string;
       /** Knowledge Base Id */
       readonly knowledge_base_id: string;
-    };
-    /** ProbeLightRagServerRequest */
-    readonly ProbeLightRagServerRequest: {
-      /**
-       * Api Key
-       * @default
-       */
-      readonly api_key: string;
-      /** Server Url */
-      readonly server_url: string;
-      /**
-       * Use Saved Api Key
-       * @default false
-       */
-      readonly use_saved_api_key: boolean;
-    };
-    /** ProbeWeKnoraRequest */
-    readonly ProbeWeKnoraRequest: {
-      /** Api Key */
-      readonly api_key: string;
-      /** Knowledge Base Id */
-      readonly knowledge_base_id: string;
-      /** Server Url */
-      readonly server_url: string;
     };
     /** ProviderEditPayload */
     readonly ProviderEditPayload: {
@@ -19024,23 +18398,6 @@ export interface components {
        */
       readonly transcript_provider: string;
     };
-    /** ZimArticleImportRequest */
-    readonly ZimArticleImportRequest: {
-      /** Article Path */
-      readonly article_path: string;
-      /** Kb Ref */
-      readonly kb_ref: string;
-      /**
-       * Title
-       * @default
-       */
-      readonly title: string;
-      /**
-       * Workspace Id
-       * @default
-       */
-      readonly workspace_id: string;
-    };
   };
   responses: never;
   parameters: never;
@@ -19192,18 +18549,12 @@ export type SchemaConnectFolderRequest =
   components["schemas"]["ConnectFolderRequest"];
 export type SchemaConnectImaRequest =
   components["schemas"]["ConnectImaRequest"];
-export type SchemaConnectKiwixRequest =
-  components["schemas"]["ConnectKiwixRequest"];
-export type SchemaConnectLightRagServerRequest =
-  components["schemas"]["ConnectLightRagServerRequest"];
 export type SchemaConnectMarginNote4Request =
   components["schemas"]["ConnectMarginNote4Request"];
 export type SchemaConnectObsidianRequest =
   components["schemas"]["ConnectObsidianRequest"];
 export type SchemaConnectSubagentRequest =
   components["schemas"]["ConnectSubagentRequest"];
-export type SchemaConnectWeKnoraRequest =
-  components["schemas"]["ConnectWeKnoraRequest"];
 export type SchemaCreateBookRequest =
   components["schemas"]["CreateBookRequest"];
 export type SchemaCreateCalendar = components["schemas"]["CreateCalendar"];
@@ -19236,14 +18587,6 @@ export type SchemaDataMigrationPayload =
   components["schemas"]["DataMigrationPayload"];
 export type SchemaDedupRequest = components["schemas"]["DedupRequest"];
 export type SchemaDeepDiveRequest = components["schemas"]["DeepDiveRequest"];
-export type SchemaPraxisApiRoutersBookProgressRequest =
-  components["schemas"]["praxis__api__routers__book__ProgressRequest"];
-export type SchemaPraxisApiRoutersCoWriterLlmSelectionPayload =
-  components["schemas"]["praxis__api__routers__co_writer__LLMSelectionPayload"];
-export type SchemaPraxisApiRoutersMemoryLlmSelectionPayload =
-  components["schemas"]["praxis__api__routers__memory__LLMSelectionPayload"];
-export type SchemaPraxisApiRoutersVideoLearningProgressRequest =
-  components["schemas"]["praxis__api__routers__video_learning__ProgressRequest"];
 export type SchemaDeleteBlockRequest =
   components["schemas"]["DeleteBlockRequest"];
 export type SchemaDeleteKnowledgeBaseRequest =
@@ -19304,10 +18647,6 @@ export type SchemaGenerateTopicDraftRequest =
   components["schemas"]["GenerateTopicDraftRequest"];
 export type SchemaGitHubSourceInfo = components["schemas"]["GitHubSourceInfo"];
 export type SchemaGrantPayload = components["schemas"]["GrantPayload"];
-export type SchemaGraphRagConfigUpdate =
-  components["schemas"]["GraphRagConfigUpdate"];
-export type SchemaGraphRagModelCompatibilityRequest =
-  components["schemas"]["GraphRagModelCompatibilityRequest"];
 export type SchemaGuardianAuthorizationPayload =
   components["schemas"]["GuardianAuthorizationPayload"];
 export type SchemaGuardianCredentialResetPayload =
@@ -19339,8 +18678,6 @@ export type SchemaInstallSkillRequest =
   components["schemas"]["InstallSkillRequest"];
 export type SchemaInvidiousSettings =
   components["schemas"]["InvidiousSettings"];
-export type SchemaKiwixConnectionRequest =
-  components["schemas"]["KiwixConnectionRequest"];
 export type SchemaKnowledgeBaseInfo =
   components["schemas"]["KnowledgeBaseInfo"];
 export type SchemaKnowledgeMovePayload =
@@ -19359,22 +18696,6 @@ export type SchemaLearningCaptureUpdateRequest =
   components["schemas"]["LearningCaptureUpdateRequest"];
 export type SchemaLearningPageCustomization =
   components["schemas"]["LearningPageCustomization"];
-export type SchemaLightRagConfigUpdate =
-  components["schemas"]["LightRagConfigUpdate"];
-export type SchemaLightRagIndexingSelection =
-  components["schemas"]["LightRagIndexingSelection"];
-export type SchemaLightRagIndexingVision =
-  components["schemas"]["LightRagIndexingVision"];
-export type SchemaLightRagModelSelection =
-  components["schemas"]["LightRagModelSelection"];
-export type SchemaLightRagRoleModel =
-  components["schemas"]["LightRagRoleModel"];
-export type SchemaLightRagRoleModels =
-  components["schemas"]["LightRagRoleModels"];
-export type SchemaLightRagServerConfigUpdate =
-  components["schemas"]["LightRagServerConfigUpdate"];
-export type SchemaLightRagVisionModel =
-  components["schemas"]["LightRagVisionModel"];
 export type SchemaLinkedFolderInfo = components["schemas"]["LinkedFolderInfo"];
 export type SchemaLinkFolderRequest =
   components["schemas"]["LinkFolderRequest"];
@@ -19438,8 +18759,6 @@ export type SchemaOutgoingAttachment =
   components["schemas"]["OutgoingAttachment"];
 export type SchemaPageChatSessionRequest =
   components["schemas"]["PageChatSessionRequest"];
-export type SchemaPageIndexConfigUpdate =
-  components["schemas"]["PageIndexConfigUpdate"];
 export type SchemaPairRequest = components["schemas"]["PairRequest"];
 export type SchemaPairResponse = components["schemas"]["PairResponse"];
 export type SchemaPartnerGroupMessageRequest =
@@ -19464,13 +18783,17 @@ export type SchemaPracticeQuestion = components["schemas"]["PracticeQuestion"];
 export type SchemaPracticeSourceCounts =
   components["schemas"]["PracticeSourceCounts"];
 export type SchemaPracticeSummary = components["schemas"]["PracticeSummary"];
+export type SchemaPraxisApiRoutersBookProgressRequest =
+  components["schemas"]["praxis__api__routers__book__ProgressRequest"];
+export type SchemaPraxisApiRoutersCoWriterLlmSelectionPayload =
+  components["schemas"]["praxis__api__routers__co_writer__LLMSelectionPayload"];
+export type SchemaPraxisApiRoutersMemoryLlmSelectionPayload =
+  components["schemas"]["praxis__api__routers__memory__LLMSelectionPayload"];
+export type SchemaPraxisApiRoutersVideoLearningProgressRequest =
+  components["schemas"]["praxis__api__routers__video_learning__ProgressRequest"];
 export type SchemaProbeFolderRequest =
   components["schemas"]["ProbeFolderRequest"];
 export type SchemaProbeImaRequest = components["schemas"]["ProbeImaRequest"];
-export type SchemaProbeLightRagServerRequest =
-  components["schemas"]["ProbeLightRagServerRequest"];
-export type SchemaProbeWeKnoraRequest =
-  components["schemas"]["ProbeWeKnoraRequest"];
 export type SchemaProviderEditPayload =
   components["schemas"]["ProviderEditPayload"];
 export type SchemaProviderModeUpdate =
@@ -19705,8 +19028,6 @@ export type SchemaWorkspaceResources =
 export type SchemaWorkspaceUpdateRequest =
   components["schemas"]["WorkspaceUpdateRequest"];
 export type SchemaYouTubeSettings = components["schemas"]["YouTubeSettings"];
-export type SchemaZimArticleImportRequest =
-  components["schemas"]["ZimArticleImportRequest"];
 export type $defs = Record<string, never>;
 export interface operations {
   readonly root__get: {
@@ -25209,49 +24530,6 @@ export interface operations {
       };
     };
   };
-  readonly update_pending_indexing_policy_api_knowledge_bases__kb_name__indexing_policy_put: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path: {
-        readonly kb_name: string;
-      };
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json":
-          | components["schemas"]["LightRagIndexingSelection"]
-          | components["schemas"]["IndexingLLMSelectionRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   readonly get_indexing_readiness_api_knowledge_bases__kb_name__indexing_readiness_get: {
     readonly parameters: {
       readonly query?: never;
@@ -25556,45 +24834,6 @@ export interface operations {
         readonly "application/x-www-form-urlencoded": components["schemas"]["Body_reindex_knowledge_base_api_knowledge_bases__kb_name__reindex_post"];
       };
     };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly get_reindex_config_api_knowledge_bases__kb_name__reindex_config_get: {
-    readonly parameters: {
-      readonly query?: {
-        readonly embedding_model?: string;
-      };
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path: {
-        readonly kb_name: string;
-      };
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
     readonly responses: {
       /** @description Successful Response */
       readonly 200: {
@@ -26348,82 +25587,6 @@ export interface operations {
       };
     };
   };
-  readonly connect_kiwix_route_api_knowledge_bases_connect_kiwix_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ConnectKiwixRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly connect_lightrag_server_route_api_knowledge_bases_connect_lightrag_server_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ConnectLightRagServerRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   readonly connect_marginnote4_api_knowledge_bases_connect_marginnote4_post: {
     readonly parameters: {
       readonly query?: never;
@@ -26475,43 +25638,6 @@ export interface operations {
     readonly requestBody: {
       readonly content: {
         readonly "application/json": components["schemas"]["ConnectObsidianRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly connect_weknora_route_api_knowledge_bases_connect_weknora_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ConnectWeKnoraRequest"];
       };
     };
     readonly responses: {
@@ -26706,82 +25832,6 @@ export interface operations {
       };
     };
   };
-  readonly search_kiwix_articles_api_knowledge_bases_kiwix_articles_get: {
-    readonly parameters: {
-      readonly query: {
-        readonly kb_ref: string;
-        readonly q: string;
-      };
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly list_kiwix_catalog_api_knowledge_bases_kiwix_catalog_get: {
-    readonly parameters: {
-      readonly query: {
-        readonly q?: string;
-        readonly server_url: string;
-      };
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   readonly list_ima_route_api_knowledge_bases_list_ima_post: {
     readonly parameters: {
       readonly query?: never;
@@ -26893,119 +25943,6 @@ export interface operations {
       };
     };
   };
-  readonly probe_kiwix_route_api_knowledge_bases_probe_kiwix_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["KiwixConnectionRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly probe_lightrag_server_route_api_knowledge_bases_probe_lightrag_server_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ProbeLightRagServerRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly probe_weknora_route_api_knowledge_bases_probe_weknora_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ProbeWeKnoraRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   readonly get_rag_pipeline_preflight_api_knowledge_bases_rag_pipelines__provider__preflight_get: {
     readonly parameters: {
       readonly query?: never;
@@ -27078,113 +26015,6 @@ export interface operations {
       };
     };
   };
-  readonly get_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_get: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly update_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_put: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["GraphRagConfigUpdate"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly test_graphrag_model_compatibility_api_knowledge_bases_rag_pipelines_graphrag_model_compatibility_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["GraphRagModelCompatibilityRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   readonly get_ima_pipeline_config_api_knowledge_bases_rag_pipelines_ima_config_get: {
     readonly parameters: {
       readonly query?: never;
@@ -27234,179 +26064,6 @@ export interface operations {
         readonly "application/json": components["schemas"]["ImaConfigUpdate"];
       };
     };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly get_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_get: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly update_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_put: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["LightRagServerConfigUpdate"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly get_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_get: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly update_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_put: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["LightRagConfigUpdate"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly get_lightrag_model_options_api_knowledge_bases_rag_pipelines_lightrag_model_options_get: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
     readonly responses: {
       /** @description Successful Response */
       readonly 200: {
@@ -27512,76 +26169,6 @@ export interface operations {
       };
     };
     readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly get_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_get: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody?: never;
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly update_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_put: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["PageIndexConfigUpdate"];
-      };
-    };
     readonly responses: {
       /** @description Successful Response */
       readonly 200: {
@@ -35849,45 +34436,6 @@ export interface operations {
     readonly responses: {
       /** @description Successful Response */
       readonly 202: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": {
-            readonly [key: string]: unknown;
-          };
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  readonly import_zim_article_api_reading_library_import_zim_article_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: {
-        readonly Authorization?: string | null;
-      };
-      readonly path?: never;
-      readonly cookie?: {
-        readonly dt_token?: string | null;
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": components["schemas"]["ZimArticleImportRequest"];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
         headers: {
           readonly [name: string]: unknown;
         };

@@ -90,7 +90,7 @@ function _metaRow(settings: Settings, name: string): AnyRecord | null {
     try {
       const payload: unknown = JSON.parse(row.payload);
       return payload !== null && typeof payload === "object" && !Array.isArray(payload)
-        ? (payload as AnyRecord)
+        ? database.normalizeKbMetaTimestamps(payload as AnyRecord)
         : null;
     } catch {
       return null;

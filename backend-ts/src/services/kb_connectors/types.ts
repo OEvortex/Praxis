@@ -5,34 +5,35 @@ export type AnyRecord = Record<string, any>;
 
 // Provider ids (services/rag/factory.py)
 export const DEFAULT_PROVIDER = "llamaindex";
-export const PAGEINDEX_PROVIDER = "pageindex";
-export const PAGEINDEX_OSS_PROVIDER = "pageindex-oss";
+export const IMA_PROVIDER = "ima";
+
+// Retired provider ids. Kept as exported constants so stored kb_meta rows and
+// the connector/probe code still parse; they are absent from KNOWN_PROVIDERS,
+// so normalizeProviderName folds them back to the default.
 export const GRAPHRAG_PROVIDER = "graphrag";
 export const LIGHTRAG_PROVIDER = "lightrag";
-export const LIGHTRAG_SERVER_PROVIDER = "lightrag-server";
-export const IMA_PROVIDER = "ima";
+export const PAGEINDEX_PROVIDER = "pageindex";
+export const PAGEINDEX_OSS_PROVIDER = "pageindex_oss";
+export const LIGHTRAG_SERVER_PROVIDER = "lightrag_server";
 export const WEKNORA_PROVIDER = "weknora";
 export const KIWIX_PROVIDER = "kiwix";
 
+// Provider ids that still exist as stored data but have no engine behind
+// them normalize to the default — see normalizeProviderName.
 export const KNOWN_PROVIDERS = new Set([
   DEFAULT_PROVIDER,
-  PAGEINDEX_PROVIDER,
-  PAGEINDEX_OSS_PROVIDER,
-  GRAPHRAG_PROVIDER,
-  LIGHTRAG_PROVIDER,
-  LIGHTRAG_SERVER_PROVIDER,
   IMA_PROVIDER,
-  WEKNORA_PROVIDER,
-  KIWIX_PROVIDER,
 ]);
 
 // KB type discriminators (knowledge/kb_types.py)
 export const OBSIDIAN_KB_TYPE = "obsidian";
 export const LINKED_KB_TYPE = "linked";
-export const LIGHTRAG_SERVER_KB_TYPE = "lightrag_server";
 export const IMA_KB_TYPE = "ima";
-export const WEKNORA_KB_TYPE = "weknora";
 export const MARGINNOTE4_KB_TYPE = "marginnote4";
+// Retired connector types kept only so existing kb_meta rows still parse as
+// connected/read-only; nothing can create new ones.
+export const LIGHTRAG_SERVER_KB_TYPE = "lightrag_server";
+export const WEKNORA_KB_TYPE = "weknora";
 export const KIWIX_KB_TYPE = "kiwix";
 
 export const CONNECTED_KB_TYPES = new Set([

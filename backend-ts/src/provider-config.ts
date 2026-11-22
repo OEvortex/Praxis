@@ -194,6 +194,32 @@ export function get_selection(
   return sel;
 }
 
+/**
+ * Selection a turn should actually run with.
+ *
+ * Resolution order: explicit command override → saved active selection →
+ * first configured option. The last step mirrors the fallback in
+ * `GET /api/settings/llm-options`: when a learner has configured a model but
+ * never explicitly picked one, the composer already shows that model as the
+ * default. Turns must agree with the UI — otherwise surfaces that don't send
+ * an explicit `llm_selection` (notably Co-Writer threads) fail at init with
+ * "no model configured" even though a model is configured.
+ */
+export function active_selection(
+  settings: Settings,
+  override?: unknown,
+): AnyDict | null {
+  const explicit = _clean_selection(override);
+  if (explicit) return explicit;
+  const saved = get_selection(settings);
+  if (saved) return saved;
+  // `model_options` is the single source of truth for what the UI offers.
+  // Saved profiles come first, so this is the same first row the settings
+  // endpoint marks as the active default.
+  const options = model_options(settings);
+  return options.length ? _clean_selection(options[0]) : null;
+}
+
 export function set_selection(
   settings: Settings,
   selection: unknown,
@@ -355,7 +381,9 @@ export function resolve_runtime_model(
   // model_id, source. `provider` is a vtx-compatible label; `model` is the
   // wire model id. Never reads ~/.vtx.
   const cmd = command ?? {};
-  const selection = get_selection(settings, cmd["llm_selection"]);
+  // Turns (Co-Writer threads included) must resolve to the same default the
+  // composer shows, even when the client sends no explicit llm_selection.
+  const selection = active_selection(settings, cmd["llm_selection"]);
   const catalog = load_catalog(settings);
 
   const profileId = String(selection?.["profile_id"] ?? "") || "";

@@ -21,14 +21,12 @@ const fixtures = vi.hoisted(() => ({
   models: vi.fn(),
   usage: vi.fn(),
   fetch: vi.fn(),
-  lightRagConfig: vi.fn(),
   llmOptions: vi.fn(),
   t: (key: string) => key,
 }));
 vi.mock("@/features/knowledge/api/engines", () => ({
   getEngineModelOptions: fixtures.models,
   getEmbeddingUsage: fixtures.usage,
-  getLightRagConfig: fixtures.lightRagConfig,
 }));
 vi.mock("@/hooks/useLLMOptions", () => ({
   useLLMOptions: fixtures.llmOptions,
@@ -76,7 +74,6 @@ beforeEach(() => {
       }),
     });
   fixtures.usage.mockReset();
-  fixtures.lightRagConfig.mockReset().mockResolvedValue({});
   fixtures.llmOptions.mockReset().mockReturnValue({
     options: [],
     loading: false,
@@ -124,10 +121,7 @@ it("lets a healthy KB explicitly re-index with another configured embedding mode
   });
   fireEvent.click(screen.getByRole("button", { name: "Start full re-index" }));
   await waitFor(() =>
-    expect(onReindex).toHaveBeenCalledWith(
-      undefined,
-      expect.objectContaining(b),
-    ),
+    expect(onReindex).toHaveBeenCalledWith(expect.objectContaining(b)),
   );
 });
 
@@ -142,23 +136,8 @@ it("lists affected knowledge bases and explains that deletion preserves their da
   expect(screen.getByText(/Deleting this model is allowed/)).toBeVisible();
 });
 
-it("lets an empty LightRAG KB replace a deleted embedding model before its first upload", async () => {
+it("lets an empty KB replace a deleted embedding model before its first upload", async () => {
   const onReindex = vi.fn().mockResolvedValue(undefined);
-  const llm = { profile_id: "chat", model_id: "chat-model" };
-  fixtures.llmOptions.mockReturnValue({
-    options: [
-      {
-        ...llm,
-        model: "chat",
-        model_name: "Chat",
-        profile_name: "Provider",
-        provider: "openai",
-      },
-    ],
-    activeDefault: llm,
-    loading: false,
-    error: null,
-  });
   const kb = {
     name: "empty",
     status: "ready",
@@ -168,7 +147,7 @@ it("lets an empty LightRAG KB replace a deleted embedding model before its first
     },
     statistics: {
       raw_documents: 0,
-      rag_provider: "lightrag",
+      rag_provider: "llamaindex",
       index_versions: [],
     },
   } as unknown as KnowledgeBase;
@@ -186,7 +165,7 @@ it("lets an empty LightRAG KB replace a deleted embedding model before its first
     expect(screen.getByRole("button", { name: "Save model" })).toBeEnabled(),
   );
   fireEvent.click(screen.getByRole("button", { name: "Save model" }));
-  await waitFor(() => expect(onReindex).toHaveBeenCalledWith("confirmed", b));
+  await waitFor(() => expect(onReindex).toHaveBeenCalledWith(b));
 });
 
 it("sends model IDs on create and re-index without activating a global model", async () => {
@@ -196,7 +175,7 @@ it("sends model IDs on create and re-index without activating a global model", a
     files: [],
     embeddingModel: a,
   });
-  await reindexKnowledgeBase("notes", undefined, b);
+  await reindexKnowledgeBase("notes", b);
   expect(fixtures.fetch).toHaveBeenCalledTimes(2);
   const [create, reindex] = fixtures.fetch.mock.calls;
   expect(JSON.parse(create[1].body.get("embedding_model"))).toEqual(a);

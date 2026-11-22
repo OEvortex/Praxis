@@ -15,7 +15,6 @@ import {
   Library,
   Plus,
   Search,
-  Server,
   Star,
 } from "lucide-react";
 import {
@@ -41,7 +40,7 @@ interface KnowledgeHomeProps {
   providers: RagProviderSummary[];
   onOpenKb: (name: string) => void;
   onOpenEngine: (id: string) => void;
-  onOpenSource: (id: "obsidian" | "marginnote4" | "kiwix") => void;
+  onOpenSource: (id: "obsidian" | "marginnote4") => void;
   onCreate: () => void;
   activeSection: KnowledgeHomeSection;
   onSectionChange: (section: KnowledgeHomeSection) => void;
@@ -128,9 +127,6 @@ export default function KnowledgeHome({
       local: providers.filter(
         (provider) => knowledgeEngineGroup(provider) === "local",
       ),
-      server: providers.filter(
-        (provider) => knowledgeEngineGroup(provider) === "server",
-      ),
       cloud: providers.filter(
         (provider) => knowledgeEngineGroup(provider) === "cloud",
       ),
@@ -153,13 +149,6 @@ export default function KnowledgeHome({
         description: "Notes, excerpts and cards pushed in by the MarginNote 4 add-on.",
         action: "Connect library",
         count: kbs.filter((kb) => kb.metadata?.type === "marginnote4").length,
-      },
-      {
-        id: "kiwix" as const,
-        name: "Kiwix / ZIM",
-        description: "Search an existing ZIM archive through kiwix-serve. Articles stay on the server.",
-        action: "Connect archive",
-        count: kbs.filter((kb) => kb.metadata?.type === "kiwix").length,
       },
     ],
     [kbs],
@@ -422,23 +411,6 @@ export default function KnowledgeHome({
               </div>
               <div className={pageGridClass(2)}>
                 {groupedProviders.local.map(renderProvider)}
-              </div>
-            </section>
-
-            <section>
-              <div className="mb-3 flex items-start gap-2">
-                <Server className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
-                <div>
-                  <h2 className="text-[13px] font-medium text-[var(--foreground)]">
-                    {"Server engines"}
-                  </h2>
-                  <p className="mt-0.5 text-[11.5px] text-[var(--muted-foreground)]">
-                    {"Connects to a retrieval server you operate."}
-                  </p>
-                </div>
-              </div>
-              <div className={pageGridClass(2)}>
-                {groupedProviders.server.map(renderProvider)}
               </div>
             </section>
 

@@ -497,11 +497,7 @@ export function renderNiceToolArgs(
  * only the ones whose capitalisation it cannot guess.
  */
 const PROVIDER_LABELS: Record<string, string> = {
-  lightrag: "LightRAG",
-  raganything: "RAGAnything",
-  pageindex: "PageIndex",
   llamaindex: "LlamaIndex",
-  graphrag: "GraphRAG",
   duckduckgo: "DuckDuckGo",
   ddg: "DuckDuckGo",
   openai: "OpenAI",

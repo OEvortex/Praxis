@@ -16,7 +16,7 @@
             "type": "string"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -73,7 +73,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -216,15 +216,15 @@
         "properties": {
           "max_depth": {
             "default": 3,
-            "maximum": 5.0,
-            "minimum": 1.0,
+            "maximum": 5,
+            "minimum": 1,
             "title": "Max Depth",
             "type": "integer"
           },
           "max_pages": {
             "default": 200,
-            "maximum": 200.0,
-            "minimum": 1.0,
+            "maximum": 200,
+            "minimum": 1,
             "title": "Max Pages",
             "type": "integer"
           },
@@ -447,7 +447,7 @@
             "type": "string"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -574,7 +574,7 @@
       "ApplyBookEditRequest": {
         "properties": {
           "expected_revision": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Expected Revision",
             "type": "integer"
           }
@@ -1369,8 +1369,8 @@
           },
           "position": {
             "default": 0,
-            "maximum": 10000.0,
-            "minimum": 0.0,
+            "maximum": 10000,
+            "minimum": 0,
             "title": "Position",
             "type": "integer"
           },
@@ -1447,7 +1447,7 @@
             "type": "string"
           },
           "created_at": {
-            "default": 0.0,
+            "default": 0,
             "title": "Created At",
             "type": "number"
           },
@@ -1458,7 +1458,7 @@
             "type": "string"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -1501,7 +1501,7 @@
             "type": "string"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -2304,7 +2304,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -2435,26 +2435,26 @@
         "description": "Chat attachment policy (size caps + extraction budgets).\n\nBounds mirror the normalization clamps in\n``runtime_settings.CHAT_ATTACHMENT_*_RANGE`` so the API rejects loudly\nwhat the file layer would silently clamp.",
         "properties": {
           "max_chars_per_doc": {
-            "maximum": 5000000.0,
-            "minimum": 10000.0,
+            "maximum": 5000000,
+            "minimum": 10000,
             "title": "Max Chars Per Doc",
             "type": "integer"
           },
           "max_chars_total": {
-            "maximum": 5000000.0,
-            "minimum": 10000.0,
+            "maximum": 5000000,
+            "minimum": 10000,
             "title": "Max Chars Total",
             "type": "integer"
           },
           "max_file_mb": {
-            "maximum": 1024.0,
-            "minimum": 1.0,
+            "maximum": 1024,
+            "minimum": 1,
             "title": "Max File Mb",
             "type": "integer"
           },
           "max_total_mb": {
-            "maximum": 2048.0,
-            "minimum": 1.0,
+            "maximum": 2048,
+            "minimum": 1,
             "title": "Max Total Mb",
             "type": "integer"
           }
@@ -2609,8 +2609,8 @@
       "ChatResponseTimeoutUpdate": {
         "properties": {
           "chat_response_timeout": {
-            "maximum": 1800.0,
-            "minimum": 30.0,
+            "maximum": 1800,
+            "minimum": 30,
             "title": "Chat Response Timeout",
             "type": "integer"
           }
@@ -2636,8 +2636,8 @@
             "title": "Ask Hint Enabled"
           },
           "trace_count": {
-            "maximum": 100.0,
-            "minimum": 3.0,
+            "maximum": 100,
+            "minimum": 3,
             "title": "Trace Count",
             "type": "integer"
           }
@@ -2760,7 +2760,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -2906,7 +2906,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -2962,7 +2962,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -3098,57 +3098,6 @@
         "title": "ConnectImaRequest",
         "type": "object"
       },
-      "ConnectKiwixRequest": {
-        "properties": {
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          },
-          "zim_name": {
-            "title": "Zim Name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "server_url",
-          "zim_name",
-          "name"
-        ],
-        "title": "ConnectKiwixRequest",
-        "type": "object"
-      },
-      "ConnectLightRagServerRequest": {
-        "properties": {
-          "api_key": {
-            "default": "",
-            "title": "Api Key",
-            "type": "string"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "search_mode": {
-            "default": "",
-            "title": "Search Mode",
-            "type": "string"
-          },
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "server_url"
-        ],
-        "title": "ConnectLightRagServerRequest",
-        "type": "object"
-      },
       "ConnectMarginNote4Request": {
         "properties": {
           "db_path": {
@@ -3211,34 +3160,6 @@
           "agent_kind"
         ],
         "title": "ConnectSubagentRequest",
-        "type": "object"
-      },
-      "ConnectWeKnoraRequest": {
-        "properties": {
-          "api_key": {
-            "title": "Api Key",
-            "type": "string"
-          },
-          "knowledge_base_id": {
-            "title": "Knowledge Base Id",
-            "type": "string"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "server_url",
-          "api_key",
-          "knowledge_base_id"
-        ],
-        "title": "ConnectWeKnoraRequest",
         "type": "object"
       },
       "CreateBookRequest": {
@@ -3885,8 +3806,8 @@
             "type": "string"
           },
           "time_seconds": {
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "Time Seconds",
             "type": "number"
           }
@@ -4084,7 +4005,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -4123,7 +4044,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -4162,8 +4083,8 @@
         "description": "Admin payload for issuing a local ordinary-user device credential.",
         "properties": {
           "daily_limit_minutes": {
-            "maximum": 1440.0,
-            "minimum": 5.0,
+            "maximum": 1440,
+            "minimum": 5,
             "title": "Daily Limit Minutes",
             "type": "integer"
           },
@@ -4174,8 +4095,8 @@
             "type": "string"
           },
           "expires_in_days": {
-            "maximum": 365.0,
-            "minimum": 1.0,
+            "maximum": 365,
+            "minimum": 1,
             "title": "Expires In Days",
             "type": "integer"
           },
@@ -5495,65 +5416,6 @@
         "title": "GrantPayload",
         "type": "object"
       },
-      "GraphRagConfigUpdate": {
-        "description": "Partial update for GraphRAG query knobs (omitted fields kept).",
-        "properties": {
-          "community_level": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Community Level"
-          },
-          "dynamic_community_selection": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Dynamic Community Selection"
-          },
-          "response_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Response Type"
-          }
-        },
-        "title": "GraphRagConfigUpdate",
-        "type": "object"
-      },
-      "GraphRagModelCompatibilityRequest": {
-        "description": "Configured chat-model candidate to test without activating it.",
-        "properties": {
-          "model_id": {
-            "title": "Model Id",
-            "type": "string"
-          },
-          "profile_id": {
-            "title": "Profile Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "profile_id",
-          "model_id"
-        ],
-        "title": "GraphRagModelCompatibilityRequest",
-        "type": "object"
-      },
       "GuardianAuthorizationPayload": {
         "properties": {
           "guardian_user_id": {
@@ -5899,7 +5761,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -6033,24 +5895,6 @@
           }
         },
         "title": "InvidiousSettings",
-        "type": "object"
-      },
-      "KiwixConnectionRequest": {
-        "properties": {
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          },
-          "zim_name": {
-            "title": "Zim Name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "server_url",
-          "zim_name"
-        ],
-        "title": "KiwixConnectionRequest",
         "type": "object"
       },
       "KnowledgeBaseInfo": {
@@ -6350,8 +6194,8 @@
           "age": {
             "anyOf": [
               {
-                "maximum": 120.0,
-                "minimum": 3.0,
+                "maximum": 120,
+                "minimum": 3,
                 "type": "integer"
               },
               {
@@ -6548,380 +6392,6 @@
         "title": "LearningPageCustomization",
         "type": "object"
       },
-      "LightRagConfigUpdate": {
-        "description": "Partial update for LightRAG query + indexing knobs (omitted fields kept).",
-        "properties": {
-          "entity_extract_max_gleaning": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Entity Extract Max Gleaning"
-          },
-          "llm_model_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Llm Model Id"
-          },
-          "llm_model_max_async": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Llm Model Max Async"
-          },
-          "llm_profile_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Llm Profile Id"
-          },
-          "llm_timeout": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Llm Timeout"
-          },
-          "max_concurrent_files": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Max Concurrent Files"
-          },
-          "response_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Response Type"
-          },
-          "role_models": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LightRagRoleModels"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "top_k": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Top K"
-          }
-        },
-        "title": "LightRagConfigUpdate",
-        "type": "object"
-      },
-      "LightRagIndexingSelection": {
-        "additionalProperties": false,
-        "description": "Resolved create/rebuild overrides, without mutable engine inheritance.",
-        "properties": {
-          "extract": {
-            "$ref": "#/components/schemas/LightRagModelSelection"
-          },
-          "vlm": {
-            "$ref": "#/components/schemas/LightRagIndexingVision"
-          }
-        },
-        "required": [
-          "extract"
-        ],
-        "title": "LightRagIndexingSelection",
-        "type": "object"
-      },
-      "LightRagIndexingVision": {
-        "additionalProperties": false,
-        "description": "Represent an explicitly enabled or disabled indexing vision model.",
-        "properties": {
-          "mode": {
-            "default": "disabled",
-            "enum": [
-              "disabled",
-              "enabled"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
-          "selection": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LightRagModelSelection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "title": "LightRagIndexingVision",
-        "type": "object"
-      },
-      "LightRagModelSelection": {
-        "additionalProperties": false,
-        "description": "Identify a catalog model and its optional reasoning selection.",
-        "properties": {
-          "model_id": {
-            "maxLength": 128,
-            "minLength": 1,
-            "title": "Model Id",
-            "type": "string"
-          },
-          "profile_id": {
-            "maxLength": 128,
-            "minLength": 1,
-            "title": "Profile Id",
-            "type": "string"
-          },
-          "reasoning_effort": {
-            "anyOf": [
-              {
-                "enum": [
-                  "none",
-                  "minimal",
-                  "low",
-                  "medium",
-                  "high",
-                  "xhigh",
-                  "max",
-                  "adaptive"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reasoning Effort"
-          }
-        },
-        "required": [
-          "profile_id",
-          "model_id"
-        ],
-        "title": "LightRagModelSelection",
-        "type": "object"
-      },
-      "LightRagRoleModel": {
-        "additionalProperties": false,
-        "description": "Configure a text role through base inheritance or an explicit model.",
-        "properties": {
-          "max_async": {
-            "default": 4,
-            "maximum": 32.0,
-            "minimum": 1.0,
-            "title": "Max Async",
-            "type": "integer"
-          },
-          "mode": {
-            "default": "inherit",
-            "enum": [
-              "inherit",
-              "model"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
-          "reasoning_effort": {
-            "anyOf": [
-              {
-                "enum": [
-                  "none",
-                  "minimal",
-                  "low",
-                  "medium",
-                  "high",
-                  "xhigh",
-                  "max",
-                  "adaptive"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reasoning Effort"
-          },
-          "selection": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LightRagModelSelection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "timeout": {
-            "default": 240,
-            "maximum": 3600.0,
-            "minimum": 1.0,
-            "title": "Timeout",
-            "type": "integer"
-          }
-        },
-        "title": "LightRagRoleModel",
-        "type": "object"
-      },
-      "LightRagRoleModels": {
-        "additionalProperties": false,
-        "description": "Group the independent base model and its four role overrides.",
-        "properties": {
-          "base": {
-            "$ref": "#/components/schemas/LightRagModelSelection"
-          },
-          "extract": {
-            "$ref": "#/components/schemas/LightRagRoleModel"
-          },
-          "keyword": {
-            "$ref": "#/components/schemas/LightRagRoleModel"
-          },
-          "query": {
-            "$ref": "#/components/schemas/LightRagRoleModel"
-          },
-          "vlm": {
-            "$ref": "#/components/schemas/LightRagVisionModel"
-          }
-        },
-        "required": [
-          "base"
-        ],
-        "title": "LightRagRoleModels",
-        "type": "object"
-      },
-      "LightRagServerConfigUpdate": {
-        "description": "Reusable LightRAG Server defaults (individual KBs may override them).",
-        "properties": {
-          "api_key": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Api Key"
-          },
-          "server_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Server Url"
-          }
-        },
-        "title": "LightRagServerConfigUpdate",
-        "type": "object"
-      },
-      "LightRagVisionModel": {
-        "additionalProperties": false,
-        "description": "Configure disabled, inherited, or explicit vision model execution.",
-        "properties": {
-          "max_async": {
-            "default": 4,
-            "maximum": 32.0,
-            "minimum": 1.0,
-            "title": "Max Async",
-            "type": "integer"
-          },
-          "mode": {
-            "default": "disabled",
-            "enum": [
-              "disabled",
-              "inherit",
-              "model"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
-          "reasoning_effort": {
-            "anyOf": [
-              {
-                "enum": [
-                  "none",
-                  "minimal",
-                  "low",
-                  "medium",
-                  "high",
-                  "xhigh",
-                  "max",
-                  "adaptive"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reasoning Effort"
-          },
-          "selection": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/LightRagModelSelection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "timeout": {
-            "default": 240,
-            "maximum": 3600.0,
-            "minimum": 1.0,
-            "title": "Timeout",
-            "type": "integer"
-          }
-        },
-        "title": "LightRagVisionModel",
-        "type": "object"
-      },
       "LinkFolderRequest": {
         "description": "Request model for linking a local folder to a KB.",
         "properties": {
@@ -7039,8 +6509,8 @@
           },
           "limit": {
             "default": 20,
-            "maximum": 50.0,
-            "minimum": 1.0,
+            "maximum": 50,
+            "minimum": 1,
             "title": "Limit",
             "type": "integer"
           }
@@ -7339,8 +6809,8 @@
           },
           "tool_timeout": {
             "default": 30,
-            "maximum": 600.0,
-            "minimum": 1.0,
+            "maximum": 600,
+            "minimum": 1,
             "title": "Tool Timeout",
             "type": "integer"
           },
@@ -7400,13 +6870,13 @@
         "properties": {
           "end_locator": {
             "default": 0,
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "End Locator",
             "type": "integer"
           },
           "end_seconds": {
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "End Seconds",
             "type": "number"
           },
@@ -7435,13 +6905,13 @@
           },
           "start_locator": {
             "default": 0,
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Start Locator",
             "type": "integer"
           },
           "start_seconds": {
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "Start Seconds",
             "type": "number"
           }
@@ -7459,7 +6929,7 @@
           "end_locator": {
             "anyOf": [
               {
-                "minimum": 0.0,
+                "minimum": 0,
                 "type": "integer"
               },
               {
@@ -7471,8 +6941,8 @@
           "end_seconds": {
             "anyOf": [
               {
-                "maximum": 86400.0,
-                "minimum": 0.0,
+                "maximum": 86400,
+                "minimum": 0,
                 "type": "number"
               },
               {
@@ -7543,7 +7013,7 @@
           "start_locator": {
             "anyOf": [
               {
-                "minimum": 0.0,
+                "minimum": 0,
                 "type": "integer"
               },
               {
@@ -7555,8 +7025,8 @@
           "start_seconds": {
             "anyOf": [
               {
-                "maximum": 86400.0,
-                "minimum": 0.0,
+                "maximum": 86400,
+                "minimum": 0,
                 "type": "number"
               },
               {
@@ -7572,9 +7042,9 @@
       "MarkSuggestionRequest": {
         "properties": {
           "time_seconds": {
-            "default": 0.0,
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "default": 0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "Time Seconds",
             "type": "number"
           }
@@ -7664,7 +7134,7 @@
             "type": "string"
           },
           "created_at": {
-            "default": 0.0,
+            "default": 0,
             "title": "Created At",
             "type": "number"
           },
@@ -7789,7 +7259,7 @@
             "type": "string"
           },
           "created_at": {
-            "default": 0.0,
+            "default": 0,
             "title": "Created At",
             "type": "number"
           },
@@ -8176,7 +7646,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -8208,7 +7678,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -8305,8 +7775,8 @@
       "NetworkSettingsUpdate": {
         "properties": {
           "backend_port": {
-            "maximum": 65535.0,
-            "minimum": 1.0,
+            "maximum": 65535,
+            "minimum": 1,
             "title": "Backend Port",
             "type": "integer"
           },
@@ -8318,8 +7788,8 @@
             "type": "array"
           },
           "frontend_port": {
-            "maximum": 65535.0,
-            "minimum": 1.0,
+            "maximum": 65535,
+            "minimum": 1,
             "title": "Frontend Port",
             "type": "integer"
           },
@@ -9030,23 +8500,6 @@
         "title": "PageChatSessionRequest",
         "type": "object"
       },
-      "PageIndexConfigUpdate": {
-        "properties": {
-          "api_key": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Api Key"
-          }
-        },
-        "title": "PageIndexConfigUpdate",
-        "type": "object"
-      },
       "PairRequest": {
         "properties": {
           "device_kind": {
@@ -9219,7 +8672,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -9238,12 +8691,12 @@
       "PositionInfo": {
         "properties": {
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
           "percentage": {
-            "default": 0.0,
+            "default": 0,
             "title": "Percentage",
             "type": "number"
           },
@@ -9254,7 +8707,7 @@
             "type": "string"
           },
           "updated_at": {
-            "default": 0.0,
+            "default": 0,
             "title": "Updated At",
             "type": "number"
           }
@@ -9268,15 +8721,15 @@
       "PositionPayload": {
         "properties": {
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
           "percentage": {
             "anyOf": [
               {
-                "maximum": 1.0,
-                "minimum": 0.0,
+                "maximum": 1,
+                "minimum": 0,
                 "type": "number"
               },
               {
@@ -9554,52 +9007,6 @@
         "title": "ProbeImaRequest",
         "type": "object"
       },
-      "ProbeLightRagServerRequest": {
-        "properties": {
-          "api_key": {
-            "default": "",
-            "title": "Api Key",
-            "type": "string"
-          },
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          },
-          "use_saved_api_key": {
-            "default": false,
-            "title": "Use Saved Api Key",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "server_url"
-        ],
-        "title": "ProbeLightRagServerRequest",
-        "type": "object"
-      },
-      "ProbeWeKnoraRequest": {
-        "properties": {
-          "api_key": {
-            "title": "Api Key",
-            "type": "string"
-          },
-          "knowledge_base_id": {
-            "title": "Knowledge Base Id",
-            "type": "string"
-          },
-          "server_url": {
-            "title": "Server Url",
-            "type": "string"
-          }
-        },
-        "required": [
-          "server_url",
-          "api_key",
-          "knowledge_base_id"
-        ],
-        "title": "ProbeWeKnoraRequest",
-        "type": "object"
-      },
       "ProviderEditPayload": {
         "properties": {
           "activate": {
@@ -9845,7 +9252,7 @@
             "type": "string"
           },
           "selected_index": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Selected Index",
             "type": "integer"
           }
@@ -9868,7 +9275,7 @@
             "type": "array"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -10146,7 +9553,7 @@
       "ReadAloudAudioPayload": {
         "properties": {
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           }
@@ -10177,7 +9584,7 @@
             "type": "string"
           },
           "locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Locator",
             "type": "integer"
           },
@@ -10232,24 +9639,24 @@
         "description": "One material's Reading progress in an account's learning records.",
         "properties": {
           "furthest_locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Furthest Locator",
             "type": "integer"
           },
           "furthest_percentage": {
-            "maximum": 1.0,
-            "minimum": 0.0,
+            "maximum": 1,
+            "minimum": 0,
             "title": "Furthest Percentage",
             "type": "number"
           },
           "latest_locator": {
-            "minimum": 1.0,
+            "minimum": 1,
             "title": "Latest Locator",
             "type": "integer"
           },
           "latest_percentage": {
-            "maximum": 1.0,
-            "minimum": 0.0,
+            "maximum": 1,
+            "minimum": 0,
             "title": "Latest Percentage",
             "type": "number"
           },
@@ -10417,7 +9824,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -10446,7 +9853,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -10710,7 +10117,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -10830,7 +10237,7 @@
             "type": "boolean"
           },
           "version": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Version",
             "type": "integer"
           }
@@ -12002,7 +11409,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -12513,12 +11920,12 @@
       "TextPositionSelectorPayload": {
         "properties": {
           "end": {
-            "exclusiveMinimum": 0.0,
+            "exclusiveMinimum": 0,
             "title": "End",
             "type": "integer"
           },
           "start": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Start",
             "type": "integer"
           },
@@ -13734,7 +13141,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -13798,8 +13205,8 @@
           "position": {
             "anyOf": [
               {
-                "maximum": 100000.0,
-                "minimum": 0.0,
+                "maximum": 100000,
+                "minimum": 0,
                 "type": "integer"
               },
               {
@@ -13911,7 +13318,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 1.0,
+                "minimum": 1,
                 "type": "integer"
               },
               {
@@ -13998,7 +13405,7 @@
           "expected_revision": {
             "anyOf": [
               {
-                "minimum": 0.0,
+                "minimum": 0,
                 "type": "integer"
               },
               {
@@ -15338,8 +14745,8 @@
           },
           "sync_interval_hours": {
             "default": 24,
-            "maximum": 168.0,
-            "minimum": 1.0,
+            "maximum": 168,
+            "minimum": 1,
             "title": "Sync Interval Hours",
             "type": "integer"
           },
@@ -15363,8 +14770,8 @@
           },
           "sync_interval_hours": {
             "default": 24,
-            "maximum": 168.0,
-            "minimum": 1.0,
+            "maximum": 168,
+            "minimum": 1,
             "title": "Sync Interval Hours",
             "type": "integer"
           }
@@ -15660,39 +15067,6 @@
         "title": "YouTubeSettings",
         "type": "object"
       },
-      "ZimArticleImportRequest": {
-        "properties": {
-          "article_path": {
-            "maxLength": 2048,
-            "minLength": 1,
-            "title": "Article Path",
-            "type": "string"
-          },
-          "kb_ref": {
-            "maxLength": 300,
-            "minLength": 1,
-            "title": "Kb Ref",
-            "type": "string"
-          },
-          "title": {
-            "default": "",
-            "maxLength": 300,
-            "title": "Title",
-            "type": "string"
-          },
-          "workspace_id": {
-            "default": "",
-            "title": "Workspace Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kb_ref",
-          "article_path"
-        ],
-        "title": "ZimArticleImportRequest",
-        "type": "object"
-      },
       "praxis__api__routers__book__ProgressRequest": {
         "properties": {
           "book_id": {
@@ -15763,14 +15137,14 @@
         "properties": {
           "duration_seconds": {
             "default": 0,
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "Duration Seconds",
             "type": "number"
           },
           "time_seconds": {
-            "maximum": 86400.0,
-            "minimum": 0.0,
+            "maximum": 86400,
+            "minimum": 0,
             "title": "Time Seconds",
             "type": "number"
           }
@@ -26374,158 +25748,6 @@
         ]
       }
     },
-    "/api/knowledge-bases/connect-kiwix": {
-      "post": {
-        "description": "Bind a KB to a kiwix-serve archive; no ingest or index is created.",
-        "operationId": "connect_kiwix_route_api_knowledge_bases_connect_kiwix_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectKiwixRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Connect Kiwix Route Api Knowledge Bases Connect Kiwix Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Connect Kiwix Route",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/connect-lightrag-server": {
-      "post": {
-        "description": "Connect an external LightRAG server as a retrieval-only knowledge base.\n\nRe-probes server-side (never trusts the client's verdict), then registers a\npointer (``type: lightrag_server``). Retrieval is offloaded to the server's\n``/query`` endpoint — no copy, no local index.",
-        "operationId": "connect_lightrag_server_route_api_knowledge_bases_connect_lightrag_server_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectLightRagServerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Connect Lightrag Server Route",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
     "/api/knowledge-bases/connect-marginnote4": {
       "post": {
         "description": "Register a connected MarginNote 4 library as a knowledge base.\n\nCreates a ``type: marginnote4`` pointer so the MarginNote capability can\nbind to it on turns where the user selects this KB. When ``db_path`` is\nomitted the capability derives a default SQLite path from the KB name.",
@@ -26669,80 +25891,6 @@
           }
         },
         "summary": "Connect Obsidian Vault",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/connect-weknora": {
-      "post": {
-        "description": "Connect a self-hosted WeKnora knowledge base for retrieval only.",
-        "operationId": "connect_weknora_route_api_knowledge_bases_connect_weknora_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectWeKnoraRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Connect Weknora Route",
         "tags": [
           "knowledge-bases"
         ]
@@ -27087,186 +26235,6 @@
         ]
       }
     },
-    "/api/knowledge-bases/kiwix-articles": {
-      "get": {
-        "description": "List bounded article matches for Knowledge Center and Reading import.",
-        "operationId": "search_kiwix_articles_api_knowledge_bases_kiwix_articles_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "kb_ref",
-            "required": true,
-            "schema": {
-              "maxLength": 300,
-              "minLength": 1,
-              "title": "Kb Ref",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "q",
-            "required": true,
-            "schema": {
-              "maxLength": 500,
-              "minLength": 1,
-              "title": "Q",
-              "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Search Kiwix Articles Api Knowledge Bases Kiwix Articles Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Search Kiwix Articles",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/kiwix-catalog": {
-      "get": {
-        "description": "List exact ZIM names from legacy OPDS; v2 can omit loaded archives.",
-        "operationId": "list_kiwix_catalog_api_knowledge_bases_kiwix_catalog_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "server_url",
-            "required": true,
-            "schema": {
-              "maxLength": 2048,
-              "minLength": 1,
-              "title": "Server Url",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "schema": {
-              "default": "",
-              "maxLength": 100,
-              "title": "Q",
-              "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response List Kiwix Catalog Api Knowledge Bases Kiwix Catalog Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "List Kiwix Catalog",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
     "/api/knowledge-bases/list-ima": {
       "post": {
         "description": "List IMA knowledge bases without storing or echoing credentials.",
@@ -27491,232 +26459,6 @@
         ]
       }
     },
-    "/api/knowledge-bases/probe-kiwix": {
-      "post": {
-        "description": "Verify that one archive is readable without copying its ZIM file.",
-        "operationId": "probe_kiwix_route_api_knowledge_bases_probe_kiwix_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KiwixConnectionRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Probe Kiwix Route Api Knowledge Bases Probe Kiwix Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Probe Kiwix Route",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/probe-lightrag-server": {
-      "post": {
-        "description": "Test-connect to an external LightRAG server before binding a KB to it.\n\nReturns the verdict (reachable? is it a LightRAG server? API key accepted?)\nso the UI can confirm before any registration happens. Creates nothing.",
-        "operationId": "probe_lightrag_server_route_api_knowledge_bases_probe_lightrag_server_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProbeLightRagServerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Probe Lightrag Server Route",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/probe-weknora": {
-      "post": {
-        "description": "Validate a WeKnora server and knowledge-base binding without registering.",
-        "operationId": "probe_weknora_route_api_knowledge_bases_probe_weknora_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProbeWeKnoraRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Probe Weknora Route",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
     "/api/knowledge-bases/rag-pipelines/active-model": {
       "put": {
         "description": "Set the active model for an engine's required kind, applied immediately.\n\nThis is the same active selection the model catalog manages; switching it\nhere affects every engine that uses that kind (the active model is global).",
@@ -27786,216 +26528,6 @@
           }
         },
         "summary": "Set Rag Active Model",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/graphrag/config": {
-      "get": {
-        "description": "Read GraphRAG's query knobs (response style, community granularity).",
-        "operationId": "get_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Graphrag Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      },
-      "put": {
-        "description": "Persist GraphRAG's query knobs. Takes effect on the next query.",
-        "operationId": "update_graphrag_pipeline_config_api_knowledge_bases_rag_pipelines_graphrag_config_put",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GraphRagConfigUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Graphrag Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/graphrag/model-compatibility": {
-      "post": {
-        "description": "Test GraphRAG structured output without changing the active chat model.",
-        "operationId": "test_graphrag_model_compatibility_api_knowledge_bases_rag_pipelines_graphrag_model_compatibility_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GraphRagModelCompatibilityRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Test Graphrag Model Compatibility",
         "tags": [
           "knowledge-bases"
         ]
@@ -28132,342 +26664,6 @@
           }
         },
         "summary": "Update Ima Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/lightrag-server/config": {
-      "get": {
-        "description": "Read reusable server defaults with the API key redacted.",
-        "operationId": "get_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Lightrag Server Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      },
-      "put": {
-        "description": "Persist reusable defaults without changing existing KB bindings.",
-        "operationId": "update_lightrag_server_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_server_config_put",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LightRagServerConfigUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Lightrag Server Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/lightrag/config": {
-      "get": {
-        "description": "Read LightRAG's query knobs plus its indexing concurrency/extraction knobs.",
-        "operationId": "get_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Lightrag Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      },
-      "put": {
-        "description": "Persist LightRAG's knobs.\n\nQuery knobs (``top_k``, ``response_type``) take effect on the next query;\nthe indexing knobs shape how a KB is built, so they apply to the next\nbuild or rebuild.",
-        "operationId": "update_lightrag_pipeline_config_api_knowledge_bases_rag_pipelines_lightrag_config_put",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LightRagConfigUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Lightrag Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/lightrag/model-options": {
-      "get": {
-        "description": "Return accessible catalog models with supported role capabilities.",
-        "operationId": "get_lightrag_model_options_api_knowledge_bases_rag_pipelines_lightrag_model_options_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Lightrag Model Options",
         "tags": [
           "knowledge-bases"
         ]
@@ -28678,142 +26874,6 @@
           }
         },
         "summary": "Get Rag Model Options",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/rag-pipelines/pageindex/config": {
-      "get": {
-        "description": "Read the PageIndex credential state (key redacted to a boolean).",
-        "operationId": "get_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_get",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Pageindex Pipeline Config",
-        "tags": [
-          "knowledge-bases"
-        ]
-      },
-      "put": {
-        "description": "Persist the deployment-level PageIndex Cloud credential.",
-        "operationId": "update_pageindex_pipeline_config_api_knowledge_bases_rag_pipelines_pageindex_config_put",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PageIndexConfigUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Pageindex Pipeline Config",
         "tags": [
           "knowledge-bases"
         ]
@@ -30204,101 +28264,6 @@
         ]
       }
     },
-    "/api/knowledge-bases/{kb_name}/indexing-policy": {
-      "put": {
-        "description": "Reject obsolete model edits instead of saving a policy that will not apply.",
-        "operationId": "update_pending_indexing_policy_api_knowledge_bases__kb_name__indexing_policy_put",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "kb_name",
-            "required": true,
-            "schema": {
-              "title": "Kb Name",
-              "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/LightRagIndexingSelection"
-                  },
-                  {
-                    "$ref": "#/components/schemas/IndexingLLMSelectionRequest"
-                  }
-                ],
-                "title": "Payload"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Update Pending Indexing Policy Api Knowledge Bases  Kb Name  Indexing Policy Put",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Pending Indexing Policy",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
     "/api/knowledge-bases/{kb_name}/indexing-readiness": {
       "get": {
         "operationId": "get_indexing_readiness_api_knowledge_bases__kb_name__indexing_readiness_get",
@@ -30998,93 +28963,6 @@
           }
         },
         "summary": "Reindex Knowledge Base",
-        "tags": [
-          "knowledge-bases"
-        ]
-      }
-    },
-    "/api/knowledge-bases/{kb_name}/reindex-config": {
-      "get": {
-        "description": "Read selected embedding and current role defaults for rebuild confirmation.",
-        "operationId": "get_reindex_config_api_knowledge_bases__kb_name__reindex_config_get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "kb_name",
-            "required": true,
-            "schema": {
-              "title": "Kb Name",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "embedding_model",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Embedding Model",
-              "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Get Reindex Config Api Knowledge Bases  Kb Name  Reindex Config Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Reindex Config",
         "tags": [
           "knowledge-bases"
         ]
@@ -49296,84 +47174,6 @@
           }
         },
         "summary": "Import Urls",
-        "tags": [
-          "reading"
-        ]
-      }
-    },
-    "/api/reading/library/import-zim-article": {
-      "post": {
-        "description": "Open one selected Kiwix article in Immersive Reading.\n\nOnly its bounded text snapshot enters the reading store.  The ZIM archive\nstays on the existing kiwix-serve instance, without bulk extraction.",
-        "operationId": "import_zim_article_api_reading_library_import_zim_article_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          },
-          {
-            "in": "cookie",
-            "name": "dt_token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dt Token"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ZimArticleImportRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Import Zim Article Api Reading Library Import Zim Article Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Import Zim Article",
         "tags": [
           "reading"
         ]

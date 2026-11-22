@@ -32,22 +32,13 @@ export function actionTool(options: MergedToolOptions): BaseTool {
   const actionParam = options.actionParam ?? "action";
   const actionNames = Object.keys(options.actions);
   const properties: Record<string, ToolParamField> = {
-    [actionParam]: {
-      type: "string",
-      enum: actionNames,
-      description: "Which operation to perform. " + actionNames
-        .map((name) => `${name}: ${options.actions[name].description}`)
-        .join("; "),
-    },
+    [actionParam]: { type: "string", enum: actionNames },
   };
   for (const action of Object.values(options.actions)) {
     const schema = action.tool.params as ToolParamsSchema | undefined;
     for (const [key, value] of Object.entries(schema?.properties ?? {})) {
       if (key.startsWith("_")) continue;
       if (key in properties) continue;
-      // ToolParamField uses a field-level `required?: boolean`; that is not
-      // valid JSON Schema and providers reject it. The action's own tool
-      // validates its arguments, so drop the flag here.
       const field = { ...(value as Record<string, unknown>) };
       if (typeof field.required === "boolean") delete field.required;
       properties[key] = field as ToolParamField;
@@ -59,9 +50,9 @@ export function actionTool(options: MergedToolOptions): BaseTool {
     required: [actionParam],
   };
   const mutating = Object.values(options.actions).some((a) => a.tool.mutating);
-  const description = `${options.description}\n\nActions:\n${actionNames
-    .map((name) => `- ${name}: ${options.actions[name].description}`)
-    .join("\n")}`;
+  const description = `${options.description} Actions: ${actionNames
+    .map((name) => `${name}=${options.actions[name].description}`)
+    .join(", ")}`;
 
   class MergedTool extends BaseTool {
     name = options.name;

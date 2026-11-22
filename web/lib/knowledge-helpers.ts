@@ -12,38 +12,6 @@ export const DEFAULT_UPLOAD_POLICY: KnowledgeUploadPolicy = {
   allow_any_extension: false,
 };
 
-const PAGEINDEX_UPLOAD_EXTENSIONS: Record<string, string[]> = {
-  pageindex: [
-    ".pdf",
-    ".md",
-    ".markdown",
-    ".txt",
-    ".docx",
-    ".doc",
-    ".pptx",
-    ".ppt",
-    ".xlsx",
-    ".xls",
-    ".csv",
-  ],
-  "pageindex-oss": [".pdf"],
-};
-
-export function uploadPolicyForProvider(
-  policy: KnowledgeUploadPolicy,
-  provider?: string,
-): KnowledgeUploadPolicy {
-  const extensions = PAGEINDEX_UPLOAD_EXTENSIONS[provider || ""];
-  return extensions
-    ? {
-        ...policy,
-        extensions,
-        accept: extensions.join(","),
-        allow_any_extension: false,
-      }
-    : policy;
-}
-
 export interface ProgressInfo {
   task_id?: string;
   stage?: string;
@@ -99,58 +67,6 @@ export interface IndexVersion {
   ready?: boolean;
   legacy?: boolean;
   failure_summary?: string;
-  indexing_policy?: LightRagIndexingPolicy;
-  embedding_model?: string;
-  embedding_dim?: number;
-}
-
-export interface LightRagIndexingPolicy {
-  schema_version?: number;
-  extract?: LightRagIndexingPolicy;
-  vlm?: { mode: "disabled" | "enabled"; snapshot?: LightRagIndexingPolicy };
-  policy: "pending_pinned" | "pinned" | "legacy_unpinned" | string;
-  selection?: {
-    profile_id: string;
-    model_id: string;
-    reasoning_effort?: string;
-  };
-  descriptor?: {
-    model?: string;
-    binding?: string;
-    provider_mode?: string;
-    reasoning_effort?: string | null;
-  };
-  fingerprint?: string | null;
-  vision_available?: boolean;
-  vlm_used?: boolean;
-}
-
-export type LightRagVersionDisplayState =
-  "published" | "building" | "failed" | "legacy" | "inactive";
-
-export function currentLightRagBuildCandidate(
-  versions: IndexVersion[],
-  rebuildActive: boolean,
-): IndexVersion | undefined {
-  if (!rebuildActive) return undefined;
-  return versions.find((version) => version.ready !== true);
-}
-
-export function lightRagVersionDisplayState(
-  version: IndexVersion,
-  options: {
-    published: boolean;
-    rebuildActive: boolean;
-    kbError: boolean;
-    legacy: boolean;
-  },
-): LightRagVersionDisplayState {
-  if (options.published) return "published";
-  if (options.legacy || version.legacy) return "legacy";
-  if (version.ready) return "inactive";
-  if (options.rebuildActive) return "building";
-  if (options.kbError || version.failure_summary) return "failed";
-  return "inactive";
 }
 
 export interface KnowledgeBase {
@@ -183,16 +99,10 @@ export interface KnowledgeBase {
     vault_path?: string;
     /** SQLite store of a connected MarginNote 4 library (when type === "marginnote4"). */
     db_path?: string;
-    /** Connected Kiwix archive; article bytes remain on the configured server. */
-    server_url?: string;
-    zim_name?: string;
-    zim_title?: string;
     /** Backend of a connected subagent (when type === "subagent"): "claude_code" | "codex" | "antigravity" | "kimi" | "opencode" | "mimo" | "hermes" | "openclaw" | "deepseek_harness" | "partner". */
     agent_kind?: string;
     /** Bound partner id when agent_kind === "partner". */
     partner_id?: string;
-    indexing_policy?: LightRagIndexingPolicy;
-    indexing_model_unavailable?: boolean;
   };
   progress?: ProgressInfo;
   statistics?: {
@@ -217,9 +127,6 @@ export interface KnowledgeBase {
 
 export type ProviderConnectionStatus =
   "ready" | "needs_key" | "needs_setup" | "unavailable";
-
-export const providerUsesEmbeddingMetadata = (provider?: string): boolean =>
-  provider !== "pageindex" && provider !== "pageindex-oss";
 
 export const providerConnectionStatus = (provider: {
   id: string;
@@ -330,7 +237,6 @@ const KB_DETAIL_SECTIONS = [
   "web",
   "versions",
   "devices",
-  "kiwix",
   "settings",
 ] as const;
 
@@ -346,10 +252,10 @@ export type KbDetailSection = (typeof KB_DETAIL_SECTIONS)[number];
 export const kbDetailSections = (kb: KnowledgeBase): KbDetailSection[] =>
   isMarginNoteKb(kb)
     ? ["devices", "settings"]
-    : kb.metadata?.type === "kiwix"
-      ? ["kiwix", "settings"]
     : KB_DETAIL_SECTIONS.filter(
-        (section) => section !== "devices" && section !== "kiwix" && (section !== "folders" || !kb.metadata?.type),
+        (section) =>
+          section !== "devices" &&
+          (section !== "folders" || !kb.metadata?.type),
       );
 
 /** Local source folders belong to ordinary, Praxis-managed indexed KBs. */
@@ -358,7 +264,6 @@ export const kbDetailSections = (kb: KnowledgeBase): KbDetailSection[] =>
 export const kbProvider = (kb: KnowledgeBase): string => {
   if (kb.metadata?.type === "obsidian") return "obsidian";
   if (isMarginNoteKb(kb)) return MARGINNOTE4_KB_TYPE;
-  if (kb.metadata?.type === "kiwix") return "kiwix";
   return (
     (kb.statistics?.rag_provider as string | undefined) ||
     (kb.metadata?.rag_provider as string | undefined) ||
@@ -368,7 +273,6 @@ export const kbProvider = (kb: KnowledgeBase): string => {
 
 /** Source-document count for a KB, or null when unknown. */
 export const kbDocCount = (kb: KnowledgeBase): number | null => {
-  if (kb.metadata?.type === "kiwix") return null;
   const raw = kb.statistics?.raw_documents;
   if (typeof raw === "number") return raw;
   const indexed = kb.metadata?.last_indexed_count;
@@ -396,34 +300,19 @@ export const resolveKnowledgeIndexFailure = (
     storedProgress?.message?.trim() ||
     undefined;
 
-  const embeddingConfigurationCodes = new Set([
-    "graphrag_embedding_authentication_failed",
-    "graphrag_embedding_dimension_mismatch",
-    "graphrag_embedding_endpoint_failed",
-    "graphrag_embedding_incompatible",
-    "graphrag_embedding_provider_unsupported",
-  ]);
-  const completionConfigurationCodes = new Set([
-    "graphrag_model_incompatible",
+  const configurationCodes = new Set([
     "indexing_model_unavailable",
     "reindex_required",
-    "graphrag_provider_unsupported",
-    "graphrag_model_authentication_failed",
-    "graphrag_model_endpoint_failed",
   ]);
-  const requiresEmbeddingChange = embeddingConfigurationCodes.has(code ?? "");
-  const requiresCompletionChange = completionConfigurationCodes.has(code ?? "");
 
   return {
     code,
     message,
     retryable: progress?.retryable ?? storedProgress?.retryable,
-    requiresModelChange: requiresEmbeddingChange || requiresCompletionChange,
-    settingsHref: requiresEmbeddingChange
-      ? "/settings#embedding"
-      : requiresCompletionChange
-        ? "/settings#models"
-        : undefined,
+    requiresModelChange: configurationCodes.has(code ?? ""),
+    settingsHref: configurationCodes.has(code ?? "")
+      ? "/settings#models"
+      : undefined,
   };
 };
 
@@ -436,19 +325,10 @@ export const kbNeedsReindex = (kb: KnowledgeBase): boolean =>
   Boolean(kb.statistics?.needs_reindex) ||
   resolveKbStatus(kb) === "needs_reindex";
 
-export const kbRequiresLightRagRebuildBeforeAppend = (
-  kb: KnowledgeBase,
-): boolean =>
-  kbProvider(kb) === "lightrag" &&
-  (kb.metadata?.indexing_policy?.policy === "legacy_unpinned" ||
-    Boolean(kb.metadata?.embedding_mismatch));
-
 export const kbIsUploadable = (kb: KnowledgeBase): boolean =>
   resolveKbStatus(kb) === "ready" &&
   !kbEmbeddingUnavailable(kb) &&
-  !kbNeedsReindex(kb) &&
-  !kb.metadata?.indexing_model_unavailable &&
-  !kbRequiresLightRagRebuildBeforeAppend(kb);
+  !kbNeedsReindex(kb);
 
 export const kbCanUploadDocuments = (
   kb: KnowledgeBase,
@@ -457,9 +337,7 @@ export const kbCanUploadDocuments = (
   kbIsUploadable(kb) ||
   (resolveKbStatus(kb) === "error" &&
     !kbEmbeddingUnavailable(kb) &&
-    !indexingActive &&
-    !kb.metadata?.indexing_model_unavailable &&
-    !kbRequiresLightRagRebuildBeforeAppend(kb));
+    !indexingActive);
 
 export const kbCanReindex = (kb: KnowledgeBase): boolean => {
   if (kb.read_only) return false;
@@ -470,7 +348,7 @@ export const kbCanReindex = (kb: KnowledgeBase): boolean => {
       : true;
   if (!hasSourceFiles) return false;
   if (status === "error") return true;
-  if (["llamaindex", "lightrag", "graphrag"].includes(kbProvider(kb))) return !kbHasLiveProgress(kb);
+  if (kbProvider(kb) === "llamaindex") return !kbHasLiveProgress(kb);
   return (
     Boolean(kb.statistics?.needs_reindex) ||
     kb.statistics?.active_match === false

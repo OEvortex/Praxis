@@ -17,12 +17,12 @@ test("IMA belongs only to link-existing provider choices", () => {
   const providers = [
     { id: "ima", name: "IMA", description: "remote" },
     { id: "llamaindex", name: "LlamaIndex", description: "local" },
-    { id: "pageindex", name: "PageIndex", description: "cloud" },
+    { id: "future-cloud", name: "Cloud", description: "cloud" },
   ] as RagProviderSummary[];
 
   assert.deepEqual(
     createProviders(providers).map((provider) => provider.id),
-    ["llamaindex", "pageindex"],
+    ["llamaindex", "future-cloud"],
   );
   assert.equal(linkSourceEnabled(providers[0]), true);
   assert.equal(linkSourceEnabled({ ...providers[2], linkable: false }), false);

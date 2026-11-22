@@ -160,7 +160,7 @@ export interface NbReadParams {
 const nbReadSchema: ToolParamsSchema = {
   type: "object",
   properties: {
-    page_id: { type: "string", description: "Page id to read.", required: true },
+    page_id: { type: "string", description: "Page id to read." },
     offset: { type: "number", description: "Start line of the Markdown body (1-based)." },
     limit: { type: "number", description: "Number of body lines to return." },
   },
@@ -263,7 +263,7 @@ export interface NbSearchParams {
 const nbSearchSchema: ToolParamsSchema = {
   type: "object",
   properties: {
-    query: { type: "string", description: "Text to find in page titles or content.", required: true },
+    query: { type: "string", description: "Text to find in page titles or content." },
     limit: { type: "number", description: "Maximum pages to return.", default: 10 },
   },
   required: ["query"],
@@ -415,7 +415,6 @@ const nbPatchSchema: ToolParamsSchema = {
       description:
         "Page operations applied in order. Every op is validated " +
         "before anything is written; one failure aborts the whole patch.",
-      required: true,
       items: { type: "object" },
     },
   },

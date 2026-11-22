@@ -1,6 +1,8 @@
 import {
   BarChart3,
+  BookOpen,
   BrainCircuit,
+  Calculator,
   CircleHelp,
   Clapperboard,
   Code2,
@@ -10,9 +12,12 @@ import {
   GraduationCap,
   Image as ImageIcon,
   Lightbulb,
+  ListChecks,
   MessageSquare,
   NotebookPen,
   Microscope,
+  Route,
+  Search,
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
@@ -83,6 +88,58 @@ export const CHAT_CAPABILITIES: ChatCapabilityDef[] = [
       "videogen",
     ],
     defaultTools: [],
+  },
+  // The composer's five starting points are also real turn modes: picking one
+  // frames how the tutor answers, while its starter prompts still prefill the
+  // box. They sit in the primary menu because they need no extra setup.
+  {
+    value: "explain",
+    label: "Explain",
+    description: "Build understanding with examples and a misconception check",
+    icon: BookOpen,
+    allowedTools: [
+      "brainstorm",
+      "geogebra_analysis",
+      "web_search",
+      "exec",
+      "reason",
+      "paper_search",
+      "imagegen",
+      "videogen",
+    ],
+    defaultTools: [],
+  },
+  {
+    value: "solve",
+    label: "Solve",
+    description: "Work through a problem step by step with hints",
+    icon: Calculator,
+    allowedTools: ["geogebra_analysis", "web_search", "exec", "reason"],
+    defaultTools: ["reason"],
+  },
+  {
+    value: "practice",
+    label: "Practice",
+    description: "Adaptive questions, quizzes and flashcards",
+    icon: ListChecks,
+    allowedTools: ["web_search", "exec", "reason"],
+    defaultTools: [],
+  },
+  {
+    value: "plan",
+    label: "Plan",
+    description: "Turn a goal into a concrete study plan",
+    icon: Route,
+    allowedTools: ["web_search", "reason"],
+    defaultTools: [],
+  },
+  {
+    value: "research",
+    label: "Research",
+    description: "Guided reading, synthesis and source-backed answers",
+    icon: Search,
+    allowedTools: ["web_search", "paper_search", "exec", "reason"],
+    defaultTools: ["web_search", "paper_search"],
   },
   {
     value: "deep_solve",
@@ -171,6 +228,23 @@ export const CHAT_CAPABILITIES: ChatCapabilityDef[] = [
 
 /** The Mastery workspace's own action — the only one that screen runs. */
 export const MASTERY_CAPABILITY_VALUE = "mastery_path";
+
+/** Composer actions that are real turn modes and selectable in the chat UI. */
+export const TUTOR_MODE_VALUES = [
+  "explain",
+  "solve",
+  "practice",
+  "plan",
+  "research",
+] as const;
+
+const TUTOR_MODE_SET = new Set<string>(TUTOR_MODE_VALUES);
+
+/** Plain chat or one of the five tutor modes — what Chat can actually run. */
+export function isChatModeCapability(value: string | null): boolean {
+  if (!value) return true;
+  return TUTOR_MODE_SET.has(value);
+}
 
 export const VISIBLE_CHAT_CAPABILITIES = CHAT_CAPABILITIES.filter(
   (capability) =>

@@ -81,9 +81,9 @@ const GUIDES: readonly { id: StarterGroup; icon: StarterIcon }[] = [
  * requests only when chosen, and under it one line of the learner's own —
  * a single suggestion drawn from what they have been working on. Asking for
  * another generates a new one, told what was already offered. The two are kept apart because they are different
- * things: the row is a menu, the line is advice. Picking either writes the
- * request into the composer and stops there: the learner can adjust it, and
- * sending stays their decision.
+ * things: the row is a menu, the line is advice. Choosing a tab sets the
+ * turn's tutor mode; picking either request writes it into the composer and
+ * stops there: the learner can adjust it, and sending stays their decision.
  *
  * Generation, caching and staleness of the personal suggestions live on the
  * backend; this renders the result, and owns the manual way back when there
@@ -93,11 +93,17 @@ const GUIDES: readonly { id: StarterGroup; icon: StarterIcon }[] = [
  */
 export default function StarterSuggestions({
   onPick,
+  onSelectGroup,
+  supportedModes,
   disabled = false,
   workspaceId = activeWorkspaceId(),
 }: {
   /** Put this text in the composer for the learner to send. */
   onPick: (prompt: string) => void;
+  /** The tab is also a turn mode: selecting it frames the tutor's answer. */
+  onSelectGroup?: (group: StarterGroup) => void;
+  /** Only show actions whose mode the backend actually registers. Omit while the catalog is still loading. */
+  supportedModes?: readonly string[];
   disabled?: boolean;
   workspaceId?: string;
 }) {
@@ -266,7 +272,11 @@ export default function StarterSuggestions({
       </>
     );
   }
-  const guides = GUIDES.filter(entry => starterPrompts(chat, entry.id).length > 0);
+  const guides = GUIDES.filter(
+    (entry) =>
+      starterPrompts(chat, entry.id).length > 0 &&
+      (!supportedModes || supportedModes.includes(entry.id)),
+  );
   const guide = guides.find((entry) => entry.id === open);
 
   return (
@@ -290,7 +300,11 @@ export default function StarterSuggestions({
               type="button"
               aria-expanded={open === entry.id}
               aria-controls={open === entry.id ? panelId : undefined}
-              onClick={() => setOpen(open === entry.id ? null : entry.id)}
+              onClick={() => {
+                const next = open === entry.id ? null : entry.id;
+                setOpen(next);
+                if (next) onSelectGroup?.(entry.id);
+              }}
               className="dt-starter-tab"
             >
               {/* One highlight that glides to the chosen way, not one per chip. */}

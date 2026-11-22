@@ -1,10 +1,8 @@
 export {
   connectImaKnowledgeBase,
-  connectKiwix,
   connectLinkedFolder,
   connectMarginNote4Library,
   connectObsidianVault,
-  connectWeKnora,
   createKnowledgeBase,
   deleteKnowledgeBase,
   getKnowledgeUploadPolicy,
@@ -13,23 +11,14 @@ export {
   listKnowledgeBases,
   listRagProviders,
   probeImaKnowledgeBase,
-  probeKiwix,
   probeLinkedFolder,
-  probeWeKnora,
   readErrorDetail,
   reindexKnowledgeBase,
-  getReindexConfig,
-  type LightRagRebuildConfig,
   retryKnowledgeBase,
-  searchKiwixArticles,
-  importKiwixArticle,
-  listKiwixArchives,
   setDefaultKnowledgeBase,
 } from "./client";
 
 export type {
-  IndexingLLMSelection,
-  LightRagIndexingSelection,
   ImaKnowledgeBasePage,
   ImaProbe,
   KnowledgeBaseSummary,
@@ -37,5 +26,4 @@ export type {
   KnowledgeUploadPolicy,
   LinkedFolderProbe,
   RagProviderSummary,
-  WeKnoraProbe,
 } from "../model/types";

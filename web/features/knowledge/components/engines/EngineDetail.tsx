@@ -2,14 +2,7 @@
 
 import { useMemo } from "react";
 
-import {
-  ArrowLeft,
-  Database,
-  KeyRound,
-  Server,
-  Settings2,
-  Workflow,
-} from "lucide-react";
+import { ArrowLeft, Database, KeyRound, Settings2 } from "lucide-react";
 import type { RagProviderSummary } from "@/features/knowledge/api/types";
 import {
   kbDocCount,
@@ -18,35 +11,20 @@ import {
   resolveKbStatus,
   type KnowledgeBase,
 } from "@/lib/knowledge-helpers";
-import { PageIndexConfigForm } from "@/components/knowledge/PageIndexSettingsModal";
 import KnowledgeEngineIcon from "@/components/knowledge/KnowledgeEngineIcon";
-import { INSTALL_HINTS } from "./engine-constants";
-import { ModeSelector, Section, StatusBadge } from "./EngineFormPrimitives";
+import { Section, StatusBadge } from "./EngineFormPrimitives";
 import { LlamaIndexForm } from "./LlamaIndexForm";
 import { ImaForm } from "./ImaForm";
-import {
-  GraphRagForm,
-  LightRagForm,
-  LightRagModelsForm,
-  LightRagServerForm,
-} from "./GraphRagAndLightRagForms";
 import { ModelsSection } from "./EngineModelsSection";
 import { EnvRequirements } from "./EngineEnvRequirements";
 
-export {
-  LlamaIndexForm,
-  ImaForm,
-  GraphRagForm,
-  LightRagForm,
-  LightRagModelsForm,
-};
+export { LlamaIndexForm, ImaForm };
 
 export interface EngineDetailProps {
   provider: RagProviderSummary;
   kbs: KnowledgeBase[];
   onBack: () => void;
   onOpenKb: (name: string) => void;
-  onSelectMode: (providerId: string, mode: string) => Promise<void> | void;
   /** Called after a config change so the parent can refresh provider state. */
   onChanged: () => void;
   onError: (message: string) => void;
@@ -57,14 +35,10 @@ export default function EngineDetail({
   kbs,
   onBack,
   onOpenKb,
-  onSelectMode,
   onChanged,
   onError,
 }: EngineDetailProps) {
-  
   const status = providerConnectionStatus(provider);
-  const installHint = INSTALL_HINTS[provider.id];
-  const hasModes = (provider.modes?.length ?? 0) > 0;
 
   const engineKbs = useMemo(
     () => kbs.filter((kb) => kbProvider(kb) === provider.id),
@@ -107,52 +81,14 @@ export default function EngineDetail({
             Auto-opens when the engine isn't ready so the gap is obvious. */}
         <EnvRequirements
           providerId={provider.id}
-          installHint={installHint}
           defaultOpen={status !== "ready"}
           onError={onError}
         />
-
-        {provider.id === "lightrag-server" && (
-          <Section label={"Connection defaults"} icon={Server}>
-            <LightRagServerForm onChanged={onChanged} onError={onError} />
-          </Section>
-        )}
-
-        {/* Retrieval modes (graphrag / lightrag) */}
-        {hasModes && (
-          <Section label={"Retrieval mode"} icon={Workflow}>
-            <p className="-mt-1 mb-3 text-[11.5px] leading-snug text-[var(--muted-foreground)]">
-              {"The default for new searches. A knowledge base can still override it per-KB."}
-            </p>
-            <ModeSelector provider={provider} onSelectMode={onSelectMode} />
-          </Section>
-        )}
 
         {/* LlamaIndex tuning */}
         {provider.id === "llamaindex" && (
           <Section label={"Retrieval & chunking"} icon={Settings2}>
             <LlamaIndexForm onChanged={onChanged} onError={onError} />
-          </Section>
-        )}
-
-        {/* GraphRAG query knobs */}
-        {provider.id === "graphrag" && (
-          <Section label={"Retrieval parameters"} icon={Settings2}>
-            <GraphRagForm onChanged={onChanged} onError={onError} />
-          </Section>
-        )}
-
-        {/* LightRAG query knobs */}
-        {provider.id === "lightrag" && (
-          <Section label={"Retrieval parameters"} icon={Settings2}>
-            <LightRagForm onChanged={onChanged} onError={onError} />
-          </Section>
-        )}
-
-        {/* PageIndex credentials */}
-        {provider.id === "pageindex" && (
-          <Section label={"Credentials"} icon={KeyRound}>
-            <PageIndexConfigForm onChanged={onChanged} onError={onError} />
           </Section>
         )}
 
@@ -164,11 +100,7 @@ export default function EngineDetail({
         )}
 
         {/* Models — in-place pickers for the kinds this engine needs */}
-        <ModelsSection
-          providerId={provider.id}
-          onChanged={onChanged}
-          onError={onError}
-        />
+        <ModelsSection providerId={provider.id} onError={onError} />
 
         {/* Knowledge bases on this engine */}
         <Section

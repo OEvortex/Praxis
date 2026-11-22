@@ -191,7 +191,6 @@ export async function createKnowledgeBase(payload: {
   provider: string;
   files: File[];
   storageWorkspaceId?: string;
-  pageindexMode?: "flash" | "standard";
   searchMode?: string;
   embeddingModel?: EmbeddingModelSelection;
 }): Promise<KnowledgeTaskResponse> {
@@ -200,9 +199,6 @@ export async function createKnowledgeBase(payload: {
   form.append("rag_provider", payload.provider);
   if (payload.storageWorkspaceId !== undefined)
     form.append("storage_workspace_id", payload.storageWorkspaceId);
-  if (payload.pageindexMode) {
-    form.append("pageindex_mode", payload.pageindexMode);
-  }
   if (payload.searchMode) form.append("search_mode", payload.searchMode);
   if (payload.embeddingModel)
     form.append("embedding_model", JSON.stringify(payload.embeddingModel));
@@ -318,44 +314,14 @@ export async function setDefaultKnowledgeBase(name: string): Promise<void> {
   invalidateKnowledgeCaches();
 }
 
-export interface LightRagRebuildConfig {
-  fingerprint: string;
-  indexing_policy: import("@/lib/knowledge-helpers").LightRagIndexingPolicy;
-  embedding: { model: string; dimension: number };
-  embedding_selection?: EmbeddingModelSelection | null;
-}
-
-export async function getReindexConfig(
-  name: string,
-  embeddingModel?: EmbeddingModelSelection,
-): Promise<LightRagRebuildConfig> {
-  const query = embeddingModel
-    ? `?${new URLSearchParams({ embedding_model: JSON.stringify(embeddingModel) })}`
-    : "";
-  const res = await apiFetch(
-    apiUrl(
-      `/api/knowledge-bases/${encodeURIComponent(name)}/reindex-config${query}`,
-    ),
-    { cache: "no-store" },
-  );
-  if (!res.ok)
-    throw new Error(
-      await readErrorDetail(res, "Failed to load rebuild configuration"),
-    );
-  return (await res.json()) as LightRagRebuildConfig;
-}
-
 export async function reindexKnowledgeBase(
   name: string,
-  configFingerprint?: string,
   embeddingModel?: EmbeddingModelSelection,
 ): Promise<KnowledgeTaskResponse> {
   const request: RequestInit = { method: "POST" };
-  if (configFingerprint || embeddingModel) {
+  if (embeddingModel) {
     const form = new FormData();
-    if (configFingerprint) form.append("config_fingerprint", configFingerprint);
-    if (embeddingModel)
-      form.append("embedding_model", JSON.stringify(embeddingModel));
+    form.append("embedding_model", JSON.stringify(embeddingModel));
     request.body = form;
   }
   const res = await apiFetch(

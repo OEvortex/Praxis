@@ -117,6 +117,19 @@ test("home capability menu uses the curated order and workspace boundaries", () 
   );
 });
 
+test("the registered chat and tutor modes appear in the home menu in order", () => {
+  const merged = mergeCapabilityPresentations(
+    parseCapabilityCatalogPayload({
+      capabilities: ["research", "chat", "explain", "plan", "solve", "practice"],
+    }),
+  );
+
+  assert.deepEqual(
+    visibleCapabilityPresentations(merged).map((capability) => capability.value),
+    ["", "explain", "solve", "practice", "plan", "research"],
+  );
+});
+
 test("catalog merging returns isolated turn presentation objects", () => {
   const descriptors = parseCapabilityCatalogPayload({ capabilities: ["chat"] });
   const first = mergeCapabilityPresentations(descriptors);

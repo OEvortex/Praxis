@@ -7,10 +7,8 @@ import {
   kbCanReindex,
   kbDetailSections,
   kbProvider,
-  providerUsesEmbeddingMetadata,
   resolveKnowledgeIndexFailure,
   taskFailureMessage,
-  uploadPolicyForProvider,
   validateFiles,
   providerConnectionStatus,
   type KnowledgeBase,
@@ -21,28 +19,6 @@ test("knowledge upload extension matching supports compound Docling suffixes", (
   assert.equal(getFileExtension("BOOK.TAR.GZ", allowed), ".tar.gz");
   assert.equal(getFileExtension("document.DCLG.XML", allowed), ".dclg.xml");
   assert.equal(getFileExtension("plain.XML", allowed), ".xml");
-});
-
-test("PageIndex providers do not expose embedding metadata", () => {
-  assert.equal(providerUsesEmbeddingMetadata("pageindex"), false);
-  assert.equal(providerUsesEmbeddingMetadata("pageindex-oss"), false);
-  assert.equal(providerUsesEmbeddingMetadata("llamaindex"), true);
-  assert.equal(providerUsesEmbeddingMetadata("graphrag"), true);
-});
-
-test("PageIndex OSS upload policy accepts PDF only", () => {
-  const base = {
-    extensions: [".pdf", ".pptx", ".txt"],
-    accept: ".pdf,.pptx,.txt",
-    max_file_size_bytes: 100,
-  };
-  assert.deepEqual(uploadPolicyForProvider(base, "pageindex-oss"), {
-    extensions: [".pdf"],
-    accept: ".pdf",
-    max_file_size_bytes: 100,
-    allow_any_extension: false,
-  });
-  assert.equal(uploadPolicyForProvider(base, "llamaindex"), base);
 });
 
 test("unbounded parser policy delegates unknown extensions", () => {
@@ -117,13 +93,13 @@ test("resolveKnowledgeIndexFailure preserves actionable backend metadata", () =>
         progress: {
           stage: "error",
           error: "Choose a chat model that supports structured output.",
-          error_code: "graphrag_model_incompatible",
+          error_code: "indexing_model_unavailable",
           retryable: false,
         },
       }),
     ),
     {
-      code: "graphrag_model_incompatible",
+      code: "indexing_model_unavailable",
       message: "Choose a chat model that supports structured output.",
       retryable: false,
       requiresModelChange: true,
@@ -138,7 +114,7 @@ test("resolveKnowledgeIndexFailure distinguishes configuration from transient fa
       status: "error",
       progress: {
         stage: "error",
-        error_code: "graphrag_model_authentication_failed",
+        error_code: "reindex_required",
         retryable: false,
       },
     }),
@@ -148,7 +124,7 @@ test("resolveKnowledgeIndexFailure distinguishes configuration from transient fa
       status: "error",
       progress: {
         stage: "error",
-        error_code: "graphrag_model_rate_limited",
+        error_code: "rate_limit_exceeded",
         retryable: true,
       },
     }),
@@ -161,34 +137,18 @@ test("resolveKnowledgeIndexFailure distinguishes configuration from transient fa
   assert.equal(rateLimit?.retryable, true);
 });
 
-test("resolveKnowledgeIndexFailure routes embedding configuration failures to embedding settings", () => {
-  const endpointFailure = resolveKnowledgeIndexFailure(
-    kb({
-      status: "error",
-      progress: {
-        stage: "error",
-        error_code: "graphrag_embedding_endpoint_failed",
-        retryable: false,
-      },
-    }),
-  );
-
-  assert.equal(endpointFailure?.requiresModelChange, true);
-  assert.equal(endpointFailure?.settingsHref, "/settings#embedding");
-});
-
 test("taskFailureMessage keeps trace details out of the primary error", () => {
   assert.equal(
     taskFailureMessage({
-      detail: "GraphRAG preflight failed.",
+      detail: "Index preflight failed.",
       details: "Traceback: sensitive internal diagnostics",
     }),
-    "GraphRAG preflight failed.",
+    "Index preflight failed.",
   );
 });
 
 test("engine status follows the credential and install state", () => {
-  // IMA holds one account credential pair, like PageIndex.
+  // IMA holds one account credential pair for all of its knowledge bases.
   assert.equal(
     providerConnectionStatus({
       id: "ima",
@@ -211,19 +171,19 @@ test("engine status follows the credential and install state", () => {
   );
   assert.equal(
     providerConnectionStatus({
-      id: "pageindex",
+      id: "future-engine",
       configured: false,
       requires_api_key: true,
     }),
     "needs_key",
   );
   assert.equal(
-    providerConnectionStatus({ id: "graphrag", configured: false }),
+    providerConnectionStatus({ id: "future-engine", configured: false }),
     "unavailable",
   );
   assert.equal(
     providerConnectionStatus({
-      id: "lightrag-server",
+      id: "future-engine",
       configured: true,
       setup_required: true,
     }),

@@ -36,6 +36,12 @@ import {
   isConnectedKb,
   normalizeProviderName,
 } from "../services/kb_connectors/types.js";
+import {
+  TUTOR_MODE_ALLOWED_TOOLS,
+  TUTOR_MODES,
+  is_tutor_mode,
+} from "../capabilities/tutor_modes/capability.js";
+import { TUTOR_MODE_TOOL_NAMES } from "../capabilities/tutor_modes/tools.js";
 
 export const handlersRouter = new Hono();
 
@@ -399,29 +405,53 @@ handlersRouter.get(
 // -- capabilities ---------------------------------------------------------------
 
 // GET /api/capabilities/registered
+//
+// Chat plus the five composer tutor modes. Their presentations live in the
+// web capability catalog; this endpoint is what makes them selectable in the
+// Mode tray — the frontend builds its menu from the registered descriptors.
+const TUTOR_MODE_DESCRIPTIONS: Record<string, string> = {
+  explain: "Build understanding with examples and a misconception check",
+  solve: "Work through a problem step by step with hints",
+  practice: "Adaptive questions, quizzes and flashcards",
+  plan: "Turn a goal into a concrete study plan",
+  research: "Guided reading, synthesis and source-backed answers",
+};
+
 handlersRouter.get("/api/capabilities/registered", (c) =>
   c.json({
-    capabilities: [
-      {
-        id: "chat",
-        kind: "capability",
-        available: true,
-        manifest: {
-          name: "chat",
-          description: "General tutoring conversation",
-          version: "1.0.0",
-        },
-        config_schema: { type: "object", properties: {} },
+    capabilities: ["chat", ...TUTOR_MODES].map((id) => ({
+      id,
+      kind: "capability",
+      available: true,
+      manifest: {
+        name: id === "chat" ? "chat" : id.charAt(0).toUpperCase() + id.slice(1),
+        description:
+          id === "chat"
+            ? "General tutoring conversation"
+            : (TUTOR_MODE_DESCRIPTIONS[id] ?? "Tutor mode"),
+        version: "1.0.0",
+        // Mirrors DeepTutor's module manifests: stages and tools_used tell the
+        // client which tools the mode owns and may reach.
+        stages: ["responding"],
+        tools_used: is_tutor_mode(id)
+          ? [
+              TUTOR_MODE_TOOL_NAMES[id],
+              ...TUTOR_MODE_ALLOWED_TOOLS[id],
+            ]
+          : [],
       },
-    ],
+      config_schema: { type: "object", properties: {} },
+    })),
   }),
 );
 
 // -- settings -------------------------------------------------------------------
 
 async function _savedSelection(): Promise<AnyRecord | null> {
-  // Active selection from Praxis's own catalog (legacy file as fallback).
-  return (await providerConfig.get_selection(_settings())) as AnyRecord | null;
+  // Same resolution the turn runtime uses: saved selection, or the first
+  // configured model when the learner never explicitly picked one. Keeping
+  // this shared prevents the composer showing a default the agent can't run.
+  return (await providerConfig.active_selection(_settings())) as AnyRecord | null;
 }
 
 // GET /api/settings/llm-options

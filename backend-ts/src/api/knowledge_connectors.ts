@@ -12,12 +12,7 @@ import { KnowledgeBaseStore } from "../store/kb_store.js";
 
 import {
   DEFAULT_PROVIDER,
-  GRAPHRAG_PROVIDER,
   IMA_PROVIDER,
-  KIWIX_PROVIDER,
-  LIGHTRAG_PROVIDER,
-  LIGHTRAG_SERVER_PROVIDER,
-  WEKNORA_PROVIDER,
   isConnectedKb,
   normalizeProviderName,
   type AnyRecord,
@@ -53,19 +48,6 @@ import {
   pageLimit,
   probeKnowledgeBase,
 } from "../services/kb_connectors/ima.js";
-import {
-  KiwixClient,
-  KiwixError,
-  normalizeKiwixBaseUrl,
-  validateZimName,
-} from "../services/kb_connectors/kiwix.js";
-import {
-  LIGHTRAG_SERVER_SUPPORTED_MODES,
-  loadLightRagServerSettings,
-  normalizeLightRagServerBaseUrl,
-  probeServer,
-} from "../services/kb_connectors/lightrag_server.js";
-import { probeWeKnora } from "../services/kb_connectors/weknora.js";
 import {
   assertWritableKb,
   createKbFolder,
@@ -123,7 +105,6 @@ function connectorError(c: Context, exc: unknown, fallback = "Internal error"): 
     if (lower.includes("already exists")) return httpError(c, 400, msg);
     return httpError(c, 400, msg);
   }
-  if (exc instanceof KiwixError) return httpError(c, 400, msg);
   return httpError(c, 500, msg || fallback);
 }
 
@@ -266,128 +247,7 @@ knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-folder", async (c) 
   }
 });
 
-// POST /knowledge-bases/probe-lightrag-server
-knowledgeConnectorsRouter.post("/api/knowledge-bases/probe-lightrag-server", async (c) => {
-  const b = await body(c);
-  const serverUrl = str(b["server_url"]).trim();
-  if (!serverUrl) return httpError(c, 400, "server_url is required.");
-  let apiKey = str(b["api_key"]);
-  if (b["use_saved_api_key"] === true && !apiKey) {
-    const settings = getSettings();
-    const defaults = loadLightRagServerSettings(settings);
-    if (
-      normalizeLightRagServerBaseUrl(defaults["server_url"]) ===
-      normalizeLightRagServerBaseUrl(serverUrl)
-    ) {
-      apiKey = str(defaults["api_key"]);
-    }
-  }
-  const result = await probeServer(serverUrl, apiKey);
-  return c.json(result);
-});
-
-// POST /knowledge-bases/connect-lightrag-server
-knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-lightrag-server", async (c) => {
-  const b = await body(c);
-  const name = str(b["name"]).trim();
-  const serverUrl = str(b["server_url"]).trim();
-  if (!name || !serverUrl) {
-    return httpError(c, 400, "Both name and server_url are required.");
-  }
-  const settings = getSettings();
-  let apiKey = str(b["api_key"]);
-  if (!apiKey) {
-    const defaults = loadLightRagServerSettings(settings);
-    if (
-      normalizeLightRagServerBaseUrl(defaults["server_url"]) ===
-      normalizeLightRagServerBaseUrl(serverUrl)
-    ) {
-      apiKey = str(defaults["api_key"]);
-    }
-  }
-  const result = await probeServer(serverUrl, apiKey);
-  if (!result.ok) {
-    return httpError(c, 400, result.error || "Could not connect to the LightRAG server.");
-  }
-  let searchMode = str(b["search_mode"]).trim().toLowerCase();
-  if (searchMode && !LIGHTRAG_SERVER_SUPPORTED_MODES.includes(searchMode)) searchMode = "";
-  try {
-    const safe = assertNameAvailable(settings, name);
-    const entry = registerKbEntry(settings, safe, {
-      path: safe,
-      type: "lightrag_server",
-      rag_provider: LIGHTRAG_SERVER_PROVIDER,
-      server_url: result.base_url,
-      api_key: apiKey.trim(),
-      description: `LightRAG server: ${safe}`,
-      status: "ready",
-      needs_reindex: false,
-      ...(searchMode ? { search_mode: searchMode } : {}),
-    });
-    return c.json({
-      status: "connected",
-      id: safe,
-      name: safe,
-      server_url: entry["server_url"],
-      rag_provider: entry["rag_provider"],
-    });
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
-// POST /knowledge-bases/probe-weknora
-knowledgeConnectorsRouter.post("/api/knowledge-bases/probe-weknora", async (c) => {
-  const b = await body(c);
-  const serverUrl = str(b["server_url"]).trim();
-  const kbId = str(b["knowledge_base_id"]).trim();
-  if (!serverUrl || !kbId) {
-    return httpError(c, 400, "Both server_url and knowledge_base_id are required.");
-  }
-  const result = await probeWeKnora(serverUrl, str(b["api_key"]), kbId);
-  return c.json(result);
-});
-
-// POST /knowledge-bases/connect-weknora
-knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-weknora", async (c) => {
-  const b = await body(c);
-  const name = str(b["name"]).trim();
-  const serverUrl = str(b["server_url"]).trim();
-  const kbId = str(b["knowledge_base_id"]).trim();
-  if (!name || !serverUrl || !kbId) {
-    return httpError(c, 400, "name, server_url, and knowledge_base_id are required.");
-  }
-  const result = await probeWeKnora(serverUrl, str(b["api_key"]), kbId);
-  if (!result.ok) {
-    return httpError(c, 400, result.error || "Could not connect to the WeKnora knowledge base.");
-  }
-  try {
-    const settings = getSettings();
-    const safe = assertNameAvailable(settings, name);
-    const entry = registerKbEntry(settings, safe, {
-      path: safe,
-      type: "weknora",
-      rag_provider: WEKNORA_PROVIDER,
-      server_url: result.base_url,
-      api_key: str(b["api_key"]).trim(),
-      knowledge_base_id: result.knowledge_base_id,
-      description: `WeKnora knowledge base: ${safe}`,
-      status: "ready",
-      needs_reindex: false,
-    });
-    return c.json({
-      status: "connected",
-      id: safe,
-      name: safe,
-      server_url: entry["server_url"],
-      knowledge_base_id: entry["knowledge_base_id"],
-      rag_provider: entry["rag_provider"],
-    });
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
+// ===========================================================================
 // -- IMA ---------------------------------------------------------------------
 
 function resolveImaCredentials(settings: Settings, clientId: string, apiKey: string) {
@@ -463,7 +323,6 @@ knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-ima", async (c) => 
       path: safe,
       type: "ima",
       rag_provider: IMA_PROVIDER,
-      // Credentials omitted from the request stay account-level (not copied).
       ...(overrides.client_id
         ? { client_id: overrides.client_id, api_key: overrides.api_key }
         : {}),
@@ -485,95 +344,6 @@ knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-ima", async (c) => 
   }
 });
 
-// -- KiWix ----------------------------------------------------------------------
-
-// GET /knowledge-bases/kiwix-catalog
-knowledgeConnectorsRouter.get("/api/knowledge-bases/kiwix-catalog", async (c) => {
-  const serverUrl = (c.req.query("server_url") ?? "").trim();
-  const q = (c.req.query("q") ?? "").slice(0, 100);
-  if (!serverUrl) return httpError(c, 400, "server_url is required.");
-  try {
-    const archives = await KiwixClient.listArchives(serverUrl, q);
-    return c.json({
-      archives: archives.map((a) => ({ zim_name: a.zim_name, title: a.title })),
-    });
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
-// POST /knowledge-bases/probe-kiwix
-knowledgeConnectorsRouter.post("/api/knowledge-bases/probe-kiwix", async (c) => {
-  const b = await body(c);
-  try {
-    const client = new KiwixClient(str(b["server_url"]), str(b["zim_name"]));
-    const title = await client.probe();
-    return c.json({ ok: true, zim_name: client.zimName, title });
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
-// POST /knowledge-bases/connect-kiwix
-knowledgeConnectorsRouter.post("/api/knowledge-bases/connect-kiwix", async (c) => {
-  const b = await body(c);
-  const name = str(b["name"]).trim();
-  try {
-    const settings = getSettings();
-    const client = new KiwixClient(str(b["server_url"]), str(b["zim_name"]));
-    const title = await client.probe();
-    const safe = assertNameAvailable(settings, name);
-    const entry = registerKbEntry(settings, safe, {
-      path: safe,
-      type: "kiwix",
-      rag_provider: KIWIX_PROVIDER,
-      server_url: client.baseUrl,
-      zim_name: client.zimName,
-      zim_title: title.slice(0, 300),
-      description: `Kiwix archive: ${title || client.zimName}`,
-      status: "ready",
-      needs_reindex: false,
-    });
-    return c.json({
-      status: "connected",
-      id: safe,
-      name,
-      zim_name: entry["zim_name"],
-      title: entry["zim_title"],
-      rag_provider: entry["rag_provider"],
-    });
-  } catch (exc) {
-    return connectorError(c, exc);
-  }
-});
-
-// GET /knowledge-bases/kiwix-articles
-knowledgeConnectorsRouter.get("/api/knowledge-bases/kiwix-articles", async (c) => {
-  const kbRef = (c.req.query("kb_ref") ?? "").trim();
-  const q = (c.req.query("q") ?? "").trim();
-  if (!kbRef || !q) return httpError(c, 400, "kb_ref and q are required.");
-  try {
-    const settings = getSettings();
-    const entry = getKbEntry(settings, kbRef);
-    if (!entry || entry["type"] !== "kiwix") {
-      return httpError(c, 404, "Kiwix knowledge base not found.");
-    }
-    const client = new KiwixClient(str(entry["server_url"]), str(entry["zim_name"]));
-    const results = await client.search(q, 10);
-    return c.json({
-      articles: results.map(({ hit, content }) => ({
-        title: hit.title,
-        article_path: hit.article_path,
-        excerpt: String(content ?? "").slice(0, 500),
-      })),
-    });
-  } catch (exc) {
-    if (exc instanceof KiwixError) return httpError(c, 502, exc.message || "Kiwix search failed.");
-    return connectorError(c, exc);
-  }
-});
-
-// ===========================================================================
 // Supported file types / embedding usage / default KB
 // ===========================================================================
 

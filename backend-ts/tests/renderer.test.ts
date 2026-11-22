@@ -54,7 +54,7 @@ describe("response-format prompt policy", () => {
   it("states when plain Markdown is the right answer", () => {
     expect(systemPrompt).toContain("ordinary Markdown with no program at all");
     expect(spec).toContain("plain Markdown answer is a complete, valid reply");
-    expect(spec).toContain("When a reply would be one or two sentences");
-    expect(spec).toContain("Example 5: A short factual answer needs no interface");
+    expect(spec).toContain("One-or-two-sentence answers go out as plain Markdown");
+    expect(spec).toContain("needs no interface");
   });
 });

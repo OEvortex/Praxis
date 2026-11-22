@@ -7,7 +7,6 @@ import type { EmbeddingModelSelection } from "@/features/knowledge/model/types";
 
 import { useState } from "react";
 
-import LightRagEmbeddingWarning from "./LightRagEmbeddingWarning";
 import {
   ArrowLeft,
   Database,
@@ -24,7 +23,6 @@ import {
   Upload,
 } from "lucide-react";
 import type {
-  IndexingLLMSelection,
   LinkedFolderInfo,
   KnowledgeUploadPolicy,
   SyncFolderResponse,
@@ -34,7 +32,6 @@ import {
   isMarginNoteKb,
   kbProvider,
   kbDetailSections,
-  providerUsesEmbeddingMetadata,
   resolveKbStatus,
   type KbDetailSection,
   type KnowledgeBase,
@@ -52,7 +49,6 @@ import KbGitHubSourcesSection from "./KbGitHubSourcesSection";
 import KbLinkedFoldersSection from "./KbLinkedFoldersSection";
 import KbWebSourcesSection from "./KbWebSourcesSection";
 import KbMarginNoteDevicesSection from "./KbMarginNoteDevicesSection";
-import KbKiwixArticlesSection from "./KbKiwixArticlesSection";
 import KnowledgeEngineIcon, {
   knowledgeSourceIconId,
 } from "./KnowledgeEngineIcon";
@@ -79,7 +75,6 @@ interface KnowledgeBaseDetailProps {
   ) => Promise<SyncFolderResponse>;
   onReindex: (
     kbName: string,
-    configFingerprint?: string,
     embeddingModel?: EmbeddingModelSelection,
   ) => Promise<void>;
   onRetry: (kbName: string) => Promise<void>;
@@ -101,7 +96,6 @@ const SECTION_CHROME: Record<
   web: { label: "Web", Icon: Globe },
   versions: { label: "Index versions", Icon: Layers },
   devices: { label: "Devices", Icon: Smartphone },
-  kiwix: { label: "Articles", Icon: FileText },
   settings: { label: "Settings", Icon: SettingsIcon },
 };
 
@@ -159,13 +153,7 @@ export default function KnowledgeBaseDetail({
   const isMarginNote = isMarginNoteKb(kb);
   // A MarginNote library records no engine and no embedding: defaulting to
   // "llamaindex · Default embedding" here described a pipeline it never runs.
-  const provider = kb.metadata?.type === "kiwix"
-    ? "Kiwix / ZIM"
-    : isMarginNote
-    ? "MarginNote 4"
-    : kb.statistics?.rag_provider || "llamaindex";
-  const pageIndexProvider =
-    isMarginNote || kb.metadata?.type === "kiwix" || !providerUsesEmbeddingMetadata(provider);
+  const provider = isMarginNote ? "MarginNote 4" : kbProvider(kb);
   const embeddingLabel = meta.embedding_model
     ? typeof meta.embedding_dim === "number"
       ? `${meta.embedding_model} · ${meta.embedding_dim}${"d"}`
@@ -180,14 +168,10 @@ export default function KnowledgeBaseDetail({
     task.executing === true;
   const status = resolveKbStatus(kb);
   // Nothing to re-run: its content arrives from the add-on, not an index.
-  const canRetry = status === "error" && !kb.read_only && !isMarginNote && kb.metadata?.type !== "kiwix";
+  const canRetry = status === "error" && !kb.read_only && !isMarginNote;
 
   const handleRetry = async () => {
     if (!canRetry || retrySubmitting || isReindexingLocally) return;
-    if (kbProvider(kb) === "lightrag") {
-      setSection("versions");
-      return;
-    }
     setRetrySubmitting(true);
     try {
       await onRetry(knowledgeBaseRef(kb));
@@ -250,13 +234,12 @@ export default function KnowledgeBaseDetail({
               </div>
               <p className="mt-1 text-[12px] text-[var(--muted-foreground)]">
                 {provider}
-                {!pageIndexProvider ? ` · ${embeddingLabel}` : ""} ·{" "}
+                {!isMarginNote ? ` · ${embeddingLabel}` : ""} ·{" "}
                 {"Updated"} {updatedLabel}
                 {lastIndexedLabel
                   ? ` · ${"Last indexed"} ${lastIndexedLabel}`
                   : ""}
               </p>
-              <LightRagEmbeddingWarning kb={kb} />
             </div>
           </div>
           {canRetry && (
@@ -274,7 +257,7 @@ export default function KnowledgeBaseDetail({
                 )}
                 {retrySubmitting || isReindexingLocally
                   ? "Retrying…"
-                  : (kbProvider(kb) === "lightrag" ? "Review rebuild" : "Retry indexing")}
+                  : "Retry indexing"}
               </button>
             </Tooltip>
           )}
@@ -344,18 +327,12 @@ export default function KnowledgeBaseDetail({
                 <KbIndexVersionsSection
                   kb={kb}
                   task={task}
-                  onReindex={(configFingerprint, embeddingModel) =>
+                  onReindex={(embeddingModel) =>
                     kb.read_only
                       ? Promise.resolve()
-                      : status === "error" &&
-                          kbProvider(kb) !== "lightrag" &&
-                          !embeddingModel
+                      : status === "error" && !embeddingModel
                         ? handleRetry()
-                        : onReindex(
-                            knowledgeBaseRef(kb),
-                            configFingerprint,
-                            embeddingModel,
-                          )
+                        : onReindex(knowledgeBaseRef(kb), embeddingModel)
                   }
                 />
               )}
@@ -370,9 +347,6 @@ export default function KnowledgeBaseDetail({
                   key={knowledgeBaseRef(kb)}
                   kb={kb}
                 />
-              )}
-              {activeSection === "kiwix" && (
-                <KbKiwixArticlesSection key={knowledgeBaseRef(kb)} kb={kb} />
               )}
               {activeSection === "settings" && (
                 <KbSettingsSection

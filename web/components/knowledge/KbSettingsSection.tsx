@@ -13,7 +13,6 @@ import {
 import {
   formatKnowledgeTimestamp,
   isMarginNoteKb,
-  providerUsesEmbeddingMetadata,
   type KnowledgeBase,
 } from "@/lib/knowledge-helpers";
 
@@ -78,8 +77,6 @@ export default function KbSettingsSection({
   const provider = isMarginNote
     ? "MarginNote 4"
     : kb.statistics?.rag_provider || "llamaindex";
-  const pageIndexProvider =
-    isMarginNote || !providerUsesEmbeddingMetadata(provider);
   const embeddingLabel = meta.embedding_model
     ? typeof meta.embedding_dim === "number"
       ? `${meta.embedding_model} · ${meta.embedding_dim}${"d"}`
@@ -103,7 +100,7 @@ export default function KbSettingsSection({
 
         <dl className="grid gap-3 rounded-lg border border-[var(--border)] bg-[var(--background)] p-3 sm:grid-cols-2">
           <Field label={"RAG provider"}>{provider}</Field>
-          {!pageIndexProvider && (
+          {!isMarginNote && (
             <Field label={"Embedding"}>{embeddingLabel}</Field>
           )}
           <Field label={"Created"}>{created || "—"}</Field>

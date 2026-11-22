@@ -11,14 +11,12 @@ import { useParams, useRouter, useSearchParams } from "@/shared/router/navigatio
 
 import { Loader2 } from "lucide-react";
 import { useKnowledgeBases } from "@/hooks/useKnowledgeBases";
-import { updateRagProviderMode } from "@/features/knowledge/api/engines";
 import KnowledgeHome, { type KnowledgeHomeSection } from "./KnowledgeHome";
 import {
   decodeResourceSegment,
   knowledgeBaseRoute,
 } from "@/lib/resource-routes";
 import type {
-  IndexingLLMSelection,
   LinkedFolderInfo,
   SyncFolderResponse,
 } from "@/features/knowledge/model/types";
@@ -45,7 +43,6 @@ const EngineDetail = dynamic(
   },
 );
 const CreateKbModal = dynamic(() => import("./CreateKbModal"));
-const ConnectKiwixModal = dynamic(() => import("./ConnectKiwixModal"));
 
 export default function KnowledgePage() {
   
@@ -81,11 +78,8 @@ export default function KnowledgePage() {
     linkFolder,
     unlinkFolder,
     syncLinkedFolder,
-    connectLightRagServer,
-    connectWeKnora,
     connectMarginNote4,
     connectIma,
-    connectKiwix,
   } = useKnowledgeBases();
 
   // Connected subagents are stored as ``type: subagent`` KBs so the chat
@@ -105,7 +99,6 @@ export default function KnowledgePage() {
   const [homeSection, setHomeSection] =
     useState<KnowledgeHomeSection>(initialHomeSection);
   const [createOpen, setCreateOpen] = useState(false);
-  const [kiwixOpen, setKiwixOpen] = useState(false);
   const [createPreset, setCreatePreset] = useState<{
     mode: "new" | "link";
     source?: string;
@@ -115,11 +108,7 @@ export default function KnowledgePage() {
     setCreatePreset(null);
     setCreateOpen(true);
   }, []);
-  const openSource = useCallback((source: "obsidian" | "marginnote4" | "kiwix") => {
-    if (source === "kiwix") {
-      setKiwixOpen(true);
-      return;
-    }
+  const openSource = useCallback((source: "obsidian" | "marginnote4") => {
     setCreatePreset({ mode: "link", source });
     setCreateOpen(true);
   }, []);
@@ -239,7 +228,6 @@ export default function KnowledgePage() {
       provider: string;
       files: File[];
       storageWorkspaceId?: string;
-      pageindexMode?: "flash" | "standard";
       searchMode?: string;
     }) => {
       try {
@@ -353,13 +341,9 @@ export default function KnowledgePage() {
   );
 
   const handleReindex = useCallback(
-    async (
-      kbName: string,
-      configFingerprint?: string,
-      embeddingModel?: EmbeddingModelSelection,
-    ) => {
+    async (kbName: string, embeddingModel?: EmbeddingModelSelection) => {
       try {
-        await reindex(kbName, configFingerprint, embeddingModel);
+        await reindex(kbName, embeddingModel);
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
         throw err;
@@ -377,18 +361,6 @@ export default function KnowledgePage() {
       }
     },
     [retry, setError],
-  );
-
-  const handleSelectMode = useCallback(
-    async (id: string, mode: string) => {
-      try {
-        await updateRagProviderMode(id, mode);
-        await refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    },
-    [refresh, setError],
   );
 
   return (
@@ -441,7 +413,6 @@ export default function KnowledgePage() {
                 setView("home");
               }}
               onOpenKb={openKb}
-              onSelectMode={handleSelectMode}
               onChanged={() => void refresh({ force: true })}
               onError={(message) => setError(message)}
             />
@@ -498,8 +469,6 @@ export default function KnowledgePage() {
           onCreate={handleCreate}
           onConnectLinkedFolder={connectLinkedFolder}
           onConnectObsidian={connectObsidian}
-          onConnectLightRagServer={connectLightRagServer}
-          onConnectWeKnora={connectWeKnora}
           onConnectMarginNote4={connectMarginNote4}
           onConnectIma={connectIma}
           initialMode={createPreset?.mode}
@@ -507,15 +476,6 @@ export default function KnowledgePage() {
           onConfigureProvider={(providerId) => {
             setCreateOpen(false);
             openEngine(providerId);
-          }}
-        />
-      ) : null}
-      {kiwixOpen ? (
-        <ConnectKiwixModal
-          onClose={() => setKiwixOpen(false)}
-          onConnect={async (params) => {
-            await connectKiwix(params);
-            openKb(`account:kb:${params.name}`);
           }}
         />
       ) : null}

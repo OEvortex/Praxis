@@ -6,9 +6,6 @@ import { homedir } from "node:os";
 import { inspectKbVersions } from "./index_probe.js";
 import {
   DEFAULT_PROVIDER,
-  GRAPHRAG_PROVIDER,
-  LIGHTRAG_PROVIDER,
-  PAGEINDEX_PROVIDER,
   normalizeProviderName,
   type AnyRecord,
 } from "./types.js";
@@ -16,11 +13,7 @@ import { collectSupportedFiles } from "./file_types.js";
 import { createHash } from "node:crypto";
 
 export const LINK_ROOTS_ENV = "DEEPTUTOR_LINKED_FOLDER_ROOTS";
-export const LINKABLE_PROVIDERS = new Set([
-  DEFAULT_PROVIDER,
-  GRAPHRAG_PROVIDER,
-  LIGHTRAG_PROVIDER,
-]);
+export const LINKABLE_PROVIDERS = new Set([DEFAULT_PROVIDER]);
 
 export class LinkedKbError extends Error {}
 
@@ -141,12 +134,6 @@ export function probeLinkedFolder(
     error: null,
   };
 
-  if (resolved === PAGEINDEX_PROVIDER) {
-    result.error =
-      "PageIndex indexes live in the cloud, not in a local folder, so they " +
-      "cannot be linked. Create a PageIndex knowledge base instead.";
-    return result;
-  }
   if (!LINKABLE_PROVIDERS.has(resolved)) {
     result.error = `Engine '${resolved}' does not support linking an existing folder.`;
     return result;

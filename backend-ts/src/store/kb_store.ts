@@ -790,6 +790,34 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+// Safe scalar/metadata fields mirrored into list() responses — the same
+// allowlist the KB detail endpoint uses, minus secrets like api_key.
+const KB_LIST_METADATA_KEYS = [
+  "description",
+  "rag_provider",
+  "needs_reindex",
+  "last_indexed_at",
+  "last_indexed_action",
+  "type",
+  "vault_path",
+  "external_path",
+  "db_path",
+  "server_url",
+  "zim_name",
+  "zim_title",
+  "knowledge_base_id",
+  "agent_kind",
+  "cwd",
+  "partner_id",
+  "embedding_model",
+  "embedding_dim",
+  "embedding_selection",
+  "embedding_status",
+  "indexing_policy",
+  "indexing_model_unavailable",
+  "embedding_mismatch",
+] as const;
+
 export class KnowledgeBaseStore {
   private _settings: Settings;
 
@@ -809,7 +837,7 @@ export class KnowledgeBaseStore {
         return {};
       }
     }
-    return isRecord(payload) ? payload : {};
+    return isRecord(payload) ? database.normalizeKbMetaTimestamps(payload) : {};
   }
 
   private _meta(name: string): Record<string, unknown> | null {
@@ -885,10 +913,14 @@ export class KnowledgeBaseStore {
         status: "ready",
         path: `sqlite:///${this._settings.sessions_db}?kb=${row.name}`,
         metadata: {
+          ...Object.fromEntries(
+            KB_LIST_METADATA_KEYS.filter((key) => meta[key] !== undefined)
+              .map((key) => [key, meta[key]]),
+          ),
           created_at: meta["created_at"],
           last_updated: meta["last_updated"],
           last_indexed_count: chunks,
-          rag_provider: "keyword",
+          rag_provider: meta["rag_provider"] ?? "keyword",
         },
         statistics: {
           raw_documents: docCounts.get(row.name) ?? 0,

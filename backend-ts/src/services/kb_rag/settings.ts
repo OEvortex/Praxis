@@ -51,11 +51,6 @@ function _clampedInt(value: unknown, fallback: number, low: number, high: number
 // Defaults (ported verbatim from runtime_settings.py)
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_PAGEINDEX_SETTINGS: AnyDict = {
-  version: 1,
-  api_key: "",
-};
-
 export const DEFAULT_IMA_SETTINGS: AnyDict = {
   version: 1,
   client_id: "",
@@ -91,31 +86,6 @@ export const DEFAULT_LLAMAINDEX_SETTINGS: AnyDict = {
   image_description_timeout_seconds: 60,
 };
 
-export const DEFAULT_GRAPHRAG_SETTINGS: AnyDict = {
-  version: 1,
-  response_type: "Multiple Paragraphs",
-  community_level: 2,
-  dynamic_community_selection: false,
-};
-
-export const DEFAULT_LIGHTRAG_SETTINGS: AnyDict = {
-  version: 2,
-  top_k: 60,
-  response_type: "Multiple Paragraphs",
-  max_concurrent_files: 1,
-  llm_model_max_async: 4,
-  entity_extract_max_gleaning: 1,
-  llm_timeout: 240,
-  llm_profile_id: "",
-  llm_model_id: "",
-};
-
-export const DEFAULT_LIGHTRAG_SERVER_SETTINGS: AnyDict = {
-  version: 1,
-  server_url: "",
-  api_key: "",
-};
-
 const IGNORE_PROCESS_OVERRIDES_ENV = "DEEPTUTOR_IGNORE_PROCESS_ENV_OVERRIDES";
 
 // ---------------------------------------------------------------------------
@@ -128,163 +98,12 @@ function _envValue(key: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// LightRAG role-model contract (port of services/config/lightrag_roles.py —
-// credential-free shapes only; catalog validation happens in the
-// router layer).
-// ---------------------------------------------------------------------------
-
-export const LIGHTRAG_REASONING_EFFORTS = [
-  "none",
-  "minimal",
-  "low",
-  "medium",
-  "high",
-  "xhigh",
-  "max",
-  "adaptive",
-] as const;
-
-export class LightRagRoleError extends Error {
-  name = "ValueError";
-}
-
-function _fail(message: string): never {
-  throw new LightRagRoleError(message);
-}
-
-function _strictInt(value: unknown, field: string): number {
-  // schema validation strict=True ints: booleans and floats are rejected.
-  if (typeof value !== "number" || !Number.isInteger(value)) {
-    _fail(`${field} must be an integer.`);
-  }
-  return value;
-}
-
-function _roleObject(value: unknown, label: string): AnyDict {
-  if (value === null || value === undefined) return {};
-  if (!isRecord(value)) _fail(`${label} must be an object.`);
-  return value;
-}
-
-function _noExtraKeys(raw: AnyDict, allowed: string[], label: string): void {
-  for (const key of Object.keys(raw)) {
-    if (!allowed.includes(key)) {
-      _fail(`${label}: unexpected field '${key}'.`);
-    }
-  }
-}
-
-function _parseModelSelection(
-  value: unknown,
-  label: string,
-): AnyDict | null {
-  if (value === null || value === undefined) return null;
-  if (!isRecord(value)) _fail(`${label} must be an object.`);
-  _noExtraKeys(value, ["profile_id", "model_id", "reasoning_effort"], label);
-  const profileId = _str(value["profile_id"]);
-  const modelId = _str(value["model_id"]);
-  if (!profileId || profileId.length > 128) {
-    _fail(`${label}.profile_id must be 1-128 characters.`);
-  }
-  if (!modelId || modelId.length > 128) {
-    _fail(`${label}.model_id must be 1-128 characters.`);
-  }
-  const out: AnyDict = { profile_id: profileId, model_id: modelId };
-  const effort = value["reasoning_effort"];
-  if (effort !== null && effort !== undefined) {
-    const text = _str(effort);
-    if (!(LIGHTRAG_REASONING_EFFORTS as readonly string[]).includes(text)) {
-      _fail(`${label}.reasoning_effort is not supported.`);
-    }
-    out["reasoning_effort"] = text;
-  }
-  return out;
-}
-
-function _parseReasoningEffort(value: unknown, label: string): string | null {
-  if (value === null || value === undefined) return null;
-  const text = _str(value);
-  if (!(LIGHTRAG_REASONING_EFFORTS as readonly string[]).includes(text)) {
-    _fail(`${label}.reasoning_effort is not supported.`);
-  }
-  return text;
-}
-
-function _parseRoleModel(
-  raw: unknown,
-  label: string,
-  modes: string[],
-  defaultMode: string,
-): AnyDict {
-  const obj = _roleObject(raw, label);
-  _noExtraKeys(
-    obj,
-    ["mode", "selection", "reasoning_effort", "max_async", "timeout"],
-    label,
-  );
-  const mode = obj["mode"] === undefined ? defaultMode : _str(obj["mode"]);
-  if (!modes.includes(mode)) {
-    _fail(`${label}.mode must be one of: ${modes.join(", ")}.`);
-  }
-  const selection = _parseModelSelection(obj["selection"], `${label}.selection`);
-  const reasoningEffort = _parseReasoningEffort(
-    obj["reasoning_effort"],
-    label,
-  );
-  if ((mode === "model") !== (selection !== null)) {
-    _fail("Only an explicit model role requires a model selection.");
-  }
-  if (selection !== null && selection["reasoning_effort"] !== undefined) {
-    _fail("Set role reasoning_effort on the role, not its model selection.");
-  }
-  const out: AnyDict = {
-    mode,
-    max_async: _clampedIntCheck(_strictInt(obj["max_async"] ?? 4, `${label}.max_async`), 1, 32, `${label}.max_async`),
-    timeout: _clampedIntCheck(_strictInt(obj["timeout"] ?? 240, `${label}.timeout`), 1, 3600, `${label}.timeout`),
-  };
-  if (mode === "disabled" && reasoningEffort !== null) {
-    _fail("A disabled vision role cannot override reasoning effort.");
-  }
-  if (selection !== null) out["selection"] = selection;
-  if (reasoningEffort !== null) out["reasoning_effort"] = reasoningEffort;
-  return out;
-}
-
-function _clampedIntCheck(value: number, low: number, high: number, label: string): number {
-  // schema validation ge/le constraints: reject rather than clamp.
-  if (value < low || value > high) {
-    _fail(`${label} must be between ${low} and ${high}.`);
-  }
-  return value;
-}
-
-export function parseLightRagRoleModels(value: unknown): AnyDict {
-  // Port of LightRagRoleModels.model_validate + .model_dump().
-  if (!isRecord(value)) _fail("role_models must be an object.");
-  _noExtraKeys(value, ["base", "extract", "keyword", "query", "vlm"], "role_models");
-  const base = _parseModelSelection(value["base"], "role_models.base");
-  if (base === null) _fail("role_models.base is required.");
-  const out: AnyDict = {
-    base,
-    extract: _parseRoleModel(value["extract"], "role_models.extract", ["inherit", "model"], "inherit"),
-    keyword: _parseRoleModel(value["keyword"], "role_models.keyword", ["inherit", "model"], "inherit"),
-    query: _parseRoleModel(value["query"], "role_models.query", ["inherit", "model"], "inherit"),
-    vlm: _parseRoleModel(value["vlm"], "role_models.vlm", ["disabled", "inherit", "model"], "disabled"),
-  };
-  return out;
-}
-
-// ---------------------------------------------------------------------------
 // Normalizers (ported)
 // ---------------------------------------------------------------------------
 
 function _normalizeResponseType(value: unknown): string {
   const text = _str(value) || "Multiple Paragraphs";
   return text.slice(0, 80);
-}
-
-function normalizePageindex(settings: AnyDict): AnyDict {
-  return { version: 1, api_key: _str(settings["api_key"]) };
 }
 
 function normalizeIma(settings: AnyDict): AnyDict {
@@ -319,47 +138,6 @@ function normalizeLlamaindex(settings: AnyDict): AnyDict {
     image_description_timeout_seconds: _clampedInt(
       settings["image_description_timeout_seconds"], 60, 5, 600,
     ),
-  };
-}
-
-function normalizeGraphrag(settings: AnyDict): AnyDict {
-  return {
-    version: 1,
-    response_type: _normalizeResponseType(settings["response_type"]),
-    community_level: _clampedInt(settings["community_level"], 2, 0, 5),
-    dynamic_community_selection: _bool(settings["dynamic_community_selection"], false),
-  };
-}
-
-export function normalizeLightrag(settings: AnyDict): AnyDict {
-  const version = settings["version"] ?? 1;
-  if (typeof version !== "number" || !Number.isInteger(version) || ![1, 2].includes(version)) {
-    throw new LightRagRoleError("Unsupported LightRAG settings version.");
-  }
-  // Missing means a released, legacy setting; malformed role_models must not
-  // fall back to the legacy chat-model pair.
-  const hasRoleModels = "role_models" in settings;
-  const roles = hasRoleModels ? parseLightRagRoleModels(settings["role_models"]) : null;
-  const result: AnyDict = {
-    version: roles !== null || settings["version"] === 2 ? 2 : 1,
-    top_k: _clampedInt(settings["top_k"], 60, 1, 200),
-    response_type: _normalizeResponseType(settings["response_type"]),
-    max_concurrent_files: _clampedInt(settings["max_concurrent_files"], 1, 1, 16),
-    llm_model_max_async: _clampedInt(settings["llm_model_max_async"], 4, 1, 32),
-    entity_extract_max_gleaning: _clampedInt(settings["entity_extract_max_gleaning"], 1, 0, 5),
-    llm_timeout: _clampedInt(settings["llm_timeout"], 240, 60, 3600),
-    llm_profile_id: _str(settings["llm_profile_id"]).slice(0, 128),
-    llm_model_id: _str(settings["llm_model_id"]).slice(0, 128),
-  };
-  if (roles !== null) result["role_models"] = roles;
-  return result;
-}
-
-function normalizeLightragServer(settings: AnyDict): AnyDict {
-  return {
-    version: 1,
-    server_url: _str(settings["server_url"]).replace(/\/+$/, ""),
-    api_key: _str(settings["api_key"]),
   };
 }
 
@@ -409,20 +187,6 @@ function _save(
 // Public load/save API — mirrors RuntimeSettingsService
 // ---------------------------------------------------------------------------
 
-export function loadPageindex(settings: Settings = _config_get_settings(), includeOverrides = true): AnyDict {
-  const payload = _loadOrCreate(settings, "pageindex", DEFAULT_PAGEINDEX_SETTINGS, normalizePageindex);
-  if (includeOverrides) {
-    const value = _envValue("PAGEINDEX_API_KEY");
-    if (value) payload["api_key"] = value;
-    return normalizePageindex(payload);
-  }
-  return payload;
-}
-
-export function savePageindex(settings: Settings = _config_get_settings(), payload: AnyDict = {}): AnyDict {
-  return _save(settings, "pageindex", DEFAULT_PAGEINDEX_SETTINGS, normalizePageindex, payload);
-}
-
 export function loadIma(settings: Settings = _config_get_settings(), includeOverrides = true): AnyDict {
   const payload = _loadOrCreate(settings, "ima", DEFAULT_IMA_SETTINGS, normalizeIma);
   if (includeOverrides) {
@@ -451,43 +215,6 @@ export function loadLlamaindex(settings: Settings = _config_get_settings(), incl
 
 export function saveLlamaindex(settings: Settings = _config_get_settings(), payload: AnyDict = {}): AnyDict {
   return _save(settings, "llamaindex", DEFAULT_LLAMAINDEX_SETTINGS, normalizeLlamaindex, payload);
-}
-
-export function loadGraphrag(settings: Settings = _config_get_settings()): AnyDict {
-  return _loadOrCreate(settings, "graphrag", DEFAULT_GRAPHRAG_SETTINGS, normalizeGraphrag);
-}
-
-export function saveGraphrag(settings: Settings = _config_get_settings(), payload: AnyDict = {}): AnyDict {
-  return _save(settings, "graphrag", DEFAULT_GRAPHRAG_SETTINGS, normalizeGraphrag, payload);
-}
-
-export function loadLightrag(settings: Settings = _config_get_settings()): AnyDict {
-  // Upstream load_lightrag differs subtly: an existing file is normalized with
-  // version forced to 1 when absent, then written back if it changed. The kv
-  // store always holds an object, so mirror that via a dedicated path.
-  const stored = database.get_state<unknown>(settings, _key("lightrag"), null);
-  if (isRecord(stored) && Object.keys(stored).length) {
-    const normalized = normalizeLightrag({ ...DEFAULT_LIGHTRAG_SETTINGS, version: 1, ...stored });
-    if (JSON.stringify(normalized) !== JSON.stringify(stored)) {
-      database.put_state(settings, _key("lightrag"), normalized);
-    }
-    return normalized;
-  }
-  const normalized = normalizeLightrag({ ...DEFAULT_LIGHTRAG_SETTINGS });
-  database.put_state(settings, _key("lightrag"), normalized);
-  return normalized;
-}
-
-export function saveLightrag(settings: Settings = _config_get_settings(), payload: AnyDict = {}): AnyDict {
-  return _save(settings, "lightrag", DEFAULT_LIGHTRAG_SETTINGS, normalizeLightrag, payload);
-}
-
-export function loadLightragServer(settings: Settings = _config_get_settings()): AnyDict {
-  return _loadOrCreate(settings, "lightrag_server", DEFAULT_LIGHTRAG_SERVER_SETTINGS, normalizeLightragServer);
-}
-
-export function saveLightragServer(settings: Settings = _config_get_settings(), payload: AnyDict = {}): AnyDict {
-  return _save(settings, "lightrag_server", DEFAULT_LIGHTRAG_SERVER_SETTINGS, normalizeLightragServer, payload);
 }
 
 // ---------------------------------------------------------------------------

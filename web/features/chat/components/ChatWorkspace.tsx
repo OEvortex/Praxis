@@ -134,9 +134,11 @@ import {
 import {
   ALL_TOOLS,
   getChatCapability,
+  isChatModeCapability,
   type ToolName,
 } from "@/features/capabilities/presentation";
 import { useCapabilityCatalog } from "@/features/capabilities/useCapabilityCatalog";
+import type { StarterGroup } from "@/lib/page-customization";
 import { browserStorage } from "@/shared/storage";
 import { downloadChatMarkdown } from "@/lib/chat-export";
 import { buildChatOutline, scrollToChatTurn } from "@/lib/chat-outline";
@@ -553,8 +555,16 @@ export default function ChatWorkspace() {
   // ``AskUserOptions`` chip click can drop text into the composer textarea.
   const prefillInputRef = useRef<((text: string) => void) | null>(null);
   const focusComposerRef = useRef<(() => void) | null>(null);
+  // Starter tabs are rendered before the capability handler is declared, so
+  // they reach it through a ref installed once the handler exists.
+  const handleSelectCapabilityRef = useRef<((value: string) => void) | null>(null);
   const handlePrefillComposer = useCallback((text: string) => {
     prefillInputRef.current?.(text);
+  }, []);
+  // A starter tab is both a card of prompts and a tutor mode. Selecting one
+  // changes how the next turn is framed; the prompts still only prefill.
+  const handleSelectStarterGroup = useCallback((group: StarterGroup) => {
+    handleSelectCapabilityRef.current?.(group);
   }, []);
 
   // A message handed over by another page (Settings' "set up with Praxis"
@@ -626,10 +636,15 @@ export default function ChatWorkspace() {
     state.isStreaming,
     state.sessionId,
   ]);
-  // Chat-only UI: sessions restored with a non-chat capability fall back
-  // to the default agent/chat mode once any in-flight stream settles.
+  // Sessions restored with a capability this screen cannot run (a dedicated
+  // workspace or pipeline) fall back to plain chat once the stream settles.
+  // The five tutor modes are real chat-turn modes and are kept.
   useEffect(() => {
-    if (state.activeCapability && !state.isStreaming) setCapability(null);
+    if (
+      state.activeCapability &&
+      !state.isStreaming &&
+      !isChatModeCapability(state.activeCapability)
+    ) setCapability(null);
   }, [state.activeCapability, state.isStreaming, setCapability]);
 
   const isVisualizeMode = activeCap.value === "visualize";
@@ -1388,8 +1403,9 @@ export default function ChatWorkspace() {
 
   const handleSelectCapability = useCallback(
     (value: string) => {
-      // Chat-only UI: ignore any non-chat capability selection.
-      if (value) return;
+      // This screen runs plain chat plus the five composer tutor modes.
+      // Other capabilities belong to their own workspaces or pipelines.
+      if (!isChatModeCapability(value)) return;
       const cap =
         capabilities.find((capability) => capability.value === value) ??
         capabilities[0] ??
@@ -1416,6 +1432,15 @@ export default function ChatWorkspace() {
     },
     [capabilities, setCapability, setTools, setCreateTarget, userEnabledTools],
   );
+
+  // Installed after declaration so the starter tabs (rendered above) can call
+  // the same selection path as the Mode chip and tray.
+  useEffect(() => {
+    handleSelectCapabilityRef.current = handleSelectCapability;
+    return () => {
+      handleSelectCapabilityRef.current = null;
+    };
+  }, [handleSelectCapability]);
 
   const fileToAttachment = fileToPendingAttachment;
 
@@ -2097,23 +2122,13 @@ export default function ChatWorkspace() {
   const handleToggleKB = useCallback(
     (name: string) => {
       const current = state.knowledgeBases;
-      const providerOf = (kbName: string) => {
-        const kb = knowledgeBases.find((item) => knowledgeBaseRef(item) === kbName);
-        return kb?.metadata?.rag_provider || kb?.statistics?.rag_provider || "";
-      };
-      const selectingOss = providerOf(name) === "pageindex-oss";
       setKBs(
         current.includes(name)
           ? current.filter((kb) => kb !== name)
-          : [
-              ...(selectingOss
-                ? current.filter((kb) => providerOf(kb) !== "pageindex-oss")
-                : current),
-              name,
-            ],
+          : [...current, name],
       );
     },
-    [knowledgeBases, setKBs, state.knowledgeBases],
+    [setKBs, state.knowledgeBases],
   );
 
   // Real knowledge bases and connected subagents render as separate composer
@@ -2570,7 +2585,7 @@ export default function ChatWorkspace() {
                 capabilityConfigConfirmed={capabilityConfigConfirmed}
                 onRequestConfigConfirm={ensureActivityPanelOpen}
                 capabilities={visibleCapabilities}
-                showCapabilityChip={false}
+                showCapabilityChip
                 onSetCapMenuOpen={setCapMenuOpen}
                 onSetSpaceMenuOpen={setSpaceMenuOpen}
                 onToggleKB={handleToggleKB}
@@ -2657,12 +2672,19 @@ export default function ChatWorkspace() {
               />
               {/* Starters sit between the composer and the spacer, so they ride
                 up with the composer on the empty screen and disappear the
-                moment the conversation has a first message. Picking one only
-                writes it into the composer: sending stays the learner's. */}
+                moment the conversation has a first message. A tab selects its
+                tutor mode; picking a prompt only writes it into the composer,
+                and sending stays the learner's. */}
               {!hasMessages ? (
                 <StarterSuggestions
                   workspaceId={state.workspaceId || ""}
                   onPick={handlePrefillComposer}
+                  onSelectGroup={handleSelectStarterGroup}
+                  supportedModes={
+                    isCapabilityCatalogLoading
+                      ? undefined
+                      : capabilities.map((capability) => capability.value)
+                  }
                   disabled={state.isStreaming}
                 />
               ) : null}

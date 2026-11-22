@@ -4,12 +4,6 @@ export type EmbeddingUsage = EmbeddingModelSelection & {
   workspace_name: string;
 };
 
-export interface IndexingLLMSelection {
-  profile_id: string;
-  model_id: string;
-  reasoning_effort?: string;
-}
-
 export interface KnowledgeBaseSummary {
   id?: string;
   name: string;
@@ -46,11 +40,6 @@ export interface RagProviderSummary {
   setup_required?: boolean;
 }
 
-export interface PageIndexConfig {
-  api_key_set: boolean;
-  configured: boolean;
-}
-
 /** Account-level Tencent IMA credentials, shared by every `ima` KB. */
 export interface ImaAccountConfig {
   client_id: string;
@@ -83,58 +72,6 @@ export interface LlamaIndexConfig {
   image_description_timeout_seconds: number;
 }
 
-export interface GraphRagConfig {
-  version: number;
-  response_type: string;
-  community_level: number;
-  dynamic_community_selection: boolean;
-}
-
-export interface LightRagRoleModel {
-  mode: "inherit" | "model" | "disabled";
-  selection?: IndexingLLMSelection | null;
-  reasoning_effort?: string | null;
-  max_async: number;
-  timeout: number;
-}
-
-export interface LightRagRoleModels {
-  base: IndexingLLMSelection;
-  extract: LightRagRoleModel;
-  keyword: LightRagRoleModel;
-  query: LightRagRoleModel;
-  vlm: LightRagRoleModel;
-}
-
-export interface LightRagIndexingSelection {
-  extract: IndexingLLMSelection;
-  vlm: { mode: "disabled" | "enabled"; selection?: IndexingLLMSelection };
-}
-
-export interface LightRagConfig {
-  role_models?: LightRagRoleModels;
-  version: number;
-  top_k: number;
-  response_type: string;
-  /** Frozen documents LightRAG parses in parallel while indexing. */
-  max_concurrent_files: number;
-  /** Concurrent LLM calls LightRAG's internal queue issues. */
-  llm_model_max_async: number;
-  /** Extra extraction passes per chunk, to recover missed entities. */
-  entity_extract_max_gleaning: number;
-  /** Per-call timeout for LightRAG's LLM requests, in seconds. */
-  llm_timeout: number;
-  /** Query model and default indexing selection; empty uses the active chat model. */
-  llm_profile_id: string;
-  llm_model_id: string;
-}
-
-export interface LightRagServerConfig {
-  server_url: string;
-  api_key_set: boolean;
-  configured: boolean;
-}
-
 export interface PreflightCheck {
   key: string;
   label: string;
@@ -161,16 +98,6 @@ export interface ModelOption {
 export interface ModelKindOptions {
   active: { profile_id: string | null; model_id: string | null };
   options: ModelOption[];
-}
-
-export interface GraphRagModelCompatibility {
-  status: "compatible" | "incompatible" | "unverifiable";
-  compatible: boolean | null;
-  code: string;
-  message: string;
-  model: string;
-  binding: string;
-  retryable: boolean;
 }
 
 /** Map of service kind ("llm" | "embedding") → its options + active selection. */
