@@ -2,8 +2,10 @@
 //  * reflection/beam-free has a 1M window in models.dev, but the bar used to
 //    show the 200k default because the window was looked up with the catalog
 //    UUID instead of the wire model (and with no saved active selection).
-//  * token numbers used to be invented (length/4 + 120*toolCount, rescaled to
-//    the total). They now come from the provider's native usage counters.
+//  * the header now uses the provider's native usage total, while the familiar
+//    Messages / System prompt / System tools rows are counted with a real
+//    tokenizer (providers never report a per-piece split). The old code used
+//    length/4 + 120*toolCount and rescaled the rows to fake a total.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../src/provider-config.js", () => ({
@@ -15,9 +17,11 @@ vi.mock("../src/provider-config.js", () => ({
 import * as providerConfig from "../src/provider-config.js";
 import {
   build_context_budget,
+  count_tokens,
   DEFAULT_CONTEXT_WINDOW,
   reported_tokens,
   resolve_context_window,
+  tokenizer_available,
   tool_manifest_text,
 } from "../src/agent/context_budget.js";
 
@@ -135,57 +139,50 @@ describe("build_context_budget", () => {
     usage: null,
   };
 
-  it("uses the native input/output counters verbatim for the breakdown", () => {
-    loadCatalog.mockReturnValue(catalogWithBeam() as never);
-    const budget = build_context_budget({
-      ...base,
-      usage: {
-        total_tokens: 1000,
-        input_tokens: 900,
-        output_tokens: 100,
-      },
-    });
-    expect(budget.window).toBe(1_048_576);
-    expect(budget.window_estimated).toBe(false);
-    expect(budget.counter).toBe("provider_usage");
-    expect(budget.model).toBe("kilo/reflection/beam-free");
-    expect(budget.used_tokens).toBe(1000);
-    expect(budget.segments).toEqual([
-      { key: "input", tokens: 900 },
-      { key: "output", tokens: 100 },
-    ]);
-    expect(budget.free_tokens).toBe(1_048_576 - 1000);
+  it("loads a real tokenizer and does not use the old length/4 heuristic", () => {
+    expect(tokenizer_available()).toBe(true);
+    const text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    const counted = count_tokens(text);
+    expect(counted.exact).toBe(true);
+    expect(counted.tokens).not.toBe(Math.floor(text.length / 4));
   });
 
-  it("shows separately reported cache tokens as their own real row", () => {
-    const budget = build_context_budget({
-      ...base,
-      usage: {
-        input_tokens: 40,
-        output_tokens: 10,
-        cache_read_tokens: 25,
-        cache_write_tokens: 5,
-      },
-    });
-    expect(budget.used_tokens).toBe(80);
-    expect(budget.segments).toEqual([
-      { key: "input", tokens: 40 },
-      { key: "output", tokens: 10 },
-      { key: "other_context", tokens: 30 },
-    ]);
-  });
-
-  it("labels a no-usage response as a heuristic instead of passing it off as measured", () => {
+  it("keeps the Messages / System prompt / System tools breakdown", () => {
     const budget = build_context_budget(base);
-    expect(budget.counter).toBe("heuristic");
     expect(budget.segments.map((s) => s.key)).toEqual([
       "messages",
       "system_prompt",
       "system_tools",
     ]);
+    expect(budget.counter).toBe("tokenizer");
+    expect(budget.tokenizer).toBe("o200k_base");
+    expect(budget.segments[0].tokens).toBe(count_tokens("Explain beam search.").tokens);
+    expect(budget.segments[1].tokens).toBe(count_tokens("You are a tutor.").tokens);
+    for (const segment of budget.segments) expect(segment.tokens).toBeGreaterThan(0);
     expect(budget.used_tokens).toBe(
       budget.segments.reduce((sum, s) => sum + s.tokens, 0),
     );
+  });
+
+  it("anchors the header to native usage and shows the gap as 'other', without rescaling the rows", () => {
+    loadCatalog.mockReturnValue(catalogWithBeam() as never);
+    const local = build_context_budget(base);
+    const counted = local.segments.reduce((sum, s) => sum + s.tokens, 0);
+    const providerTotal = counted + 500;
+
+    const budget = build_context_budget({
+      ...base,
+      usage: { total_tokens: providerTotal, input_tokens: 900, output_tokens: 100 },
+    });
+    expect(budget.window).toBe(1_048_576);
+    expect(budget.window_estimated).toBe(false);
+    expect(budget.counter).toBe("provider_usage");
+    expect(budget.model).toBe("kilo/reflection/beam-free");
+    expect(budget.used_tokens).toBe(providerTotal);
+    // Rows keep their real counts; the difference is its own row.
+    expect(budget.segments.slice(0, 3)).toEqual(local.segments);
+    expect(budget.segments.at(-1)).toEqual({ key: "other_context", tokens: 500 });
+    expect(budget.free_tokens).toBe(1_048_576 - providerTotal);
   });
 
   it("keeps the 200k default honest for unknown models", () => {

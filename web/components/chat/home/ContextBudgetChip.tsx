@@ -14,8 +14,10 @@ export type ContextBudget = {
   model?: string;
   /** Effective reasoning effort of the measured request, when one was set. */
   reasoning_effort?: string;
-  /** "provider_usage" | "heuristic" */
+  /** "provider_usage" | "tokenizer" | "heuristic" */
   counter?: string;
+  /** BPE vocabulary used for the local breakdown, when available. */
+  tokenizer?: string;
   deferred_tool_count?: number;
   segments: ContextBudgetSegment[];
 };
@@ -166,10 +168,10 @@ function SegmentRow({
 /**
  * Context-window breakdown for the just-finished turn (composer toolbar).
  *
- * Pure presentation: the numbers come from the provider's own usage counters,
- * so this component only formats what it is handed. The one footnote says when
- * a provider reported no usage at all and the numbers had to be estimated, so
- * a confident-looking bar never passes a guess off as a measurement.
+ * Pure presentation: the header comes from the provider's own usage counter
+ * and the per-piece rows are counted with a real tokenizer server-side. The
+ * footnotes say exactly how each was obtained, so the bar never passes a guess
+ * off as a measurement.
  */
 export default function ContextBudgetChip({
   budget,
@@ -227,8 +229,13 @@ export default function ContextBudgetChip({
 
   const estimatedWindow = budget.window_estimated === true;
   const heuristicCounter = budget.counter === "heuristic";
+  const localCounter = budget.counter === "tokenizer";
+  const providerCounter = budget.counter === "provider_usage";
+  const tokenizer = budget.tokenizer;
   const deferredCount = budget.deferred_tool_count ?? 0;
-  const hasNotes = estimatedWindow || heuristicCounter || deferredCount > 0;
+  const hasOther = budget.segments.some((segment) => segment.key === "other_context");
+  const hasNotes =
+    estimatedWindow || heuristicCounter || (!heuristicCounter && !!tokenizer) || hasOther || deferredCount > 0;
   const nearFull = usedShare >= 90;
 
   return (
@@ -323,7 +330,16 @@ export default function ContextBudgetChip({
                 <p>{"Window size is inferred from the model name. You can set it per model in Settings."}</p>
               )}
               {heuristicCounter && (
-                <p>{"This provider reported no token usage; counts are a rough estimate."}</p>
+                <p>{"Token counts are a rough character-based estimate."}</p>
+              )}
+              {localCounter && tokenizer && (
+                <p>{`Token counts are measured locally with the ${tokenizer} tokenizer.`}</p>
+              )}
+              {providerCounter && tokenizer && (
+                <p>{`Total from provider usage; breakdown counted locally with the ${tokenizer} tokenizer.`}</p>
+              )}
+              {hasOther && (
+                <p>{"Other context is what the provider counted beyond the pieces itemised above — mostly tool results and earlier rounds."}</p>
               )}
               {deferredCount > 0 && (
                 <p>

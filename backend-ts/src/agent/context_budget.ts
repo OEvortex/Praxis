@@ -14,12 +14,15 @@
  *     model entry by its wire id when no active selection is saved.
  *
  *  2. The token numbers were invented: `length / 4` and `120 * toolCount`,
- *     then rescaled to add up to the reported total. Now the provider's native
- *     usage is the single source of truth — its `total_tokens` for the used
- *     count and its `input_tokens` / `output_tokens` for the breakdown. Only
- *     providers that report no usage at all fall back to a character estimate,
- *     and that case is labelled as such so it is never passed off as measured.
+ *     then rescaled to add up to the reported total. The header now uses the
+ *     provider's native `total_tokens`, and the per-piece breakdown (messages,
+ *     system prompt, tool schemas) is counted locally with a real tokenizer —
+ *     providers only report input/output totals, never a per-piece split. The
+ *     residual between the counted pieces and the native total is shown as its
+ *     own "Other context" row instead of being silently spread over the rows.
  */
+
+import { getEncoding, type Tiktoken } from "js-tiktoken";
 
 import type { Settings } from "../config.js";
 import * as providerConfig from "../provider-config.js";
@@ -27,6 +30,33 @@ import type { UsageStats } from "../shared/vtx.js";
 
 /** vtx's own last-resort UI default (vtx.core.config agent.default_context_window). */
 export const DEFAULT_CONTEXT_WINDOW = 200_000;
+/** General-purpose BPE vocabulary used only for the local breakdown. */
+export const TOKENIZER_NAME = "o200k_base" as const;
+
+let _encoding: Tiktoken | null | undefined;
+function encoding(): Tiktoken | null {
+  if (_encoding === undefined) {
+    try {
+      _encoding = getEncoding(TOKENIZER_NAME);
+    } catch {
+      _encoding = null;
+    }
+  }
+  return _encoding;
+}
+
+/** True when real local tokenization is available in this build. */
+export function tokenizer_available(): boolean {
+  return encoding() !== null;
+}
+
+/** Count tokens with a real BPE vocabulary (fallback only if it cannot load). */
+export function count_tokens(text: unknown): { tokens: number; exact: boolean } {
+  const value = typeof text === "string" ? text : String(text ?? "");
+  const enc = encoding();
+  if (enc) return { tokens: enc.encode(value).length, exact: true };
+  return { tokens: Math.ceil(Buffer.byteLength(value, "utf8") / 4), exact: false };
+}
 
 export interface ContextBudgetSegment {
   key: string;
@@ -40,8 +70,10 @@ export interface ContextBudgetPayload {
   free_tokens: number;
   model?: string;
   reasoning_effort?: string;
-  /** "provider_usage" | "heuristic" */
+  /** "provider_usage" | "tokenizer" | "heuristic" */
   counter: string;
+  /** BPE vocabulary used for the local breakdown, when available. */
+  tokenizer?: string;
   segments: ContextBudgetSegment[];
 }
 
@@ -201,47 +233,45 @@ export interface BuildBudgetInput {
   usage: UsageStats | null | undefined;
 }
 
-/** Build the composer payload from the provider's native usage counters. */
+/**
+ * Build the composer payload.
+ *
+ * The header (`used_tokens`) is the provider's own total — exact. The rows are
+ * a local, real-tokenizer count of each request piece; their sum need not match
+ * the header (the provider may count tool results, hidden scaffolding, or a
+ * different vocabulary). That difference is surfaced as "Other context" rather
+ * than being spread over the rows, so every number in the popover is either a
+ * measurement or an explicitly labelled remainder.
+ */
 export function build_context_budget(input: BuildBudgetInput): ContextBudgetPayload {
-  const reported = reported_tokens(input.usage);
-  const segments: ContextBudgetSegment[] = [];
-  let used: number;
-  let counter: string;
+  const messageText = (input.messages ?? [])
+    .map((m) => text_of((m as Record<string, unknown> | null)?.content))
+    .filter(Boolean)
+    .join("\n");
 
-  if (reported > 0) {
-    // Real numbers straight from the provider — nothing estimated or rescaled.
-    used = reported;
-    counter = "provider_usage";
-    const u = (input.usage ?? {}) as Record<string, unknown>;
-    const nativeInput = positiveInt(u.input_tokens);
-    const nativeOutput = positiveInt(u.output_tokens);
-    if (nativeInput) segments.push({ key: "input", tokens: nativeInput });
-    if (nativeOutput) segments.push({ key: "output", tokens: nativeOutput });
-    const accounted = segments.reduce((sum, s) => sum + s.tokens, 0);
-    // Cache buckets (or anything else the provider counts but doesn't expose
-    // as input/output) are real too — show the residual as its own row.
-    if (used > accounted) {
-      segments.push({ key: "other_context", tokens: used - accounted });
+  const segments: ContextBudgetSegment[] = [];
+  const exact: boolean[] = [];
+  for (const [key, text] of [
+    ["messages", messageText],
+    ["system_prompt", String(input.system_prompt ?? "")],
+    ["system_tools", String(input.tool_manifest ?? "")],
+  ] as const) {
+    const counted = count_tokens(text);
+    if (counted.tokens > 0) {
+      segments.push({ key, tokens: counted.tokens });
+      exact.push(counted.exact);
     }
-  } else {
-    // The provider reported nothing. There is no honest way to measure here;
-    // keep a clearly-labelled character estimate so the chip stays useful.
-    counter = "heuristic";
-    const estimate = (value: unknown) =>
-      Math.ceil(Buffer.byteLength(text_of(value), "utf8") / 4);
-    const messageText = (input.messages ?? [])
-      .map((m) => text_of((m as Record<string, unknown> | null)?.content))
-      .filter(Boolean)
-      .join("\n");
-    for (const [key, tokens] of [
-      ["messages", estimate(messageText)],
-      ["system_prompt", estimate(input.system_prompt)],
-      ["system_tools", estimate(input.tool_manifest)],
-    ] as const) {
-      if (tokens > 0) segments.push({ key, tokens });
-    }
-    used = segments.reduce((sum, s) => sum + s.tokens, 0);
   }
+  const countedTotal = segments.reduce((sum, s) => sum + s.tokens, 0);
+
+  const reported = reported_tokens(input.usage);
+  const used = reported > 0 ? reported : countedTotal;
+  if (used > countedTotal) {
+    segments.push({ key: "other_context", tokens: used - countedTotal });
+  }
+
+  const allExact = exact.length > 0 && exact.every(Boolean);
+  const counter = reported > 0 ? "provider_usage" : allExact ? "tokenizer" : "heuristic";
 
   const resolution = resolve_context_window({
     settings: input.settings,
@@ -260,6 +290,7 @@ export function build_context_budget(input: BuildBudgetInput): ContextBudgetPayl
     model,
     ...(input.reasoning_effort ? { reasoning_effort: input.reasoning_effort } : {}),
     counter,
+    ...(allExact ? { tokenizer: TOKENIZER_NAME } : {}),
     segments,
   };
 }
