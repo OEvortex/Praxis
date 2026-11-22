@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   extractOpenUILang,
   hasOpenUILang,
+  repairOpenUIProgram,
   splitProgramStatements,
   toOpenUIProgram,
 } from "@/lib/openui/lang";
@@ -127,5 +128,40 @@ describe("a program written on one line", () => {
       'root = Text("a = b, and (c = d)")',
       'x = Math("E = mc^2", true)',
     ]);
+  });
+});
+
+describe("repairing Chart's positional arguments", () => {
+  it("shifts a numeric stacked argument into height", () => {
+    const bad = 'root = Chart("bar", rows, "sector", ["value"], "number", 240)';
+    expect(repairOpenUIProgram(bad)).toBe(
+      'root = Chart("bar", rows, "sector", ["value"], "number", false, 240)',
+    );
+    expect(toOpenUIProgram(bad)).toBe(
+      'root = Chart("bar", rows, "sector", ["value"], "number", false, 240)',
+    );
+  });
+
+  it("fixes a pie chart whose height landed in the stacked slot", () => {
+    expect(
+      repairOpenUIProgram('c = Chart("pie", rows, "name", ["value"], "percent", 220)'),
+    ).toBe('c = Chart("pie", rows, "name", ["value"], "percent", false, 220)');
+  });
+
+  it("translates 0/1 into booleans when a seventh argument is present", () => {
+    expect(repairOpenUIProgram('c = Chart("bar", rows, "x", ["v"], "number", 1, 200)')).toBe(
+      'c = Chart("bar", rows, "x", ["v"], "number", true, 200)',
+    );
+  });
+
+  it("inserts a format string when a number occupies that slot", () => {
+    expect(repairOpenUIProgram('c = Chart("pie", rows, "name", ["v"], 220)')).toBe(
+      'c = Chart("pie", rows, "name", ["v"], "number", false, 220)',
+    );
+  });
+
+  it("leaves a correct program and unrelated commas untouched", () => {
+    const good = 'root = Col([Chart("bar", rows, "x", ["v"], "number", true, 240), Text("a, b")])';
+    expect(repairOpenUIProgram(good)).toBe(good);
   });
 });

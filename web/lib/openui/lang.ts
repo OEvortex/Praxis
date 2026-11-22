@@ -195,6 +195,98 @@ export function isPlainProse(content: string | null | undefined): boolean {
   return !source.split("\n").some((line) => STATEMENT.test(line));
 }
 
+/** Split a call's arguments at top-level commas, respecting nesting and quotes. */
+function splitCallArgs(inner: string): string[] {
+  const args: string[] = [];
+  let depth = 0;
+  let quote: string | null = null;
+  let escaped = false;
+  let start = 0;
+  for (let i = 0; i < inner.length; i += 1) {
+    const char = inner[i];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (char === '"' || char === "'" || char === "`") {
+      quote = char;
+      continue;
+    }
+    if (char === "(" || char === "[" || char === "{") depth += 1;
+    else if (char === ")" || char === "]" || char === "}") depth = Math.max(0, depth - 1);
+    else if (char === "," && depth === 0) {
+      args.push(inner.slice(start, i));
+      start = i + 1;
+    }
+  }
+  args.push(inner.slice(start));
+  return args;
+}
+
+const NUMBER_LITERAL = /^\s*-?\d+(?:\.\d+)?\s*$/;
+
+/**
+ * Repair the one positional mistake models make with `Chart`:
+ *
+ * `Chart(type, rows, x, series, format, stacked: boolean, height: number)`
+ * gets written as `Chart("bar", rows, "x", ["value"], "number", 240)` — the
+ * height lands in the boolean slot and the parser reports a type mismatch,
+ * leaving the chart empty. Shift a numeric sixth argument into `height`, and
+ * translate 0/1 into false/true when a seventh argument is present.
+ */
+export function repairOpenUIProgram(source: string): string {
+  let out = source;
+  let cursor = 0;
+  while (true) {
+    const start = out.indexOf("Chart(", cursor);
+    if (start === -1) break;
+    const innerStart = start + "Chart(".length;
+    let depth = 1;
+    let quote: string | null = null;
+    let escaped = false;
+    let end = innerStart;
+    for (; end < out.length && depth > 0; end += 1) {
+      const char = out[end];
+      if (quote) {
+        if (escaped) escaped = false;
+        else if (char === "\\") escaped = true;
+        else if (char === quote) quote = null;
+        continue;
+      }
+      if (char === '"' || char === "'" || char === "`") quote = char;
+      else if (char === "(") depth += 1;
+      else if (char === ")") depth -= 1;
+    }
+    if (depth !== 0) break; // incomplete while streaming; try again next chunk
+    const inner = out.slice(innerStart, end - 1);
+    const args = splitCallArgs(inner);
+    let changed = false;
+
+    // A number in the format slot means the model skipped the format string.
+    if (args.length >= 5 && NUMBER_LITERAL.test(args[4])) {
+      args.splice(4, 0, '"number"');
+      changed = true;
+    }
+    // A number in the stacked slot means the model skipped the boolean.
+    if (args.length >= 6 && NUMBER_LITERAL.test(args[5])) {
+      if (args.length === 6) args.splice(5, 0, "false");
+      else args[5] = args[5].trim() === "1" ? "true" : "false";
+      changed = true;
+    }
+
+    if (changed) {
+      const repaired = args.map((arg) => arg.trim()).join(", ");
+      out = `${out.slice(0, innerStart)}${repaired}${out.slice(end - 1)}`;
+      cursor = innerStart + repaired.length + 1;
+    } else {
+      cursor = end;
+    }
+  }
+  return out;
+}
+
 /**
  * The program to hand the renderer for a reply.
  *
@@ -205,10 +297,12 @@ export function isPlainProse(content: string | null | undefined): boolean {
 export function toOpenUIProgram(content: string | null | undefined): string {
   const source = String(content ?? "");
   const extraction = extractOpenUILang(source);
-  if (extraction.found) return extraction.program;
+  if (extraction.found) return repairOpenUIProgram(extraction.program);
   // Mid-stream a program can start with a state or component assignment before
   // its `root` line arrives. Hand the partial source to the renderer rather
   // than showing it as Markdown for a frame.
-  if (source.split("\n").some((line) => STATEMENT.test(line))) return source;
+  if (source.split("\n").some((line) => STATEMENT.test(line))) {
+    return repairOpenUIProgram(source);
+  }
   return `root = Markdown(${JSON.stringify(source)})`;
 }
